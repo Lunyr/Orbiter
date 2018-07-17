@@ -36,17 +36,24 @@ export default const init = (tableName) => {
     if (!exists) {
       // Create queue table if it doesn't exist
       await queue.schema.createTable(tableName, (t) => {
-        t.increments('job_id');
+        t.string('job_id');
         t.timestamp('created').defaultTo(knex.fn.now());
         t.json('args');
+
+        t.unique('job_id');
       });
     }
   });
 
   return {
-    put: async (obj) => {
+    put: async (job_id, obj) => {
+      if (typeof job_id === 'undefined' || !job_id) {
+        throw new Error('job_id is required');
+      }
+      // TODO: add a check to make sure job_id doesn't exist
       // Add the job to the DB
       return queue(tableName).insert({
+        job_id: job_id,
         args: obj
       });
     },
