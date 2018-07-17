@@ -1,5 +1,5 @@
 /**
- * This library sets up a pub/sub like queue system using SQLite.
+ * This library sets up a simple queue system using SQLite.
  * 
  * Usage
  * -----
