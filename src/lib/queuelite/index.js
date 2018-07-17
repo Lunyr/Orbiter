@@ -46,7 +46,7 @@ export default const init = (tableName) => {
   return {
     put: async (obj) => {
       // Add the job to the DB
-      return await queue(tableName).insert({
+      return queue(tableName).insert({
         args: obj
       });
     },
