@@ -1,4 +1,4 @@
-import db from './backend/db';
+import db from '../main/backend/db';
 
 // TODO: Load user config and maybe some helper functions to set settings
 
@@ -14,6 +14,9 @@ export default {
   isDevelopment: process.env.NODE_ENV === 'development',
   privacy: {
     errorReporting: true,
+  },
+  logging: {
+    logLevel: process.env.NODE_ENV === 'development' ? 20 : 30
   },
   ipfs: {
     //APIRoot: 'https://ipfs.infura.io:5001',

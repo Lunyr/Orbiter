@@ -11,14 +11,14 @@
  * log.warn('my log');
  * log.debug('some stuff');
  */
-const os = require('os');
-const pjson = require('../package.json');
-const bunyan = require('bunyan');
-const lunyrConfig = require('../config/lunyrconfig')
-const Raven = require('raven');
-if (lunyrConfig.APP_ENV !== 'development') {
+import os from 'os';
+import pjson from '../../../package.json';
+import bunyan from 'bunyan';
+import settings from '../../shared/settings';
+import Raven from 'raven';
+if (!settings.isDevelopment) {
   Raven.config(
-    lunyrConfig.sentry.endpoint,
+    settings.sentry.endpoint,
     {
       name: os.hostname(),
       projectId: pjson.name,
@@ -39,7 +39,7 @@ if (lunyrConfig.APP_ENV !== 'development') {
  */
 let log = bunyan.createLogger({
   name: 'Lunyr-Services',
-  level: lunyrConfig.logging.logLevel,
+  level: settings.logging.logLevel,
 });
 
 log.info("logger initialized.");
