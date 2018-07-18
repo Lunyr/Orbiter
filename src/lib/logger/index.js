@@ -23,7 +23,7 @@ if (!settings.isDevelopment) {
       name: os.hostname(),
       projectId: pjson.name,
       release: pjson.version,
-      environment: lunyrConfig.APP_ENV,
+      environment: settings.isDevelopment ? 'development' : 'production',
     }
   ).install(
     (err, initialErr, eventId) => {

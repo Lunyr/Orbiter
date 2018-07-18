@@ -28,7 +28,7 @@ export const queue = knex({
  * @param {string} tableName is the name of queue that will be used as a table name
  * @returns {object} an object with methods to use on the queue (e.g. put, get)
  */
-export default init = (tableName) => {
+export default (tableName) => {
   tableName = tableName ? tableName : DEFAULT_TABLE_NAME;
 
   // Create the queue table if it doesn't exist
@@ -37,7 +37,7 @@ export default init = (tableName) => {
       // Create queue table if it doesn't exist
       await queue.schema.createTable(tableName, (t) => {
         t.string('job_id');
-        t.timestamp('created').defaultTo(knex.fn.now());
+        t.timestamp('created').defaultTo(queue.fn.now());
         t.json('args');
 
         t.unique('job_id');
