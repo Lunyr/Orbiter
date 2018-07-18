@@ -19,7 +19,7 @@ export default async (db) => {
       t.increments('event_id');
       t.string('contract_address', 42);
       t.string('transaction_hash', 68);
-      t.timestamp('created').defaultTo(knex.fn.now());
+      t.timestamp('created').defaultTo(db.fn.now());
       t.integer('log_index');
       t.integer('block_number');
       t.string('name');
@@ -31,7 +31,7 @@ export default async (db) => {
     // Edit Streams
     await db.schema.createTable('edit_stream', (t) => {
       t.increments('edit_stream_id');
-      t.timestamp('created').defaultTo(knex.fn.now());
+      t.timestamp('created').defaultTo(db.fn.now());
       t.timestamp('updated').defaultTo(null);
       t.string('lang', 2);
       t.string('title');
@@ -52,10 +52,10 @@ export default async (db) => {
       t.integer('proposal_state_id').references('proposal_state.proposal_state_id');
       t.integer('edit_stream_id').references('edit_stream.edit_stream_id');
       t.boolean('dirty').defaultTo(false);
-      t.timestamp('created').defaultTo(knex.fn.now());
+      t.timestamp('created').defaultTo(db.fn.now());
       t.timestamp('updated').defaultTo(null);
       t.string('from_address', 42);
-      t.numeric('image_offset', 20);
+      t.decimal('image_offset');
       t.string('content_hash', 68);
       t.string('lang', 2);
       t.uuid('doc_uuid');
@@ -74,7 +74,7 @@ export default async (db) => {
       t.increments('vote_id');
       t.integer('proposal_id').references('proposal.proposal_id');
       t.string('from_address', 42);
-      t.timestamp('created').defaultTo(knex.fn.now());
+      t.timestamp('created').defaultTo(db.fn.now());
       t.timestamp('updated').defaultTo(null);
       t.string('survey_hash', 68);
       t.boolean('dirty').defaultTo(false);
@@ -119,11 +119,12 @@ export default async (db) => {
 
     // Transactions
     await db.schema.createTable('transaction_type', (t) => {
-      t.increments('transaction_type_id');
+      t.string('transaction_type_id');
       t.string('name');
       
       t.unique('transaction_type_id');
     });
+
     await db('transaction_type').insert({ transaction_type_id: 'other', name: 'Other' });
     await db('transaction_type').insert({ transaction_type_id: 'vote', name: 'Vote' });
     await db('transaction_type').insert({ transaction_type_id: 'publish', name: 'Publish' });
@@ -132,7 +133,7 @@ export default async (db) => {
     await db('transaction_type').insert({ transaction_type_id: 'bid', name: 'Ad bid' });
 
     await db.schema.createTable('transaction_state', (t) => {
-      t.increments('transaction_state_id');
+      t.string('transaction_state_id');
       t.string('name');
       
       t.unique('transaction_state_id');
@@ -150,7 +151,7 @@ export default async (db) => {
       t.decimal('gas');
       t.decimal('gas_price');
       t.decimal('gas_used');
-      t.timestamp('created').defaultTo(knex.fn.now());
+      t.timestamp('created').defaultTo(db.fn.now());
       t.timestamp('updated').defaultTo(null);
       t.integer('transaction_type_id').references('transaction_type.transaction_type_id');
       t.integer('transaction_state_id').references('transaction_state.transaction_state_id');
@@ -161,6 +162,7 @@ export default async (db) => {
       
       t.unique('transaction_state_id');
     });
+
   } catch (error) {
     console.error(error);
   }
