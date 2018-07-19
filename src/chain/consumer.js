@@ -256,7 +256,7 @@ export default () => {
       }
 
       // Run all
-      Promise.all(promises);
+      Promise.race(promises);
 
     } catch (err) {
       log.error({ error: err.message }, "Error initializing consumer");
