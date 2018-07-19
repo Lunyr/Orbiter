@@ -1,4 +1,4 @@
-import { testAPI } from '../../../../main/backend/api';
+import { testAPI } from '../../../../backend/api';
 import createTriggerAlias from '../../helpers/createTriggerAlias';
 
 const actions = {

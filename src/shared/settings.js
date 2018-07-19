@@ -1,4 +1,4 @@
-import db from '../main/backend/db';
+import db from '../backend/db';
 
 // TODO: Load user config and maybe some helper functions to set settings
 
