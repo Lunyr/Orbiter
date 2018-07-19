@@ -13,8 +13,10 @@
  */
 
 import knex from 'knex';
+import { getLogger } from '../logger';
 
 const DEFAULT_TABLE_NAME = 'queue';
+const log = getLogger('queuelite');
 
 export const queue = knex({
   client: 'sqlite3',
@@ -31,6 +33,8 @@ export const queue = knex({
 export default (tableName) => {
   tableName = tableName ? tableName : DEFAULT_TABLE_NAME;
 
+  log.debug("QueueLite Start");
+
   // Create the queue table if it doesn't exist
   queue.schema.hasTable(tableName).then(async (exists) => {
     if (!exists) {
@@ -38,6 +42,7 @@ export default (tableName) => {
       await queue.schema.createTable(tableName, (t) => {
         t.string('job_id');
         t.timestamp('created').defaultTo(queue.fn.now());
+        t.boolean('processed').defaultTo(false),
         t.json('args');
 
         t.unique('job_id');
@@ -50,12 +55,25 @@ export default (tableName) => {
       if (typeof job_id === 'undefined' || !job_id) {
         throw new Error('job_id is required');
       }
+      log.debug({ job_id }, "Queue PUT");
       // TODO: add a check to make sure job_id doesn't exist
-      // Add the job to the DB
-      return queue(tableName).insert({
-        job_id: job_id,
-        args: obj
-      });
+      let result;
+      try {
+        // Add the job to the DB
+        result = await queue(tableName).insert({
+          job_id: job_id,
+          args: JSON.stringify(obj)
+        });
+      } catch (err) {
+        if (typeof err.message !== 'undefined' && err.message.indexOf('UNIQUE') > -1) {
+          log.debug({ job_id }, "Job already added")
+          result = null;
+        } else {
+          throw err;
+        }
+      }
+      log.debug({ result }, "QueueLite.put() inserted");
+      return result;
     },
     get: async () => {
       // Get the oldest entry
@@ -72,8 +90,21 @@ export default (tableName) => {
         job_id: result[0].job_id
       }).delete();
 
+      await queue(tableName).where({
+        job_id: result[0].job_id
+      }).update({
+        processed: true
+      });
+
       // And return that bad boy
       return result[0];
+    },
+    revert: async (job_id) => {
+      return queue(tableName).where({
+        job_id: job_id
+      }).update({
+        processed: false
+      });
     }
   };
 };
