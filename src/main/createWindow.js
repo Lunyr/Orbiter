@@ -16,6 +16,26 @@ export default ({ config, isDevelopment }) => {
     browserWindow.show();
   });
 
+  browserWindow.webContents.on('crashed', (e, killed) => {
+    console.log("OOOOHHHHH NOOO!!!!", e, killed);
+  });
+
+  browserWindow.webContents.on('did-fail-load', (e, errCode, errDesc) => {
+    console.log("OOOOHHHHH NOOO", e, errCode, errDesc);
+  });
+
+  browserWindow.webContents.on('unresponsive', () => {
+    console.log("UNRESPONSIVE");
+  });
+
+  browserWindow.webContents.on('destroyed', () => {
+    console.log("DESTROYED");
+  });
+
+  browserWindow.webContents.on('plugin-crashed', (e, name, vers) => {
+    console.log("PLUGIN CRASHED", e, name, vers);
+  });
+
   browserWindow.webContents.on('did-finish-load', () => {
     // Handle window logic properly on macOS:
     // 1. App should not terminate if window has been closed
