@@ -50,7 +50,7 @@ const getContractInstances = async (router, name) => {
   let targets = new Array();
   
   if (counts == 0) {
-    const networkId = web3.version.network;
+    const networkId = await web3.eth.net.getId();
     log.error({ 
       server: settings.jsonRPC.current, 
       networkId, 
