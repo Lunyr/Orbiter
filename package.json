@@ -37,6 +37,7 @@
     "scrypt": "^6.0.3",
     "sentry": "^0.1.2",
     "sqlite3": "^4.0.2",
+    "through2": "^2.0.3",
     "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {
