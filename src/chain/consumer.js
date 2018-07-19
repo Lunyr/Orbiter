@@ -183,7 +183,6 @@ const processLogs = (logs, queue) => {
       const decoded = abiDecoder.decodeLogs([logs[i]])[0];
       if (decoded) {
         eventCount++;
-        // TOOD: Rip this crap out
         queue.put(
           decoded.name + ': ' + logs[i].transactionHash, 
           {
