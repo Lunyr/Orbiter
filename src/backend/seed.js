@@ -117,7 +117,7 @@ export default async (db) => {
       t.unique('tag_edit_stream_id');
     });
 
-    // Transactions
+    // Transactions (chain side)
     await db.schema.createTable('transaction_type', (t) => {
       t.string('transaction_type_id');
       t.string('name');
@@ -154,13 +154,30 @@ export default async (db) => {
       t.timestamp('created').defaultTo(db.fn.now());
       t.timestamp('updated').defaultTo(null);
       t.integer('transaction_type_id').references('transaction_type.transaction_type_id');
-      t.integer('transaction_state_id').references('transaction_state.transaction_state_id');
+      t.string('transaction_state_id').references('transaction_state.transaction_state_id');
       t.integer('block_number');
       t.integer('value');
       t.integer('status');
       t.text('data');
       
       t.unique('transaction_state_id');
+    });
+
+    // Transaction watch (app side)
+    await db.schema.createTable('watch', (t) => {
+      t.string('hash', 68);
+      t.string('transaction_state_id').references('transaction_state.transaction_state_id');
+      t.boolean('read').defaultTo(false);
+      t.integer('proposal_id').references('proposal.proposal_id');
+      t.string('from_address', 42);
+      t.timestamp('created').defaultTo(db.fn.now());
+      t.timestamp('updated').defaultTo(null);
+      t.string('type');
+      t.string('title');
+      t.string('signedtx');
+      t.json('tx');
+      
+      t.unique('hash');
     });
 
   } catch (error) {

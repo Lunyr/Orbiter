@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import ipfsAPI from 'ipfs-api';
 import logger from '../lib/logger';
 import settings from '../shared/settings';
+import { addTx, getWatch, setWatchState } from '../backend/api';
 
 const { TxState, TxType } = settings;
 const log = logger.getLogger('events-utils');
@@ -68,11 +69,11 @@ async function completeTransaction(txHash, txType) {
      * can occur.
      */
     try {
-      tx = await new books.Transaction(txToStore).save(null, { method: "insert" })
+      tx = await addTx(txToStore);
     } catch (err) {
       if (
         typeof err.message !== 'undefined'
-        && err.message.indexOf('duplicate') > -1
+        && err.message.indexOf('UNIQUE') > -1
       ) {
         log.warn({ txHash }, "Conflict when inserting new transaction.");
       } else {
@@ -84,18 +85,12 @@ async function completeTransaction(txHash, txType) {
   }
 
   // check for an existing transaction watch first
-  let watch = await books.Watch.where({ hash: txHash }).fetch();
+  let watchResult = await getWatch({ hash: txHash });
 
   // If it exists, update
-  if (watch) {
+  if (watchResult.success) {
     // Set state to 1(complete)
-    await watch.save(
-      {
-        transaction_state_id: TxState.SUCCESS
-      }, { 
-        patch: true 
-      }
-    );
+    await setWatchState(txHash, TxState.SUCCESS);
   }
 }
 
