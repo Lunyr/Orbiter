@@ -50,61 +50,107 @@ export default (tableName) => {
     }
   });
 
-  return {
-    put: async (job_id, obj) => {
-      if (typeof job_id === 'undefined' || !job_id) {
-        throw new Error('job_id is required');
+  /**
+   * put adds a job to the queue
+   * @param {string} job_id is a unique string name for the job
+   * @param {object} obj is an object with any job data you want passed on
+   * @returns null?
+   */
+  const put = async (job_id, obj) => {
+    if (typeof job_id === 'undefined' || !job_id) {
+      throw new Error('job_id is required');
+    }
+    log.debug({ job_id }, "Queue PUT");
+    // TODO: add a check to make sure job_id doesn't exist
+    let result;
+    try {
+      // Add the job to the DB
+      result = await queue(tableName).insert({
+        job_id: job_id,
+        args: JSON.stringify(obj)
+      });
+    } catch (err) {
+      if (typeof err.message !== 'undefined' && err.message.indexOf('UNIQUE') > -1) {
+        log.debug({ job_id }, "Job already added")
+        result = null;
+      } else {
+        throw err;
       }
-      log.debug({ job_id }, "Queue PUT");
-      // TODO: add a check to make sure job_id doesn't exist
-      let result;
-      try {
-        // Add the job to the DB
-        result = await queue(tableName).insert({
-          job_id: job_id,
-          args: JSON.stringify(obj)
-        });
-      } catch (err) {
-        if (typeof err.message !== 'undefined' && err.message.indexOf('UNIQUE') > -1) {
-          log.debug({ job_id }, "Job already added")
-          result = null;
+    }
+    log.debug({ result }, "QueueLite.put() inserted");
+    return result;
+  };
+
+  /**
+   * get returns a job from the queue and sets it as "processed"
+   * @returns {object}
+   */
+  const get = async () => {
+    // Get the oldest entry
+    const result = await queue(tableName)
+      .where({
+        processed: false,
+      })
+      .orderBy('created', 'ASC')
+      .limit(1)
+      .select();
+
+    // Delete the entry we just got
+    await queue(tableName).where({
+      job_id: result[0].job_id
+    }).delete();
+
+    await queue(tableName).where({
+      job_id: result[0].job_id
+    }).update({
+      processed: true
+    });
+
+    // And return that bad boy
+    return result[0];
+  };
+
+  /**
+   * revert sets a "processed" job as "not processed" in case of job failure
+   * @param {string} job_id is a unique string name for the job
+   * @returns null?
+   */
+  const revert = async (job_id) => {
+    return queue(tableName).where({
+      job_id: job_id
+    }).update({
+      processed: false
+    });
+  }
+
+  /**
+   * process will continually process all "unprocessed" jobs in the queue using
+   *  the provided handler.  The handler should accept an object with job_id and
+   *  the original arguments: { job_id: "whatever", args: { one: 1 }}
+   * @param {function} handler is the function that will process each job
+   * @returns ?
+   */
+  const process = async (handler) => {
+    let isWaiting = false;
+    while (true) {
+      if (!isWaiting) {
+        const job = await get();
+        if (job) {
+          handler(job);
         } else {
-          throw err;
+          isWaiting = true;
+          setTimeout(() => {
+            isWaiting = false;
+          }, 3000);
         }
       }
-      log.debug({ result }, "QueueLite.put() inserted");
-      return result;
-    },
-    get: async () => {
-      // Get the oldest entry
-      const result = await queue(tableName)
-        .where({
-          processed: false,
-        })
-        .orderBy('created', 'ASC')
-        .limit(1)
-        .select();
-
-      // Delete the entry we just got
-      await queue(tableName).where({
-        job_id: result[0].job_id
-      }).delete();
-
-      await queue(tableName).where({
-        job_id: result[0].job_id
-      }).update({
-        processed: true
-      });
-
-      // And return that bad boy
-      return result[0];
-    },
-    revert: async (job_id) => {
-      return queue(tableName).where({
-        job_id: job_id
-      }).update({
-        processed: false
-      });
     }
+  };
+
+  return {
+    put,
+    get,
+    revert,
+    process,
   };
 };
