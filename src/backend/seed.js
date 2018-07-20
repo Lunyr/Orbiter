@@ -180,6 +180,19 @@ export default async (db) => {
       t.unique('hash');
     });
 
+    // Notifications
+    await db.schema.createTable('notification', (t) => {
+      t.increments('notification_id');
+      t.string('hashed_address', 68);
+      t.timestamp('created').defaultTo(db.fn.now());
+      t.timestamp('updated').defaultTo(null);
+      t.boolean('read').defaultTo(false);
+      t.string('type');
+      t.json('data');
+      
+      t.unique('notification_id');
+    });
+
   } catch (error) {
     console.error(error);
   }
