@@ -15,14 +15,10 @@ import { getLogger, Raven } from '../lib/logger';
 import utils from './utils';
 import queueLite from '../lib/queuelite';
 import settings from '../shared/settings';
+import { web3 } from '../shared/web3'; 
 
 const log = getLogger('consumer');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, {protocol: 'http'});
-
-// Configure web3
-const web3 = new Web3(
-  new Web3.providers.HttpProvider(settings.jsonRPC.current)
-);
 
 // A block number representing first blocks since contract deployment
 const originBlock = settings.isDevelopment ? '0x0' : '0x41736a';
