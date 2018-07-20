@@ -33,5 +33,8 @@ export default {
   },
   sentry: {
     endpoint: 'https://fd8f67edaa0447b58574066bad752943:45704cf0de7f4fb7af9cd4ba67ba52e0@sentry.io/262240'
+  },
+  eventLogConfig: {
+    attempts: 5
   }
 }

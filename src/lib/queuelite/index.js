@@ -44,6 +44,7 @@ export default (tableName) => {
         t.timestamp('created').defaultTo(queue.fn.now());
         t.boolean('processed').defaultTo(false);
         t.integer('attempts').defaultTo(0);
+        t.text('error');
         t.json('args');
 
         t.unique('job_id');
@@ -116,13 +117,14 @@ export default (tableName) => {
    * @param {string} job_id is a unique string name for the job
    * @returns null?
    */
-  const revert = async (job_id) => {
+  const revert = async (job_id, err) => {
     const job = queue(tableName).where({
-      job_id: job_id
+      job_id: job_id,
     }).select();
     return queue(tableName).where({
       job_id: job_id,
-      attempts: job[0].attempts += 1
+      attempts: job[0].attempts += 1,
+      error: err ? job[0].error + '\n' + err : job[0].error,
     }).update({
       processed: false
     });
@@ -130,8 +132,7 @@ export default (tableName) => {
 
   /**
    * process will continually process all "unprocessed" jobs in the queue using
-   *  the provided handler.  The handler should accept an object with job_id and
-   *  the original arguments: { job_id: "whatever", args: { one: 1 }}
+   *  the provided handler.  The handler should accept a Job object (see: ./Job)
    * @param {function} handler is the function that will process each job
    * @returns ?
    */
@@ -139,13 +140,18 @@ export default (tableName) => {
     let isWaiting = false;
     while (true) {
       if (!isWaiting) {
-        const job = await get();
-        if (job) {
+        const record = await get();
+        if (record) {
           try {
+            const job = new Job(record);
             await handler(job);
+            if (job.jobProgress < 100) {
+              log.warning({ percentComplete: job.jobProgress }, "Job incomplete.  Reverting...");
+              await revert(job.job_id, "Unknown error. Progress not 100%");
+            }
           } catch (err) {
             log.error(err.message);
-            await revert(job.job_id);
+            await revert(job.job_id, err.message);
           }
         } else {
           isWaiting = true;
