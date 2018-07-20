@@ -141,7 +141,12 @@ export default (tableName) => {
       if (!isWaiting) {
         const job = await get();
         if (job) {
-          handler(job);
+          try {
+            await handler(job);
+          } catch (err) {
+            log.error(err.message);
+            await revert(job.job_id);
+          }
         } else {
           isWaiting = true;
           setTimeout(() => {
