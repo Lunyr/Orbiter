@@ -42,7 +42,8 @@ export default (tableName) => {
       await queue.schema.createTable(tableName, (t) => {
         t.string('job_id');
         t.timestamp('created').defaultTo(queue.fn.now());
-        t.boolean('processed').defaultTo(false),
+        t.boolean('processed').defaultTo(false);
+        t.integer('attempts').defaultTo(0);
         t.json('args');
 
         t.unique('job_id');
@@ -116,8 +117,12 @@ export default (tableName) => {
    * @returns null?
    */
   const revert = async (job_id) => {
-    return queue(tableName).where({
+    const job = queue(tableName).where({
       job_id: job_id
+    }).select();
+    return queue(tableName).where({
+      job_id: job_id,
+      attempts: job[0].attempts += 1
     }).update({
       processed: false
     });
