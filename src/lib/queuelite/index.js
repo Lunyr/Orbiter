@@ -17,6 +17,7 @@ import { getLogger } from '../logger';
 import { Job } from './Job';
 
 const DEFAULT_TABLE_NAME = 'queue';
+const DEFAULT_MAX_ATTEMPTS = 3;
 const log = getLogger('queuelite');
 
 export const queue = knex({
@@ -31,8 +32,9 @@ export const queue = knex({
  * @param {string} tableName is the name of queue that will be used as a table name
  * @returns {object} an object with methods to use on the queue (e.g. put, get)
  */
-export default (tableName) => {
+export default (tableName, maxAttempts) => {
   tableName = tableName ? tableName : DEFAULT_TABLE_NAME;
+  maxAttempts = maxAttempts ? maxAttempts : DEFAULT_MAX_ATTEMPTS;
 
   log.debug("QueueLite Start");
 
@@ -45,6 +47,7 @@ export default (tableName) => {
         t.timestamp('created').defaultTo(queue.fn.now());
         t.boolean('processed').defaultTo(false);
         t.integer('attempts').defaultTo(0);
+        t.integer('progress').defaultTo(0);
         t.text('error');
         t.json('args');
 
@@ -96,6 +99,8 @@ export default (tableName) => {
         .where({
           processed: false,
         })
+        .where('attempts', '<', maxAttempts)
+        .orderBy('attempts', 'ASC')
         .orderBy('created', 'ASC')
         .limit(1)
         .select();
@@ -126,9 +131,9 @@ export default (tableName) => {
   /**
    * revert sets a "processed" job as "not processed" in case of job failure
    * @param {string} job_id is a unique string name for the job
-   * @returns null?
+   * @returns Promise
    */
-  const revert = async (job_id, err) => {
+  const revert = async (job_id, progress, err) => {
     const job = await queue(tableName).where({
       job_id: job_id,
     }).select();
@@ -137,15 +142,40 @@ export default (tableName) => {
       log.warn({ job_id }, "Unalbe to revert job! Job not found.");
       return null;
     }
-
+    log.debug({ progress }, "Reverting job!")
     return queue(tableName).where({
       job_id: job_id,
+    }).update({
+      processed: false,
       attempts: job[0].attempts += 1,
       error: err ? job[0].error + '\n' + err : job[0].error,
-    }).update({
-      processed: false
+      progress: progress ? progress : job[0].progress,
     });
   }
+
+  /**
+   * complete marks a job as "processed" and sets the progress percent
+   * @param {string} job_id is a unique string name for the job
+   * @param {number} progress is the integer percent of completion
+   * @returns Promise
+   */
+  const complete = async (job_id, progress) => {
+    const job = await queue(tableName).where({
+      job_id: job_id,
+    }).select();
+
+    if (job.length < 1) {
+      log.warn({ job_id }, "Unalbe to update job! Job not found.");
+      return null;
+    }
+
+    // Processed should already have been set by get()
+    return queue(tableName).where({
+      job_id: job_id,
+    }).update({
+      progress: progress
+    });
+  };
 
   /**
    * process will continually process all "unprocessed" jobs in the queue using
@@ -165,11 +195,14 @@ export default (tableName) => {
           await handler(job);
           if (job.jobProgress < 100) {
             log.warning({ percentComplete: job.jobProgress }, "Job incomplete.  Reverting...");
-            await revert(job.job_id, "Unknown error. Progress not 100%");
+            await revert(job.job_id, job.jobProgress, "Unknown error. Progress not 100%");
+          } else {
+            log.debug({ percentComplete: job.jobProgress }, "Job complete.");
+            await complete(job.job_id, job.jobProgress);
           }
         } catch (err) {
           log.error(err.message);
-          await revert(job.job_id, err.message);
+          await revert(job.job_id, job.jobProgress, err.message);
         }
         // Full speed ahead
         interval = 5;
