@@ -154,31 +154,33 @@ export default (tableName) => {
    * @returns ?
    */
   const process = async (handler) => {
-    let processing = false;
-    setInterval(async () => {
-      if (!processing) {
-        console.log("PINGPNG PINGPNG PINGPNG PINGPNG PINGPNG");
-        processing = true;
-        const record = await get();
-        if (record) {
-          log.debug({ job_id: record.job_id }, "Processing record");
-          const job = new Job(record);
-          try {
-            await handler(job);
-            if (job.jobProgress < 100) {
-              log.warning({ percentComplete: job.jobProgress }, "Job incomplete.  Reverting...");
-              await revert(job.job_id, "Unknown error. Progress not 100%");
-            }
-          } catch (err) {
-            log.error(err.message);
-            await revert(job.job_id, err.message);
+    let interval = 5;
+    const processOne = async (handler) => {
+      console.log("PINGPNG PINGPNG PINGPNG PINGPNG PINGPNG");
+      const record = await get();
+      if (record) {
+        log.debug({ job_id: record.job_id }, "Processing record");
+        const job = new Job(record);
+        try {
+          await handler(job);
+          if (job.jobProgress < 100) {
+            log.warning({ percentComplete: job.jobProgress }, "Job incomplete.  Reverting...");
+            await revert(job.job_id, "Unknown error. Progress not 100%");
           }
-        } else {
-          log.debug({ record }, "No record to process");
+        } catch (err) {
+          log.error(err.message);
+          await revert(job.job_id, err.message);
         }
-        processing = false;
+        // Full speed ahead
+        interval = 5;
+      } else {
+        log.debug({ record }, "No record to process");
+        // Slow down if we've run out of things
+        interval = 3000;
       }
-    }, 3000);
+      setTimeout(processOne.bind(null, handler), interval);
+    };
+    setTimeout(processOne.bind(null, handler), interval);
   };
 
   return {
