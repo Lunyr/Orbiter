@@ -13,7 +13,7 @@ import ipfsAPI from 'ipfs-api';
 import abiDecoder from 'abi-decoder';
 import { getLogger, Raven } from '../lib/logger';
 import utils from './utils';
-import queueLite from '../lib/queuelite';
+import eventsQueue from './queue';
 import settings from '../shared/settings';
 import { web3 } from '../shared/web3'; 
 
@@ -100,7 +100,7 @@ const getAddresses = async () => {
     await getContractInstances(router, 'tagger'),
   ]));
 
-  log.debug({ targets }, "Consumer TARGETS");
+  //log.debug({ targets }, "Consumer TARGETS");
 
   // Get the Addresses we need
   return targets;
@@ -234,9 +234,6 @@ const consumeEvents = (record, queue) => {
 export default () => {
   return new Promise(async (resolve,reject) => {
     try {
-      // Initialize the queue
-      const eventsQueue = queueLite('events');
-
       // Addresses we'll be monitoring
       const addresses = await getAddresses();
 

@@ -14,6 +14,7 @@
 
 import knex from 'knex';
 import { getLogger } from '../logger';
+import { Job } from './Job';
 
 const DEFAULT_TABLE_NAME = 'queue';
 const log = getLogger('queuelite');
@@ -89,19 +90,29 @@ export default (tableName) => {
    */
   const get = async () => {
     // Get the oldest entry
-    const result = await queue(tableName)
-      .where({
-        processed: false,
-      })
-      .orderBy('created', 'ASC')
-      .limit(1)
-      .select();
+    let result;
+    try {
+      result = await queue(tableName)
+        .where({
+          processed: false,
+        })
+        .orderBy('created', 'ASC')
+        .limit(1)
+        .select();
+    } catch (err) {
+      // handle a race condition for initial table creation
+      if (err.message.indexOf('no such table') > -1) {
+        result = [];
+      } else {
+        throw err;
+      }
+    }
 
-    // Delete the entry we just got
-    await queue(tableName).where({
-      job_id: result[0].job_id
-    }).delete();
+    if (result.length < 1) {
+      return null;
+    }
 
+    // Set this job as processed
     await queue(tableName).where({
       job_id: result[0].job_id
     }).update({
@@ -118,9 +129,15 @@ export default (tableName) => {
    * @returns null?
    */
   const revert = async (job_id, err) => {
-    const job = queue(tableName).where({
+    const job = await queue(tableName).where({
       job_id: job_id,
     }).select();
+
+    if (job.length < 1) {
+      log.warn({ job_id }, "Unalbe to revert job! Job not found.");
+      return null;
+    }
+
     return queue(tableName).where({
       job_id: job_id,
       attempts: job[0].attempts += 1,
@@ -137,13 +154,16 @@ export default (tableName) => {
    * @returns ?
    */
   const process = async (handler) => {
-    let isWaiting = false;
-    while (true) {
-      if (!isWaiting) {
+    let processing = false;
+    setInterval(async () => {
+      if (!processing) {
+        console.log("PINGPNG PINGPNG PINGPNG PINGPNG PINGPNG");
+        processing = true;
         const record = await get();
         if (record) {
+          log.debug({ job_id: record.job_id }, "Processing record");
+          const job = new Job(record);
           try {
-            const job = new Job(record);
             await handler(job);
             if (job.jobProgress < 100) {
               log.warning({ percentComplete: job.jobProgress }, "Job incomplete.  Reverting...");
@@ -154,13 +174,11 @@ export default (tableName) => {
             await revert(job.job_id, err.message);
           }
         } else {
-          isWaiting = true;
-          setTimeout(() => {
-            isWaiting = false;
-          }, 3000);
+          log.debug({ record }, "No record to process");
         }
+        processing = false;
       }
-    }
+    }, 3000);
   };
 
   return {
