@@ -1,6 +1,6 @@
 import { db } from '../db';
 
-const addEvent = async (ev) => {
+export const addEvent = async (ev) => {
   try {
     const data = await db('event').insert(ev);
     console.log("addEvent insert result", data);
@@ -14,8 +14,4 @@ const addEvent = async (ev) => {
       error: error.message,
     };
   }
-};
-
-export default {
-  addEvent,
 };

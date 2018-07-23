@@ -1,6 +1,6 @@
 import { db } from '../db';
 
-const addWatch = async (obj) => {
+export const addWatch = async (obj) => {
   try {
     const data = await db('watch').insert(obj);
     return {
@@ -15,7 +15,7 @@ const addWatch = async (obj) => {
   }
 };
 
-const getWatch = async (txHash) => {
+export const getWatch = async (txHash) => {
   try {
     const data = await db('watch').where({ hash: txHash });
     return {
@@ -30,7 +30,7 @@ const getWatch = async (txHash) => {
   }
 };
 
-const setWatchState = async (txHash, txState) => {
+export const setWatchState = async (txHash, txState) => {
   try {
     const data = await db('watch')
       .where({ hash: txHash })
@@ -45,10 +45,4 @@ const setWatchState = async (txHash, txState) => {
       error: error.message,
     };
   }
-};
-
-export default {
-  getWatch,
-  addWatch,
-  setWatchState,
 };

@@ -1,6 +1,6 @@
 import { db } from '../db';
 
-const addTx = async (tx) => {
+export const addTx = async (tx) => {
   try {
     const data = await db('transaction').insert(tx);
     console.log("addTx insert result", data);
@@ -14,8 +14,4 @@ const addTx = async (tx) => {
       error: error.message,
     };
   }
-};
-
-export default {
-  addTx,
 };

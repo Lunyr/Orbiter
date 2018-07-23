@@ -1,8 +1,8 @@
 import { db } from '../db';
-import settings from '../shared/settings';
-import { web3 } from '../shared/web3';
+import settings from '../../shared/settings';
+import { web3 } from '../../shared/web3';
 
-const addNotification = async (address, type, dataObj) => {
+export const addNotification = async (address, type, dataObj) => {
   try {
     const data = await db('notification').insert({
       hashed_address: web3.sha3(address),
@@ -22,7 +22,7 @@ const addNotification = async (address, type, dataObj) => {
   }
 };
 
-const getNotifications = async (address) => {
+export const getNotifications = async (address) => {
   try {
     const data = await db('notification').where({
       hashed_address: web3.sha3(address),
@@ -40,7 +40,7 @@ const getNotifications = async (address) => {
   }
 };
 
-const markRead = async (notification_id) => {
+export const markRead = async (notification_id) => {
   try {
     const data = await db('notification').where({
       notification_id
@@ -58,10 +58,4 @@ const markRead = async (notification_id) => {
       error: error.message,
     };
   }
-};
-
-export default {
-  addNotification,
-  getNotifications,
-  markRead,
 };
