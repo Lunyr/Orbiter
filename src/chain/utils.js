@@ -4,8 +4,8 @@ import ipfsAPI from 'ipfs-api';
 import logger from '../lib/logger';
 import settings from '../shared/settings';
 import { addTx, getWatch, setWatchState } from '../backend/api';
+import { TxState, TxType } from '../shared/constants';
 
-const { TxState, TxType } = settings;
 const log = logger.getLogger('events-utils');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, {protocol: 'https'});
 const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c77289f9ed46d843561e6';
@@ -69,7 +69,7 @@ async function completeTransaction(txHash, txType) {
      * can occur.
      */
     try {
-      tx = await addTx(txToStore);
+      await addTx(txToStore);
     } catch (err) {
       if (
         typeof err.message !== 'undefined'
