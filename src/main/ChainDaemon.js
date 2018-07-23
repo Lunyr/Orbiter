@@ -5,7 +5,7 @@ import { getLogger, Raven } from '../lib/logger';
 const log = getLogger('ChainDaemon');
 
 export default class ChainDaemon {
-  static path = __dirname + '/../chain/chain-daemon.js';
+  static path = path.resolve(__dirname, '../chain/chain-daemon.js');
   subprocess;
   handlers;
 
@@ -15,7 +15,7 @@ export default class ChainDaemon {
 
   launch() {
     log.info({ dirname: __dirname, path: ChainDaemon.path }, 'Launching daemon');
-    
+
     this.subprocess = spawn('node', [ChainDaemon.path], { stdio: ['pipe','inherit','inherit'] });
 
     this.subprocess.on('exit', () => this.fire('exit'));
