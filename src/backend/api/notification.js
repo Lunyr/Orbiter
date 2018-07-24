@@ -5,7 +5,7 @@ import { web3 } from '../../shared/web3';
 export const addNotification = async (address, type, dataObj) => {
   try {
     const data = await db('notification').insert({
-      hashed_address: web3.sha3(address),
+      hashed_address: web3.utils.sha3(address),
       type,
       data: dataObj
     });
@@ -25,7 +25,7 @@ export const addNotification = async (address, type, dataObj) => {
 export const getNotifications = async (address) => {
   try {
     const data = await db('notification').where({
-      hashed_address: web3.sha3(address),
+      hashed_address: web3.utils.sha3(address),
     }).select();
     console.log("getNotifications select result", data);
     return {
