@@ -216,10 +216,29 @@ export default (tableName, maxAttempts) => {
     setTimeout(processOne.bind(null, handler), interval);
   };
 
+  /**
+   * status will return an object with useful stats about the status of the 
+   *    queue
+   * @returns {object}
+   */
+  const status = async () => {
+    const results = await queue.raw(
+      `SELECT
+        (SELECT COUNT(*) FROM event_queue WHERE progress = 100 or attempts >= 3) AS complete,
+        (SELECT COUNT(*) FROM event_queue) AS total;`
+    );
+    return {
+      total: results[0].total,
+      complete: results[0].complete,
+      percentComplete: Math.floor((results[0].complete / results[0].total) * 100),
+    };
+  }
+
   return {
     put,
     get,
     revert,
     process,
+    status,
   };
 };
