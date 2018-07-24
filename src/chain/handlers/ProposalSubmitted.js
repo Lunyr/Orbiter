@@ -21,7 +21,7 @@ export default async (job) => {
   log.debug("ProposalSubmitted handler reached");
 
   job.progress(1);
-  console.log("job.data", job.data);
+
   // Sanity check
   if (job.data.event.name !== 'ProposalSubmitted')
     throw new Error('Invalid event for this handler');
@@ -48,7 +48,7 @@ export default async (job) => {
 
     // Verify that the conflict is valid and not an actual conflict
     // TODO: Check more values, like contentHash
-    //const conflictingProp = proposalCheck.attributes;
+    const conflictingProp = proposalCheck.data[0];
     if (
       proposalCheck.edit_stream_id == evData.editStreamId
       && proposalCheck.proposal_id == evData.proposalId
