@@ -1,4 +1,5 @@
 import { db } from '../db';
+import { ProposalState, TxType } from '../../shared/constants';
 
 export const getProposal = async (proposalId) => {
   try {
@@ -22,6 +23,26 @@ export const addProposal = async (propObj) => {
   try {
     const data = await db('proposal').insert(propObj);
     console.log("addProposal insert result", data);
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const rejectProposal = async (proposal_id) => {
+  try {
+    const data = await db('proposal').where({
+      proposal_id
+    }).update({
+      proposal_state_id: ProposalState.REJECTED
+    });
+    console.log("addProposal reject result", data);
     return {
       success: true,
       data,
