@@ -5,3 +5,4 @@ export { addEvent } from './event';
 export { addNotification, getNotifications, markRead } from './notification';
 export { getEditStream, addEditStream } from './editstream';
 export { getProposal, addProposal } from './proposal';
+export { getVote, addVote } from './vote';
