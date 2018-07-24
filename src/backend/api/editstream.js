@@ -33,3 +33,21 @@ export const addEditStream = async (esObj) => {
     };
   }
 };
+
+export const updateEditStream = async (edit_stream_id, esObj) => {
+  try {
+    const data = await db('edit_stream').where({
+      edit_stream_id
+    }).update(esObj);
+    console.log("updateEditStream insert result", data);
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
