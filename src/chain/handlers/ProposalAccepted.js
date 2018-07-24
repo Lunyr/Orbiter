@@ -1,17 +1,12 @@
 /**
  * This is the event handler for PeerReview.ProposalAccepted
  */
-import multihashes from 'multihashes';
-import settings from '../../shared/settings';
 import logger from '../../lib/logger';
 import utils from '../utils';
-import { ProposalState } from '../../shared/constants';
 import { 
   addNotification,
-  addEditStream,
   getEditStream,
   updateEditStream,
-  addProposal,
   getProposal,
   acceptProposal,
 } from '../../backend/api';
