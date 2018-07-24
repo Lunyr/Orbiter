@@ -33,8 +33,8 @@ const loadHandler = (name) => {
 const HANDLERS = [
   'ProposalSubmitted',
   'VoteOccurred',
-  /*'ProposalRejected',
-  'ProposalAccepted',
+  'ProposalRejected',
+  /*'ProposalAccepted',
   'ProposalExpired',
   'IneligibleCreator',
   'IneligibleEditor',
