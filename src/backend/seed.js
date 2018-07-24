@@ -46,6 +46,13 @@ export default async (db) => {
 
       t.unique('proposal_state_id');
     });
+    await db('proposal_state').insert({ proposal_state_id: 0, name: 'Draft' });
+    await db('proposal_state').insert({ proposal_state_id: 1, name: 'In Review' });
+    await db('proposal_state').insert({ proposal_state_id: 2, name: 'Rejected' });
+    await db('proposal_state').insert({ proposal_state_id: 3, name: 'Accepted' });
+    await db('proposal_state').insert({ proposal_state_id: 4, name: 'Expired' });
+    await db('proposal_state').insert({ proposal_state_id: 5, name: 'Proposed' });
+
     await db.schema.createTable('proposal', (t) => {
       t.increments('proposal_id');
       t.integer('parent_id').references('proposal.proposal_id');
