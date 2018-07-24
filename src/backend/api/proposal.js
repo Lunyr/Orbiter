@@ -74,3 +74,23 @@ export const acceptProposal = async (proposal_id) => {
     };
   }
 };
+
+export const expireProposal = async (proposal_id) => {
+  try {
+    const data = await db('proposal').where({
+      proposal_id
+    }).update({
+      proposal_state_id: ProposalState.EXPIRED
+    });
+    console.log("Proposal accept result", data);
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};

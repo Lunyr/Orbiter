@@ -7,7 +7,7 @@ export const addNotification = async (address, type, dataObj) => {
     const data = await db('notification').insert({
       hashed_address: web3.utils.sha3(address),
       type,
-      data: dataObj
+      data: JSON.stringify(dataObj)
     });
     console.log("addNotification insert result", data);
     return {
