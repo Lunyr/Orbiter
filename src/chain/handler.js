@@ -32,8 +32,8 @@ const loadHandler = (name) => {
 // The handlers we will use
 const HANDLERS = [
   'ProposalSubmitted',
-  /*'VoteOccurred',
-  'ProposalRejected',
+  'VoteOccurred',
+  /*'ProposalRejected',
   'ProposalAccepted',
   'ProposalExpired',
   'IneligibleCreator',
@@ -126,7 +126,6 @@ export default () => {
     try {
       await eventsQueue.process(eventRouter);
     } catch (err) {
-      //reject(err);
       throw err;
     }
   });
