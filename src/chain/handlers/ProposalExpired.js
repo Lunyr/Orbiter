@@ -59,6 +59,7 @@ export default async (job) => {
   // Update proosal state
   const expireResult = await expireProposal(evData.proposalId);
   if (expireResult.success === false) {
+    log.error({ errorMessage: expireResult.error }, "Error expiring proposal!");
     throw new Error(expireResult.error);
   }
 
