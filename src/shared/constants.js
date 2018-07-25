@@ -14,6 +14,18 @@ export const TxType = Object.freeze({
   BID: 'bid',
 });
 
+export const TxTypeTranslation = Object.freeze({
+  'ProposalSubmitted': TxType.PUBLISH,
+  'IneligibleCreator': TxType.PUBLISH,
+  'SuccessfulBid': TxType.BID,
+  'SuccessfulBidRange': TxType.BID,
+  'NotBiddable': TxType.BID,
+  'NotBiddableRange': TxType.BID,
+  'VoteOccurred': TxType.VOTE,
+  'IneligibleVoter': TxType.VOTE,
+  'ClosedForVote': TxType.VOTE,
+});
+
 export const ProposalState = Object.freeze({
   DRAFT: 0,
   IN_REVIEW: 1,

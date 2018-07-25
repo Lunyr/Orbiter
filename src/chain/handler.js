@@ -5,7 +5,8 @@ import settings from '../shared/settings';
 import logger from '../lib/logger';
 import eventsQueue from './queue';
 import utils from './utils'
-import { addEvent } from '../backend/api';
+import { addEvent, addTx } from '../backend/api';
+import { TxState, TxTypeTranslation } from '../shared/constants';
 
 const log = logger.getLogger('handler');
 const Raven = logger.Raven;
@@ -41,9 +42,8 @@ const HANDLERS = [
   'IneligibleEditor',
   'ClosedForVote',
   'ClosedForEdit',
-  /*'IneligibleEditor',
   'SuccessfulBid',
-  'SuccessfulBidRange',
+  /*'SuccessfulBidRange',
   'NotBiddable',
   'NotBiddableRange',
   'CBNBurned',
@@ -59,7 +59,7 @@ const HANDLERS = [
 ];
 
 /**
- * @dev eventRouter is provided with a job from the Bull queue and tries to send
+ * @dev eventRouter is provided with a job from the queue and tries to send
  *  it to the appropriate handler.  It will load and use any handler listed in 
  *  HANDLERS.
  * @param {object} job is the object returned from Bull
@@ -93,13 +93,58 @@ const eventRouter = async (job) => {
         }
       }
 
-      // Send it to the handler
+      // Add tx to the DB
+      const txFromChain = await utils.getTransaction(job.data.txHash);
+      if (txFromChain) {
+        const receiptFromChain = await utils.getTransactionReceipt(job.data.txHash);
+        if (!receiptFromChain) {
+          throw new Error(`Unable to get the receipt for ${job.data.txHash}`);
+        }
+        let txToStore = { 
+          hash: job.data.txHash,
+          nonce: txFromChain.nonce,
+          from_address: txFromChain.from,
+          to_address: txFromChain.to,
+          gas: parseInt(txFromChain.gas),
+          gas_price: parseInt(txFromChain.gasPrice),
+          gas_used: parseInt(receiptFromChain.gasUsed),
+          block_number: parseInt(receiptFromChain.blockNumber),
+          value: parseInt(txFromChain.value),
+          data: txFromChain.input,
+          status: receiptFromChain.status ? parseInt(receiptFromChain.status) : null,
+          transaction_state_id: TxState.SUCCESS,
+        };
+        if (typeof TxTypeTranslation[job.data.event.name] !== 'undefined') {
+          txToStore.transaction_type_id = TxTypeTranslation[job.data.event.name];
+        }
+        /**
+         * Generally speaking, we should never be inserting twice, but there are 
+         * edge cases where a failed job is restarted due to a handler bug and this
+         * can occur.
+         */
+        try {
+          const txResult = await addTx(txToStore);
+          if (!txResult.success) {
+            throw new Error(txResult.error);
+          }
+        } catch (err) {
+          // Only throw non-unique errors
+          if (err.message.indexOf('UNIQUE') < 0) {
+            throw err;
+          }
+        }
+      } else {
+        log.error({ txHash: job.data.txHash }, "Unable to find transaction for event in DB or on chain.");
+      }
+
+      // Load the handler
       let handler = loadHandler(eventName);
 
       if (!handler) {
         throw new Error(`Unable to load handler for ${eventName}`);
       }
 
+      // Have the handler process the job
       const handlerResult = await handler(job);
       return handlerResult;
 

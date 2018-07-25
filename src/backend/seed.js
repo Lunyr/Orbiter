@@ -167,7 +167,7 @@ export default async (db) => {
       t.integer('status');
       t.text('data');
       
-      t.unique('transaction_state_id');
+      t.unique('hash');
     });
 
     // Transaction watch (app side)

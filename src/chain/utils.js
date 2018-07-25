@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import ipfsAPI from 'ipfs-api';
 import logger from '../lib/logger';
 import settings from '../shared/settings';
-import { addTx, getWatch, setWatchState } from '../backend/api';
+import { getWatch, setWatchState } from '../backend/api';
 import { TxState, TxType } from '../shared/constants';
 
 const log = logger.getLogger('events-utils');
@@ -38,51 +38,6 @@ const getEventData = (ev) => {
 async function completeTransaction(txHash, txType) {
   // sanity check
   if (!txHash) new Error("txHash is missing");
-
-  // Get chain details for the tx
-  const txFromChain = await getTransaction(txHash);
-  if (txFromChain) {
-    const receiptFromChain = await getTransactionReceipt(txHash);
-    if (!receiptFromChain) {
-      throw new Error(`Unable to get the receipt for ${txHash}`);
-    }
-    let txToStore = { 
-      hash: txHash,
-      nonce: txFromChain.nonce,
-      from_address: txFromChain.from,
-      to_address: txFromChain.to,
-      gas: parseInt(txFromChain.gas),
-      gas_price: parseInt(txFromChain.gasPrice),
-      gas_used: parseInt(receiptFromChain.gasUsed),
-      block_number: parseInt(receiptFromChain.blockNumber),
-      value: parseInt(txFromChain.value),
-      data: txFromChain.input,
-      status: receiptFromChain.status ? parseInt(receiptFromChain.status) : null,
-      transaction_state_id: TxState.SUCCESS,
-    };
-    if (txType) {
-      txToStore.transaction_type_id = txType
-    }
-    /**
-     * Generally speaking, we should never be inserting twice, but there are 
-     * edge cases where a failed job is restarted due to a handler bug and this
-     * can occur.
-     */
-    try {
-      await addTx(txToStore);
-    } catch (err) {
-      if (
-        typeof err.message !== 'undefined'
-        && err.message.indexOf('UNIQUE') > -1
-      ) {
-        log.warn({ txHash }, "Conflict when inserting new transaction.");
-      } else {
-        throw err;
-      }
-    }
-  } else {
-    log.error({ txHash }, "Unable to find transaction for event in DB or on chain.");
-  }
 
   // check for an existing transaction watch first
   let watchResult = await getWatch({ hash: txHash });
