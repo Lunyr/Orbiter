@@ -49,10 +49,10 @@ const HANDLERS = [
   'CBNBurned',
   'HNRBurned',
   'SuccessfulWithdrawal',
-  /*'WithdrawalAttemptFailedTooMuch',
+  'WithdrawalAttemptFailedTooMuch',
   'WithdrawalAttemptFailedTransferFailure',
   'WithdrawalAttemptFailedTooEarly',
-  'TagAssociated',
+  /*'TagAssociated',
   'TagDisassociated',
   'TagProposed',
   'TagActivated',*/
