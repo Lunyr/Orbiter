@@ -49,7 +49,7 @@ export default async (job) => {
   // We need to update the title only if it changed and lang only if it was never set
   let editStreamPatch = null;
 
-  if (editStreamCheck.data[0].lang === null && proposal.data[0].lang !== null) {
+  if (editStreamCheck.data[0].lang === null && proposal.lang !== null) {
     if (!editStreamPatch) editStreamPatch = {};
     editStreamPatch.lang = proposal.lang;
   }
@@ -61,7 +61,7 @@ export default async (job) => {
   }
 
   if (editStreamPatch) {
-    const updateEditStreamResult = await updateEditStream(editStreamPatch);
+    const updateEditStreamResult = await updateEditStream(editStreamCheck.data[0].edit_stream_id, editStreamPatch);
     if (!updateEditStreamResult.success) {
       throw new Error(updateEditStreamResult.error);
     }
