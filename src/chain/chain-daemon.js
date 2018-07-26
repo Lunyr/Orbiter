@@ -1,13 +1,12 @@
 import { getLogger, Raven } from '../lib/logger';
 import consumer from './consumer';
-//import handler from './handler';
+import handler from './handler';
 //import janitor from './janitor';
 import settings from '../shared/settings';
 
 const log = getLogger('events');
 
 export const init = () => {
-  console.log("chain-damon *****************************");
   log.info("Starting up events...");
   /**
    * TODO: Really take a hard look at the choices here.  If this
@@ -17,7 +16,7 @@ export const init = () => {
    */
   Promise.race([
     consumer(),
-    //handler.init(),
+    handler(),
     //janitor.init(),
   ]).then((msg) => {
     log.error({ msg: msg }, "Services exited abnormally!");
