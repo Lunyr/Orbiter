@@ -52,10 +52,10 @@ const HANDLERS = [
   'WithdrawalAttemptFailedTooMuch',
   'WithdrawalAttemptFailedTransferFailure',
   'WithdrawalAttemptFailedTooEarly',
-  /*'TagAssociated',
-  'TagDisassociated',
   'TagProposed',
-  'TagActivated',*/
+  'TagActivated',
+  /*'TagAssociated',
+  'TagDisassociated',*/
 ];
 
 /**
