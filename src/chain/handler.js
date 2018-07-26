@@ -54,8 +54,8 @@ const HANDLERS = [
   'WithdrawalAttemptFailedTooEarly',
   'TagProposed',
   'TagActivated',
-  /*'TagAssociated',
-  'TagDisassociated',*/
+  'TagAssociated',
+  'TagDisassociated',
 ];
 
 /**

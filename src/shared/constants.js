@@ -12,6 +12,7 @@ export const TxType = Object.freeze({
   ETH: 'transferEth',
   LUN: 'transferLUN',
   BID: 'bid',
+  TAG: 'tag',
 });
 
 export const TxTypeTranslation = Object.freeze({
