@@ -4,6 +4,21 @@ export { getWatch, addWatch, setWatchState } from './watch';
 export { addEvent } from './event';
 export { addNotification, getNotifications, markRead } from './notification';
 export { getEditStream, addEditStream, updateEditStream } from './editstream';
-export { getProposal, addProposal, rejectProposal, acceptProposal, expireProposal } from './proposal';
-export { getVote, addVote } from './vote';
-export { getTag, addTag, activateTag, addTagProposal, associateTag } from './tag';
+export {
+    getProposal,
+    getDirtyProposals,
+    addProposal,
+    updateProposal,
+    rejectProposal,
+    acceptProposal,
+    expireProposal
+} from './proposal';
+export { getVote, getDirtyVotes, updateVote, addVote } from './vote';
+export {
+    getTag,
+    addTag,
+    activateTag,
+    addTagProposal,
+    associateTag,
+    getTagAssociation
+} from './tag';

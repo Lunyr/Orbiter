@@ -19,10 +19,46 @@ export const getProposal = async (proposalId) => {
   }
 };
 
+export const getDirtyProposals = async () => {
+  try {
+    const data = await db('proposal').where({
+      dirty: true
+    }).select();
+    console.log("getDirtyProposals result", data);
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
 export const addProposal = async (propObj) => {
   try {
     const data = await db('proposal').insert(propObj);
     console.log("addProposal insert result", data);
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const updateProposal = async (proposalId, propObj) => {
+  try {
+    const data = await db('proposal').where({
+      proposal_id: proposalId
+    }).update(propObj);
+    console.log("updateProposal insert result", data);
     return {
       success: true,
       data,

@@ -1,7 +1,7 @@
 import { getLogger, Raven } from '../lib/logger';
 import consumer from './consumer';
 import handler from './handler';
-//import janitor from './janitor';
+import janitor from './janitor';
 import settings from '../shared/settings';
 
 const log = getLogger('events');
@@ -17,7 +17,7 @@ export const init = () => {
   Promise.race([
     consumer(),
     handler(),
-    //janitor.init(),
+    janitor(),
   ]).then((msg) => {
     log.error({ msg: msg }, "Services exited abnormally!");
   }).catch((err) => {
