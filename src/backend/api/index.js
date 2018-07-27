@@ -1,6 +1,6 @@
 export { default as testAPI } from './test';
 export { addTx, getAddressByTx } from './transaction';
-export { getWatch, addWatch, setWatchState } from './watch';
+export { getWatch, getPendingWatch, addWatch, setWatchState } from './watch';
 export { addEvent } from './event';
 export { addNotification, getNotifications, markRead } from './notification';
 export { getEditStream, addEditStream, updateEditStream } from './editstream';
@@ -22,3 +22,4 @@ export {
     associateTag,
     getTagAssociation
 } from './tag';
+export { getDraftByProposalId } from './draft';

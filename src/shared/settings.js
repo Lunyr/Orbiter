@@ -36,5 +36,8 @@ export default {
   },
   eventLogConfig: {
     attempts: 5
+  },
+  sweeper: {
+    maxTransactionAge: 10 * 60 * 1000 // 10 minutes
   }
 }

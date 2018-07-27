@@ -2,6 +2,7 @@ import { getLogger, Raven } from '../lib/logger';
 import consumer from './consumer';
 import handler from './handler';
 import janitor from './janitor';
+import sweeper from './sweeper';
 import settings from '../shared/settings';
 
 const log = getLogger('events');
@@ -18,6 +19,7 @@ export const init = () => {
     consumer(),
     handler(),
     janitor(),
+    sweeper(),
   ]).then((msg) => {
     log.error({ msg: msg }, "Services exited abnormally!");
   }).catch((err) => {
