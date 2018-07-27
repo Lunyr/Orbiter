@@ -8,7 +8,7 @@ import { TxState, TxType } from '../shared/constants';
 
 const log = logger.getLogger('events-utils');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, {protocol: 'https'});
-const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c77289f9ed46d843561e6';
+export const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c77289f9ed46d843561e6';
 
 /**
  * getEventData parses an event that was provided by abi-decoder and creates an
@@ -16,7 +16,7 @@ const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c77289f9ed4
  * @param {object} ev is the event object
  * @return {object} an object with properties with argument name
  */
-const getEventData = (ev) => {
+export const getEventData = (ev) => {
     // sanity check the event
     if (
         typeof ev.events === 'undefined'
@@ -35,7 +35,7 @@ const getEventData = (ev) => {
 /**
  * completeTransaction will mark a transaction as completed
  */
-async function completeTransaction(txHash, txType) {
+export async function completeTransaction(txHash, txType) {
   // sanity check
   if (!txHash) new Error("txHash is missing");
 
@@ -55,7 +55,7 @@ async function completeTransaction(txHash, txType) {
  * @param {number} timeout, in milliseconds
  * @return {object} the JSON object that was stored in the file
  */
-const ipfsFetch = (hash, duration) => {
+export const ipfsFetch = (hash, duration) => {
   if (!hash || hash === '0x') throw new Error("Hash not provided");
   duration = duration ? duration : 15000; // default 15 seconds
   return new Promise(async (resolve, reject) => {
@@ -91,7 +91,7 @@ const ipfsFetch = (hash, duration) => {
  * @param {string} txHash is the has for the transaction to look up
  * @return {object} the results of the JSON-RPC query
  */
-const getTransaction = async (txHash) => {
+export const getTransaction = async (txHash) => {
   
   log.debug({ txHash}, "getTransaction");
   
@@ -132,7 +132,7 @@ const getTransaction = async (txHash) => {
  * @param {string} txHash is the has for the transaction to look up
  * @return {object} the results of the JSON-RPC query
  */
-const getTransactionReceipt = async (txHash) => {
+export const getTransactionReceipt = async (txHash) => {
   
   log.debug({ txHash }, "getTransactionReceipt");
   
@@ -173,7 +173,7 @@ const getTransactionReceipt = async (txHash) => {
  * @param {number/Array} blockNo is the block number to retreive
  * @return {object} the results of the JSON-RPC query
  */
-const getBlockByNumber = async (blockNo) => {
+export const getBlockByNumber = async (blockNo) => {
   
   log.debug({ blockNo }, "getBlockByNumber");
   
@@ -207,14 +207,4 @@ const getBlockByNumber = async (blockNo) => {
   log.debug({ json }, `request to JSON-RPC complete.`);
 
   return json.result;
-}
-
-module.exports = {
-  getEventData,
-  completeTransaction,
-  ipfsFetch,
-  EMPTY_IPFS_HEX,
-  getTransaction,
-  getTransactionReceipt,
-  getBlockByNumber,
 }
