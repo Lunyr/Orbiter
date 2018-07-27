@@ -12,7 +12,7 @@ import multihashes from 'multihashes';
 import ipfsAPI from 'ipfs-api';
 import abiDecoder from 'abi-decoder';
 import { getLogger, Raven } from '../lib/logger';
-import utils from './utils';
+import { ipfsFetch } from './utils';
 import eventsQueue from './queue';
 import settings from '../shared/settings';
 import { web3 } from '../shared/web3'; 
@@ -65,7 +65,7 @@ const getContractInstances = async (router, name) => {
     if (IGNORE_CONTRACTS.indexOf(addr) < 0) {
       log.debug(`Fetching ${name.toLowerCase()} ABI ${abiHash} from ipfs`);
       try {
-        const abi = await utils.ipfsFetch(abiHash, 30000);
+        const abi = await ipfsFetch(abiHash, 30000);
         log.debug(`Done fetching ${name.toLowerCase()} ABI from ipfs`);
         targets.push({
           address: addr,

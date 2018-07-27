@@ -17,25 +17,25 @@ export const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c772
  * @return {object} an object with properties with argument name
  */
 export const getEventData = (ev) => {
-    // sanity check the event
-    if (
-        typeof ev.events === 'undefined'
-        || !(ev.events instanceof Array)
-    ) { 
-        throw new Error("Not an event format I can work with");
-    }
+  // sanity check the event
+  if (
+    typeof ev.events === 'undefined'
+    || !(ev.events instanceof Array)
+  ) { 
+    throw new Error("Not an event format I can work with");
+  }
 
-    let ret = {};
-    ev.events.map((arg) => {
-        ret[arg.name] = arg.value
-    });
-    return ret;
-}
+  let ret = {};
+  ev.events.map((arg) => {
+    ret[arg.name] = arg.value
+  });
+  return ret;
+};
 
 /**
  * completeTransaction will mark a transaction as completed
  */
-export async function completeTransaction(txHash, txType) {
+export const completeTransaction = async (txHash, txType) => {
   // sanity check
   if (!txHash) new Error("txHash is missing");
 
@@ -47,7 +47,7 @@ export async function completeTransaction(txHash, txType) {
     // Set state to 1(complete)
     await setWatchState(txHash, TxState.SUCCESS);
   }
-}
+};
 
 /**
  * @dev ipfsFetch retrieves a specific JSON file from IPFS
@@ -84,7 +84,7 @@ export const ipfsFetch = (hash, duration) => {
       return reject(e);
     }
   });
-}
+};
 
 /**
  * @dev getTransaction will run eth_getTransaction
@@ -125,7 +125,7 @@ export const getTransaction = async (txHash) => {
   log.debug(`request to JSON-RPC complete.`);
 
   return json.result;
-}
+};
 
 /**
  * @dev getTransaction will run eth_getTransactionReceipt
@@ -166,7 +166,7 @@ export const getTransactionReceipt = async (txHash) => {
   log.debug(`request to JSON-RPC complete.`);
 
   return json.result;
-}
+};
 
 /**
  * @dev getBlockByNumber will run eth_getBlockByNumber
@@ -207,4 +207,4 @@ export const getBlockByNumber = async (blockNo) => {
   log.debug({ json }, `request to JSON-RPC complete.`);
 
   return json.result;
-}
+};
