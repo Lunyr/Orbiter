@@ -1,6 +1,7 @@
 /***
  * sweeper - Handles cleanup of failed transactions
  * @mikeshultz - mike@lunyr.com
+ * TODO: Refactor to use utility functions of this module
  */
 import fetch from 'node-fetch';
 import logger from '../lib/logger';
@@ -18,9 +19,9 @@ const log = logger.getLogger('sweeper');
 const Raven = logger.Raven;
 
 /**
- * Sweeper is a pending transaction processor that handles things like settings
- * a transaction as failed.  It's complementary to loghandler in that there are
- * some things that can not be event-generated 
+ * Sweeper is a pending transaction processor that handles things like setting
+ * a transaction as failed.  It's complementary to the eventhandler in that
+ * there are some things that can not be event-generated 
  */
 export class Sweeper {
 
