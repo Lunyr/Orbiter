@@ -200,6 +200,37 @@ export default async (db) => {
       t.unique('notification_id');
     });
 
+    // Drafts
+    await db.schema.createTable('draft_state', (t) => {
+      t.increments('draft_state_id');
+      t.boolean('show').defaultTo(false);
+      t.string('name');
+
+      t.unique('draft_state_id');
+    });
+    await db('draft_state').insert({ proposal_state_id: 0, show: true, name: 'Draft' });
+    await db('draft_state').insert({ proposal_state_id: 1, show: false, name: 'Submitted' });
+
+    await db.schema.createTable('draft', (t) => {
+      t.increments('draft_id');
+      t.integer('parent_id').references('draft.draft_id');
+      t.integer('draft_state_id').references('draft_state.draft_state_id');
+      t.integer('edit_stream_id').references('edit_stream.edit_stream_id');
+      t.integer('proposal_id').references('proposal.proposal_id');
+      t.timestamp('created').defaultTo(db.fn.now());
+      t.timestamp('updated').defaultTo(null);
+      t.uuid('doc_uuid');
+      t.decimal('image_offset');
+      t.string('hero_hash', 68);
+      t.string('title');
+      t.json('reference_map');
+      t.json('additional_content');
+      t.text('description');
+      t.text('megadraft');
+
+      t.unique('draft_id');
+    });
+
   } catch (error) {
     console.error(error);
   }

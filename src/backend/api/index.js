@@ -36,4 +36,10 @@ export {
     associateTag,
     getTagAssociation
 } from './tag';
-export { getDraftByProposalId } from './draft';
+export {
+    getDraft,
+    getDraftByProposalId,
+    setDraftToDraft,
+    addDraft,
+    editDraft,
+} from './draft';
