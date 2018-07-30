@@ -26,7 +26,16 @@ export {
     getCurrentArticleByTitle,
     getContributors,
 } from './article';
-export { getVote, getDirtyVotes, updateVote, addVote } from './vote';
+export {
+    getVote,
+    getDirtyVotes,
+    updateVote,
+    addVote,
+    getProposalVoteStats,
+    getProposalVotes,
+    userVotedOnProposal,
+    getUsersRecentVotes,
+} from './vote';
 export {
     getTag,
     addTag,
