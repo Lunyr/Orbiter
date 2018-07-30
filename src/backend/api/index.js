@@ -3,7 +3,12 @@ export { addTx, getAddressByTx } from './transaction';
 export { getWatch, getPendingWatch, addWatch, setWatchState } from './watch';
 export { addEvent } from './event';
 export { addNotification, getNotifications, markRead } from './notification';
-export { getEditStream, addEditStream, updateEditStream } from './editstream';
+export {
+    getEditStream,
+    getArticles,
+    addEditStream,
+    updateEditStream
+} from './editstream';
 export {
     getProposal,
     getDirtyProposals,
