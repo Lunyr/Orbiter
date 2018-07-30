@@ -5,7 +5,6 @@ export { addEvent } from './event';
 export { addNotification, getNotifications, markRead } from './notification';
 export {
     getEditStream,
-    getArticles,
     addEditStream,
     updateEditStream
 } from './editstream';
