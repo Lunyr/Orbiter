@@ -18,6 +18,25 @@ export const getTag = async (tagName) => {
   }
 };
 
+export const getTags = async (limit, page) => {
+  try {
+    limit = limit ? limit : 25;
+    page = page ? page : 0;
+    const offset = page * limit;
+    const data = await db('tag').orderBy('name').offset(offset).limit(limit).select();
+    console.log("getTags result", data);
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
 export const addTag = async (tagName) => {
   try {
     const data = await db('tag').insert({

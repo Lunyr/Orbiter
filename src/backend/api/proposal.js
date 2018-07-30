@@ -185,7 +185,7 @@ export const getProposalsInReview = async (limit, page) => {
     const offset = page * limit;
     const data = await db('proposal').where({
       proposal_state_id: ProposalState.IN_REVIEW
-    }).orderBy('created', 'DESC').select();
+    }).orderBy('created', 'DESC').offset(offset).limit(limit).select();
     log.debug({ data }, "getProposalsInReviewBy result");
     return {
       success: true,

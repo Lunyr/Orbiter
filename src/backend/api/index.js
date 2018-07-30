@@ -38,6 +38,7 @@ export {
 } from './vote';
 export {
     getTag,
+    getTags,
     addTag,
     activateTag,
     addTagProposal,
