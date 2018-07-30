@@ -130,3 +130,71 @@ export const expireProposal = async (proposal_id) => {
     };
   }
 };
+
+export const getProposalsWrittenBy = async (address) => {
+  try {
+    const data = await db('edit_stream').innerJoin(
+      'proposal',
+      'edit_stream_id',
+      'edit_stream_id'
+    ).where({
+      from_address: address,
+    }).where(
+      'proposal_state_id', 'IN', [ProposalState.REJECTED, ProposalState.ACCEPTED]
+    ).orderBy('created', 'DESC').select();
+    log.debug({ data }, "getArticlesWrittenBy result");
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const getProposalsInReviewBy = async (address) => {
+  try {
+    const data = await db('edit_stream').innerJoin(
+      'proposal',
+      'edit_stream_id',
+      'edit_stream_id'
+    ).where({
+      from_address: address,
+      proposal_state_id: ProposalState.IN_REVIEW
+    }).orderBy('created', 'DESC').select();
+    log.debug({ data }, "getProposalsInReviewBy result");
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const getProposalsInReview = async (limit, page) => {
+  try {
+    limit = limit ? limit : 25;
+    page = page ? page : 0;
+    const offset = page * limit;
+    const data = await db('proposal').where({
+      proposal_state_id: ProposalState.IN_REVIEW
+    }).orderBy('created', 'DESC').select();
+    log.debug({ data }, "getProposalsInReviewBy result");
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};

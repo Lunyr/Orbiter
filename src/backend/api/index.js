@@ -16,8 +16,17 @@ export {
     updateProposal,
     rejectProposal,
     acceptProposal,
-    expireProposal
+    expireProposal,
+    getProposalsWrittenBy,
+    getProposalsInReviewBy,
+    getProposalsInReview,
 } from './proposal';
+export {
+    getArticles,
+    getCurrentArticle,
+    getCurrentArticleByTitle,
+    getContributors,
+} from './article';
 export { getVote, getDirtyVotes, updateVote, addVote } from './vote';
 export {
     getTag,
