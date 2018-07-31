@@ -11,8 +11,8 @@ export const getArticles = async (limit, page) => {
     const offset = page * limit;
     const data = await db('edit_stream').innerJoin(
       'proposal',
-      'edit_stream_id',
-      'edit_stream_id'
+      'proposal.edit_stream_id',
+      'edit_stream.edit_stream_id'
     ).where({
       proposal_state_id: ProposalState.ACCEPTED
     }).offset(offset).limit(limit).select();
@@ -29,15 +29,15 @@ export const getArticles = async (limit, page) => {
   }
 };
 
-export const getCurrentArticle = async (edit_stream_id) => {
+export const getCurrentArticle = async (editStreamId) => {
   try {
     const data = await db('edit_stream').innerJoin(
       'proposal',
-      'edit_stream_id',
-      'edit_stream_id'
+      'proposal.edit_stream_id',
+      'edit_stream.edit_stream_id'
     ).where({
-      edit_stream_id
-    }).orderBy('created', DESC).limit(1).select();
+      'edit_stream.edit_stream_id': editStreamId
+    }).orderBy('created', 'DESC').limit(1).select();
     log.debug({ data }, "getCurrentArticle result");
     return {
       success: true,
@@ -55,11 +55,11 @@ export const getCurrentArticleByTitle = async (title) => {
   try {
     const data = await db('edit_stream').innerJoin(
       'proposal',
-      'edit_stream_id',
-      'edit_stream_id'
+      'proposal.edit_stream_id',
+      'edit_stream.edit_stream_id'
     ).where({
       'edit_stream.title': title,
-    }).orderBy('created', DESC).limit(1).select();
+    }).orderBy('created', 'DESC').limit(1).select();
     log.debug({ data }, "getCurrentArticleByTitle result");
     return {
       success: true,
@@ -73,14 +73,14 @@ export const getCurrentArticleByTitle = async (title) => {
   }
 };
 
-export const getContributors = async (edit_stream_id) => {
+export const getContributors = async (editStreamId) => {
   try {
     const data = await db('edit_stream').innerJoin(
       'proposal',
-      'edit_stream_id',
-      'edit_stream_id'
+      'proposal.edit_stream_id',
+      'edit_stream.edit_stream_id'
     ).where({
-      edit_stream_id
+      'edit_stream.edit_stream_id': editStreamId
     }).select('from_address');
     log.debug({ data }, "getContributors result");
     return {

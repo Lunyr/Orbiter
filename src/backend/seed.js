@@ -208,8 +208,8 @@ export default async (db) => {
 
       t.unique('draft_state_id');
     });
-    await db('draft_state').insert({ proposal_state_id: 0, show: true, name: 'Draft' });
-    await db('draft_state').insert({ proposal_state_id: 1, show: false, name: 'Submitted' });
+    await db('draft_state').insert({ draft_state_id: 0, show: true, name: 'Draft' });
+    await db('draft_state').insert({ draft_state_id: 1, show: false, name: 'Submitted' });
 
     await db.schema.createTable('draft', (t) => {
       t.increments('draft_id');
