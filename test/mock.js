@@ -8,6 +8,8 @@ const HASH1 = '0xbad312c0d9bd66c92e55f63651124b368e735a57877fcbb2cfaca890cf66a89
 const HASH2 = '0xbad312c0d9bd66c92e55f63651124b368e735a57877fcbb2cfaca890cf66a89b';
 const UUID1 = '1b671a64-40d5-491e-99b0-da01ff1f3341';
 
+let CURR_VOTE_ID = 0;
+
 const mockUp = async (db) => {
   // Setup the original schema and basic data
   await seed(db);
@@ -51,6 +53,16 @@ const mockUp = async (db) => {
       description: 'This is a bunch of test proposals in one stream',
       megadraft: null
     });
+    for (let j=1; j<4; j++) {
+      await db('vote').insert({
+        vote_id: CURR_VOTE_ID,
+        proposal_id: i,
+        from_address: ADDRESS1,
+        accepted: true,
+        notes: "This is a test vote",
+      });
+      CURR_VOTE_ID += 1;
+    }
   }
 };
 

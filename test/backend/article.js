@@ -33,11 +33,11 @@ describe('Article API', () => {
 
   it('should get a paginated articles', async () => {
     const result = await getArticles();
-    assert.equal(result.data.length, 25, `Unexpected result length`);
+    assert.equal(result.data.length, 25, `Unexpected result length on default`);
 
     // Get second page
     const result2 = await getArticles(null, 1);
-    assert.equal(result2.data.length, 25, `Unexpected result length`);
+    assert.equal(result2.data.length, 25, `Unexpected result length with page`);
     assert.notEqual(result2.data[0].proposal_id, result.data[0].proposal_id, "First and second results should be different");
 
     // Get all 50
