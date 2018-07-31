@@ -3,7 +3,7 @@ import { db } from '../db';
 export const addEvent = async (ev) => {
   try {
     const data = await db('event').insert(ev);
-    console.log("addEvent insert result", data);
+    log.debug({ data }, "addEvent result");
     return {
       success: true,
       data,

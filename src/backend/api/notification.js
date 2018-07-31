@@ -9,7 +9,7 @@ export const addNotification = async (address, type, dataObj) => {
       type,
       data: JSON.stringify(dataObj)
     });
-    console.log("addNotification insert result", data);
+    log.debug({ data }, "addNotification result");
     return {
       success: true,
       data,
@@ -27,7 +27,7 @@ export const getNotifications = async (address) => {
     const data = await db('notification').where({
       hashed_address: web3.utils.sha3(address),
     }).select();
-    console.log("getNotifications select result", data);
+    log.debug({ data }, "getNotifications result");
     return {
       success: true,
       data,
@@ -47,7 +47,7 @@ export const markRead = async (notification_id) => {
     }).update({
       read: true
     });
-    console.log("markRead update result", data);
+    log.debug({ data }, "markRead result");
     return {
       success: true,
       data,

@@ -5,7 +5,7 @@ export const getTag = async (tagName) => {
     const data = await db('tag').where({
       name: tagName
     }).select();
-    console.log("getTag result", data);
+    log.debug({ data }, "getTag result");
     return {
       success: true,
       data,
@@ -24,7 +24,7 @@ export const getTags = async (limit, page) => {
     page = page ? page : 0;
     const offset = page * limit;
     const data = await db('tag').orderBy('name').offset(offset).limit(limit).select();
-    console.log("getTags result", data);
+    log.debug({ data }, "getTags result");
     return {
       success: true,
       data,
@@ -42,7 +42,7 @@ export const addTag = async (tagName) => {
     const data = await db('tag').insert({
       name: tagName
     });
-    console.log("addTag result", data);
+    log.debug({ data }, "addTag result");
     return {
       success: true,
       data,
@@ -61,7 +61,7 @@ export const addTagProposal = async (tagId, fromAddress) => {
       tag_id: tagId,
       from_address: fromAddress,
     });
-    console.log("addTagProposal result", data);
+    log.debug({ data }, "addTagProposal result");
     return {
       success: true,
       data,
@@ -83,7 +83,7 @@ export const getTagAssociation = async (tagName, editStreamId) => {
          WHERE t.name = ? AND tes.edit_stream_id = ?`,
       [tagName, editStreamId]
     );
-    console.log("getTagAssociation result", data);
+    log.debug({ data }, "getTagAssociation result");
     return {
       success: true,
       data,
@@ -102,7 +102,7 @@ export const associateTag = async (tagId, editStreamId) => {
       tag_id: tagId,
       edit_stream_id: editStreamId,
     });
-    console.log("addTagEditStream result", data);
+    log.debug({ data }, "addTagEditStream result");
     return {
       success: true,
       data,
@@ -122,7 +122,7 @@ export const activateTag = async (tagName) => {
     }).update({
       active: true
     });
-    console.log("activateTag result", data);
+    log.debug({ data }, "activateTag result");
     return {
       success: true,
       data,

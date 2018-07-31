@@ -6,7 +6,7 @@ export const getProposal = async (proposalId) => {
     const data = await db('proposal').where({
       proposal_id: proposalId
     }).select();
-    console.log("getProposal result", data);
+    log.debug({ data }, "addNotification result");
     return {
       success: true,
       data,
@@ -24,7 +24,7 @@ export const getDirtyProposals = async () => {
     const data = await db('proposal').where({
       dirty: true
     }).select();
-    console.log("getDirtyProposals result", data);
+    log.debug({ data }, "getDirtyProposals result");
     return {
       success: true,
       data,
@@ -40,7 +40,7 @@ export const getDirtyProposals = async () => {
 export const addProposal = async (propObj) => {
   try {
     const data = await db('proposal').insert(propObj);
-    console.log("addProposal insert result", data);
+    log.debug({ data }, "addProposal result");
     return {
       success: true,
       data,
@@ -58,7 +58,7 @@ export const updateProposal = async (proposalId, propObj) => {
     const data = await db('proposal').where({
       proposal_id: proposalId
     }).update(propObj);
-    console.log("updateProposal insert result", data);
+    log.debug({ data }, "addNotification result");
     return {
       success: true,
       data,
@@ -78,7 +78,7 @@ export const rejectProposal = async (proposal_id) => {
     }).update({
       proposal_state_id: ProposalState.REJECTED
     });
-    console.log("Proposal reject result", data);
+    log.debug({ data }, "rejectProposal result");
     return {
       success: true,
       data,
@@ -98,7 +98,7 @@ export const acceptProposal = async (proposal_id) => {
     }).update({
       proposal_state_id: ProposalState.ACCEPTED
     });
-    console.log("Proposal accept result", data);
+    log.debug({ data }, "acceptProposal result");
     return {
       success: true,
       data,
@@ -118,7 +118,7 @@ export const expireProposal = async (proposal_id) => {
     }).update({
       proposal_state_id: ProposalState.EXPIRED
     });
-    console.log("expireProposal result", data);
+    log.debug({ data }, "expireProposal result");
     return {
       success: true,
       data,

@@ -5,7 +5,7 @@ export const getEditStream = async (editStreamId) => {
     const data = await db('edit_stream').where({
       edit_stream_id: editStreamId
     }).select();
-    console.log("getEditStream result", data);
+    log.debug({ data }, "getEditStream result");
     return {
       success: true,
       data,
@@ -21,7 +21,7 @@ export const getEditStream = async (editStreamId) => {
 export const addEditStream = async (esObj) => {
   try {
     const data = await db('edit_stream').insert(esObj);
-    console.log("addEditStream insert result", data);
+    log.debug({ data }, "addEditStream result");
     return {
       success: true,
       data,
@@ -39,7 +39,7 @@ export const updateEditStream = async (edit_stream_id, esObj) => {
     const data = await db('edit_stream').where({
       edit_stream_id
     }).update(esObj);
-    console.log("updateEditStream insert result", data);
+    log.debug({ data }, "updateEditStream result");
     return {
       success: true,
       data,

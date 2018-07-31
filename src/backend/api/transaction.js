@@ -3,7 +3,7 @@ import { db } from '../db';
 export const addTx = async (tx) => {
   try {
     const data = await db('transaction').insert(tx);
-    console.log("addTx insert result", data);
+    log.debug({ data }, "addTx result");
     return {
       success: true,
       data,

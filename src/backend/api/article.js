@@ -15,8 +15,8 @@ export const getArticles = async (limit, page) => {
       'edit_stream_id'
     ).where({
       proposal_state_id: ProposalState.ACCEPTED
-    }).select();
-    log.debug({ data }, "getEditStream result");
+    }).offset(offset).limit(limit).select();
+    log.debug({ data }, "getArticles result");
     return {
       success: true,
       data,
