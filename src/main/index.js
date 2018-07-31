@@ -32,7 +32,15 @@ const onReady = async () => {
   
   // Test seeding of db
   if (testSeed && db) {
-    await seed(db);
+    try {
+      await seed(db);
+    } catch (err) {
+      if (err.message.indexOf('already exists') > -1) {
+        log.info("Database already created");
+      } else {
+        throw err;
+      }
+    }
   }
 
   // Setup node based redux store that will act as our source of truth
