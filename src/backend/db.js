@@ -5,6 +5,7 @@ const db = knex({
   connection: {
     filename: './orbiter.sqlite',
   },
+  useNullAsDefault: true
 });
 
 export { db };

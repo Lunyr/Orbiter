@@ -10,15 +10,19 @@
   "repository": "https://github.com/Lunyr/Orbiter",
   "license": "MIT",
   "dependencies": {
+    "abi-decoder": "^1.1.0",
     "babel-runtime": "^6.26.0",
     "bunyan": "^1.8.12",
     "classnames": "^2.2.6",
     "color": "^3.0.0",
     "find-process": "^1.1.1",
     "history": "^4.6.3",
+    "ipfs-api": "^22.2.4",
     "knex": "^0.15.1",
+    "multihashes": "^0.4.13",
     "prop-types": "^15.5.10",
     "raven": "^2.6.3",
+    "raven-js": "^3.26.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-intl": "^2.4.0",
@@ -30,7 +34,11 @@
     "redux-devtools-extension": "^2.13.5",
     "redux-form": "^7.4.2",
     "redux-persist": "^5.10.0",
-    "sqlite3": "^4.0.2"
+    "scrypt": "^6.0.3",
+    "sentry": "^0.1.2",
+    "sqlite3": "^4.0.2",
+    "through2": "^2.0.3",
+    "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",

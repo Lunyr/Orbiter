@@ -1,6 +1,6 @@
 import { db } from '../db';
 
-const readAll = async () => {
+export const readAll = async () => {
   try {
     const data = await db('test');
     return {
@@ -13,8 +13,4 @@ const readAll = async () => {
       error: error.message,
     };
   }
-};
-
-export default {
-  readAll,
 };
