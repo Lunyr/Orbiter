@@ -2,6 +2,10 @@ import db from '../backend/db';
 
 // TODO: Load user config and maybe some helper functions to set settings
 
+const isDevelopment = () => {
+  return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+};
+
 const jsonRPC = {
     mainnet: 'https://mainnet.infura.io/kHjl2LF2ra5jYPjrWdqB',
     ropsten: 'https://ropsten.infura.io/kHjl2LF2ra5jYPjrWdqB',
@@ -11,12 +15,12 @@ const jsonRPC = {
 jsonRPC.current = process.env.NODE_ENV === 'development' ? jsonRPC.lunyr_testnet : jsonRPC.mainnet;
 
 export default {
-  isDevelopment: process.env.NODE_ENV === 'development',
+  isDevelopment: isDevelopment(),
   privacy: {
     errorReporting: true,
   },
   logging: {
-    logLevel: process.env.NODE_ENV === 'development' ? 20 : 30
+    logLevel: isDevelopment() ? 20 : 30
   },
   ipfs: {
     //APIRoot: 'https://ipfs.infura.io:5001',

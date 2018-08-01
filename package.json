@@ -67,7 +67,7 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "npm run private:compile -- --source-maps true && run-p -r private:watch private:serve",
-    "test": "electron-mocha --renderer -R spec --require babel-core/register test/**/*.spec.js",
+    "test": "./node_modules/.bin/electron-mocha --renderer -R spec --require babel-core/register --require test/mocha.env.js",
     "lint": "eslint --no-ignore scripts src test *.js",
     "format": "npm run private:format -- --write",
     "check-format": "npm run private:format -- --list-different",
