@@ -1,6 +1,5 @@
 const assert = require('assert');
 const { db } = require('../../build/backend/db');
-const constants = require('../../build/shared/constants');
 const api = require('../../build/backend/api');
 const mock = require('../mock');
 
