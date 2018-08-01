@@ -19,16 +19,16 @@ describe('Article API', () => {
 
   it('should get an article', async () => {
     const result = await getCurrentArticle(1);
-    
+    console.log("result", result);
     assert.equal(result.data.length, 1, `Unexpected result length`);
     
     const article = result.data[0];
     
-    assert.equal(article.proposal_id, 1, `proposal_id is incorrect`);
-    assert.equal(article.proposal_state_id, ProposalState.ACCEPTED, `proposal_state_id is incorrect`);
-    assert.equal(article.edit_stream_id, 1, `edit_stream_id is incorrect`);
-    assert.equal(article.from_address, mock.ADDRESS1, `from_address is incorrect`);
-    assert.equal(article.image_offset, 0.1, `image_offset is incorrect`);
+    assert.equal(article.id, 1, `proposal_id is incorrect`);
+    assert.equal(article.state, ProposalState.ACCEPTED, `proposal_state_id is incorrect`);
+    assert.equal(article.editStreamId, 1, `edit_stream_id is incorrect`);
+    assert.equal(article.fromAddress, mock.ADDRESS1, `from_address is incorrect`);
+    assert.equal(article.imageOffsetRatio, 0.1, `image_offset is incorrect`);
   });
 
   it('should get a paginated articles', async () => {
@@ -38,12 +38,13 @@ describe('Article API', () => {
     // Get second page
     const result2 = await getArticles(null, 1);
     assert.equal(result2.data.length, 25, `Unexpected result length with page`);
-    assert.notEqual(result2.data[0].proposal_id, result.data[0].proposal_id, "First and second results should be different");
+    console.log("result2.data[0]", result2.data[0]);
+    assert.notEqual(result2.data[0].id, result.data[0].id, `First and second results should be different. ${result.data[0].id} != ${result2.data[0].id}`);
 
     // Get all 50
     const result3 = await getArticles(50);
     assert.equal(result3.data.length, 50, `Unexpected result length`);
-    assert.equal(result3.data[0].proposal_id, result.data[0].proposal_id, "Should be the same results");
+    assert.equal(result3.data[0].id, result.data[0].id, "Should be the same results");
   });
 
   it('should get an article by title', async () => {
@@ -54,7 +55,7 @@ describe('Article API', () => {
 
   it('should get the contributors of an article', async () => {
     const result = await getContributors(1);
-    assert.equal(result.data.length, 1, "Should have one contributor");
-    assert.equal(result.data[0].from_address, mock.ADDRESS1, "Should be the same as ADDRESS1");
+    assert.equal(result.data.length, 1, "Should have one contributor")
+    assert.equal(result.data[0], mock.ADDRESS1, `Should be the same as ADDRESS1. ${result.data[0].fromAddress}`);
   });
 });

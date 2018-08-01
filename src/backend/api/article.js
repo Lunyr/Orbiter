@@ -41,7 +41,7 @@ export const getArticles = async (limit, page) => {
 
     // Repack and assemble objects for frontend use
     const data = result.reduce((acc, a) => {
-      if (!(acc instanceof Array)) acc = [acc];
+      if (!(acc instanceof Array)) acc = [toArticle(acc)];
       
       acc.push(toArticle(a));
 
@@ -67,14 +67,18 @@ export const getArticles = async (limit, page) => {
 
 export const getCurrentArticle = async (editStreamId) => {
   try {
-    const data = await db('edit_stream').innerJoin(
+    const result = await db('edit_stream').innerJoin(
       'proposal',
       'proposal.edit_stream_id',
       'edit_stream.edit_stream_id'
     ).where({
       'edit_stream.edit_stream_id': editStreamId
     }).orderBy('created', 'DESC').limit(1).select();
-    log.debug({ data }, "getCurrentArticle result");
+
+    log.debug({ result }, "getCurrentArticle result");
+
+    const data = result.map(a => toArticle(a));
+
     return {
       success: true,
       data,
@@ -89,14 +93,18 @@ export const getCurrentArticle = async (editStreamId) => {
 
 export const getCurrentArticleByTitle = async (title) => {
   try {
-    const data = await db('edit_stream').innerJoin(
+    const result = await db('edit_stream').innerJoin(
       'proposal',
       'proposal.edit_stream_id',
       'edit_stream.edit_stream_id'
     ).where({
       'edit_stream.title': title,
     }).orderBy('created', 'DESC').limit(1).select();
-    log.debug({ data }, "getCurrentArticleByTitle result");
+
+    log.debug({ result }, "getCurrentArticleByTitle result");
+
+    const data = result.map(a => toArticle(a));
+
     return {
       success: true,
       data,
@@ -111,14 +119,18 @@ export const getCurrentArticleByTitle = async (title) => {
 
 export const getContributors = async (editStreamId) => {
   try {
-    const data = await db('edit_stream').innerJoin(
+    const result = await db('edit_stream').innerJoin(
       'proposal',
       'proposal.edit_stream_id',
       'edit_stream.edit_stream_id'
     ).where({
       'edit_stream.edit_stream_id': editStreamId
     }).select('from_address');
-    log.debug({ data }, "getContributors result");
+
+    log.debug({ result }, "getContributors result");
+
+    const data = result.map(a => a.from_address);
+
     return {
       success: true,
       data,
