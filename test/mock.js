@@ -7,6 +7,7 @@ const ADDRESS2 = '0x4e3a20de4dc3baca80ace5e92e75c92d7fed40fb';
 const HASH1 = '0xbad312c0d9bd66c92e55f63651124b368e735a57877fcbb2cfaca890cf66a89a';
 const HASH2 = '0xbad312c0d9bd66c92e55f63651124b368e735a57877fcbb2cfaca890cf66a89b';
 const UUID1 = '1b671a64-40d5-491e-99b0-da01ff1f3341';
+const UUID2 = '1b671a64-40d5-491e-99b0-da01ff1f334a';
 
 let CURR_VOTE_ID = 0;
 
@@ -73,4 +74,5 @@ module.exports = {
   HASH1,
   HASH2,
   UUID1,
+  UUID2,
 };
