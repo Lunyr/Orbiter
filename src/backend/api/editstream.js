@@ -1,11 +1,19 @@
 import { db } from '../db';
+import { getLogger } from '../../lib/logger';
+import { toEditStream, fromEditStream } from '../assemblers';
+
+const log = getLogger('api-editstream');
 
 export const getEditStream = async (editStreamId) => {
   try {
-    const data = await db('edit_stream').where({
+    const result = await db('edit_stream').where({
       edit_stream_id: editStreamId
     }).select();
-    log.debug({ data }, "getEditStream result");
+
+    log.debug({ result }, "getEditStream result");
+
+    const data = result.map(e => toEditStream(e));
+
     return {
       success: true,
       data,
@@ -20,6 +28,7 @@ export const getEditStream = async (editStreamId) => {
 
 export const addEditStream = async (esObj) => {
   try {
+    esObj = fromEditStream(esObj);
     const data = await db('edit_stream').insert(esObj);
     log.debug({ data }, "addEditStream result");
     return {
@@ -34,10 +43,11 @@ export const addEditStream = async (esObj) => {
   }
 };
 
-export const updateEditStream = async (edit_stream_id, esObj) => {
+export const updateEditStream = async (editStreamId, esObj) => {
   try {
+    esObj = fromEditStream(esObj, true);
     const data = await db('edit_stream').where({
-      edit_stream_id
+      edit_stream_id: editStreamId
     }).update(esObj);
     log.debug({ data }, "updateEditStream result");
     return {
@@ -45,6 +55,7 @@ export const updateEditStream = async (edit_stream_id, esObj) => {
       data,
     };
   } catch (error) {
+    console.log(error);
     return {
       success: false,
       error: error.message,
