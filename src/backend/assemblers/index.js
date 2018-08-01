@@ -6,3 +6,4 @@
  export { toVote } from './vote';
  export { toDraft, fromDraft } from './draft';
  export { toEditStream, fromEditStream } from './editstream';
+ export { toTxStatus, toNotification, fromNotification } from './notification';
