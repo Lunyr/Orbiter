@@ -1,11 +1,19 @@
 import { db } from '../db';
+import { getLogger } from '../../lib/logger';
+import { toTag, fromTag } from '../assemblers';
+
+const log = getLogger('api-tag');
 
 export const getTag = async (tagName) => {
   try {
-    const data = await db('tag').where({
+    const result = await db('tag').where({
       name: tagName
     }).select();
-    log.debug({ data }, "getTag result");
+
+    log.debug({ result }, "getTag result");
+
+    const data = result.map(t => toTag(t));
+
     return {
       success: true,
       data,
@@ -23,8 +31,12 @@ export const getTags = async (limit, page) => {
     limit = limit ? limit : 25;
     page = page ? page : 0;
     const offset = page * limit;
-    const data = await db('tag').orderBy('name').offset(offset).limit(limit).select();
-    log.debug({ data }, "getTags result");
+    const result = await db('tag').orderBy('name').offset(offset).limit(limit).select();
+
+    log.debug({ result }, "getTags result");
+
+    const data = result.map(t => toTag(t));
+
     return {
       success: true,
       data,
@@ -42,13 +54,17 @@ export const getActiveTags = async (limit, page) => {
     limit = limit ? limit : 25;
     page = page ? page : 0;
     const offset = page * limit;
-    const data = await db('tag')
+    const result = await db('tag')
       .where({ active: true })
       .orderBy('name')
       .offset(offset)
       .limit(limit)
       .select();
-    log.debug({ data }, "getActiveTags result");
+
+    log.debug({ result }, "getActiveTags result");
+
+    const data = result.map(t => toTag(t));
+
     return {
       success: true,
       data,
@@ -64,9 +80,37 @@ export const getActiveTags = async (limit, page) => {
 export const addTag = async (tagName) => {
   try {
     const data = await db('tag').insert({
-      name: tagName
+      name: tagName,
+      active: false
     });
     log.debug({ data }, "addTag result");
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const getTagProposals = async (tagId) => {
+  try {
+    const result = await db('tag_proposal').where({
+      tag_id: tagId,
+    }).select();
+
+    log.debug({ result }, "getTagProposals result");
+
+    const data = result.map(tp => {
+      return {
+        tagId: tp.tag_id,
+        fromAddress: tp.from_address,
+      };
+    });
+
     return {
       success: true,
       data,
@@ -100,14 +144,23 @@ export const addTagProposal = async (tagId, fromAddress) => {
 
 export const getTagAssociation = async (tagName, editStreamId) => {
   try {
-    const data = await db().raw(
+    const result = await db.raw(
       `SELECT tag_id, edit_stream_id
          FROM tag t
          JOIN tag_edit_stream tes USING (tag_id)
          WHERE t.name = ? AND tes.edit_stream_id = ?`,
       [tagName, editStreamId]
     );
-    log.debug({ data }, "getTagAssociation result");
+
+    log.debug({ result }, "getTagAssociation result");
+
+    const data = result.map(tp => {
+      return {
+        tagId: tp.tag_id,
+        editStreamId: tp.edit_stream_id,
+      };
+    });
+
     return {
       success: true,
       data,

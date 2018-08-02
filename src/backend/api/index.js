@@ -47,6 +47,7 @@ export {
   getActiveTags,
   addTag,
   activateTag,
+  getTagProposals,
   addTagProposal,
   associateTag,
   getTagAssociation

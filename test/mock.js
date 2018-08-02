@@ -65,6 +65,14 @@ const mockUp = async (db) => {
       CURR_VOTE_ID += 1;
     }
   }
+
+  // Add an active tag, inactive tag, and accompanying info
+  await db('tag').insert({ active: true, name: 'first' });
+  await db('tag_proposal').insert({ tag_id: 1, from_address: ADDRESS1 });
+  await db('tag_proposal').insert({ tag_id: 1, from_address: ADDRESS2 });
+  await db('tag_edit_stream').insert({ tag_id: 1, edit_stream_id: 1 });
+  await db('tag').insert({ active: false, name: 'second' });
+  await db('tag_proposal').insert({ tag_id: 2, from_address: ADDRESS1 });
 };
 
 module.exports = {
