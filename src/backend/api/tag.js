@@ -37,6 +37,30 @@ export const getTags = async (limit, page) => {
   }
 };
 
+export const getActiveTags = async (limit, page) => {
+  try {
+    limit = limit ? limit : 25;
+    page = page ? page : 0;
+    const offset = page * limit;
+    const data = await db('tag')
+      .where({ active: true })
+      .orderBy('name')
+      .offset(offset)
+      .limit(limit)
+      .select();
+    log.debug({ data }, "getActiveTags result");
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
 export const addTag = async (tagName) => {
   try {
     const data = await db('tag').insert({
