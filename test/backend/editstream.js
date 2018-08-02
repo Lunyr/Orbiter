@@ -1,4 +1,4 @@
-const assert = require('assert');
+const assert = require('chai').assert;
 const { db } = require('../../build/backend/db');
 const api = require('../../build/backend/api');
 const mock = require('../mock');
