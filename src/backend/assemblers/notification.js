@@ -13,6 +13,7 @@ export const toTxStatus = (watch) => {
     txHash: watch.hash,
     state: watch.transaction_state_id,
     type: watch.type,
+    fromAddress: watch.from_address,
     articleTitle: watch.title,
     read: watch.read,
     tx: watch.tx,
@@ -22,6 +23,31 @@ export const toTxStatus = (watch) => {
     proposalId: watch.proposal_id,
     reimbursed: watch.reimbursement_state,
   };
+};
+
+/**
+ * fromTxStatus takes a watch object from the frontend and assembles it into
+ * something the DB can understand
+ * @param {object} - The watch to convert
+ * @return {object} - The newly assembled raw tx-status object
+ */
+export const fromTxStatus = (watch, isPartial = true) => {
+  // In case we're given a bookshelf Collection
+  let result = {
+    hash: watch.txHash,
+    transaction_state_id: watch.state,
+    read: watch.read,
+    proposal_id: watch.proposalId,
+    from_address: watch.fromAddress,
+    created: watch.createdAt,
+    updated: watch.updatedAt,
+    type: watch.type,
+    title: watch.articleTitle,
+    tx: watch.tx,
+    signedtx: watch.signedtx,
+  };
+  if (isPartial) result = clearUndefined(result);
+  return result;
 };
 
 /**
@@ -51,7 +77,7 @@ export const toNotification = (notification) => {
  */
 export const fromNotification = (notificationObj, isPartial = false) => {
   // In case we're given a bookshelf Collection
-  const result = {
+  let result = {
     notification_id: notificationObj.id,
     hashed_address: notificationObj.hashedAddress,
     created: notificationObj.createdAt,
