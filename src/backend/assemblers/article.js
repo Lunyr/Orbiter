@@ -1,4 +1,4 @@
-import { toVote } from './vote';
+import { clearUndefined } from './utils';
 
 /**
  * toArticle takes a proposal object(or returned bookshelf Collection) and 
@@ -31,4 +31,36 @@ export const toArticle = (proposal) => {
     votes: votes,
     lang: proposal.lang || null
   };
+};
+
+/**
+ * fromArticle takes a article object from the frontend and assembles an propsal
+ * object that can be inserted into the DB.
+ * @param {object} - The article to convert
+ * @return {object} - The newly assembled raw proposal object
+ */
+export const fromArticle = (proposal, isPartial = false) => {
+  // TODO
+  let result = {
+    proposal_id: proposal.id,
+    created: proposal.createdAt,
+    updated: proposal.updatedAt,
+    doc_uuid: proposal.uuid || null,
+    from_address: proposal.fromAddress,
+    edit_stream_id: proposal.editStreamId,
+    content_hash: proposal.contentHash || null,
+    hero_hash: proposal.heroImageHash || null,
+    megadraft: proposal.megadraft || null,
+    parent_id: proposal.parentId || null,
+    proposal_state_id: proposal.state,
+    title: proposal.title || null,
+    reference_map: proposal.referenceMap ? JSON.stringify(proposal.referenceMap) : null,
+    additional_content: proposal.additionalContent ? JSON.stringify(proposal.additionalContent) : null,
+    image_offset: proposal.imageOffsetRatio || null,
+    description: proposal.description || null,
+    dirty: proposal.dirty,
+    lang: proposal.lang || null
+  };
+  if (isPartial) result = clearUndefined(result);
+  return result;
 };

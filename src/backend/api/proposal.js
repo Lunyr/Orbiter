@@ -1,12 +1,20 @@
 import { db } from '../db';
 import { ProposalState, TxType } from '../../shared/constants';
+import { getLogger } from '../../lib/logger';
+import { toArticle, fromArticle } from '../assemblers';
+
+const log = getLogger('api-proposal');
 
 export const getProposal = async (proposalId) => {
   try {
-    const data = await db('proposal').where({
+    const result = await db('proposal').where({
       proposal_id: proposalId
     }).select();
-    log.debug({ data }, "addNotification result");
+
+    log.debug({ result }, "addNotification result");
+
+    const data = result.map(p => toArticle(p));
+
     return {
       success: true,
       data,
@@ -21,10 +29,14 @@ export const getProposal = async (proposalId) => {
 
 export const getDirtyProposals = async () => {
   try {
-    const data = await db('proposal').where({
+    const result = await db('proposal').where({
       dirty: true
     }).select();
-    log.debug({ data }, "getDirtyProposals result");
+
+    log.debug({ result }, "getDirtyProposals result");
+
+    const data = result.map(p => toArticle(p));
+
     return {
       success: true,
       data,
@@ -39,6 +51,7 @@ export const getDirtyProposals = async () => {
 
 export const addProposal = async (propObj) => {
   try {
+    propObj = fromArticle(propObj);
     const data = await db('proposal').insert(propObj);
     log.debug({ data }, "addProposal result");
     return {
@@ -55,6 +68,7 @@ export const addProposal = async (propObj) => {
 
 export const updateProposal = async (proposalId, propObj) => {
   try {
+    propObj = fromArticle(propObj, true);
     const data = await db('proposal').where({
       proposal_id: proposalId
     }).update(propObj);
@@ -133,16 +147,20 @@ export const expireProposal = async (proposal_id) => {
 
 export const getProposalsWrittenBy = async (address) => {
   try {
-    const data = await db('edit_stream').innerJoin(
+    const result = await db('edit_stream').innerJoin(
       'proposal',
-      'edit_stream_id',
-      'edit_stream_id'
+      'proposal.edit_stream_id',
+      'edit_stream.edit_stream_id'
     ).where({
       from_address: address,
     }).where(
       'proposal_state_id', 'IN', [ProposalState.REJECTED, ProposalState.ACCEPTED]
     ).orderBy('created', 'DESC').select();
-    log.debug({ data }, "getArticlesWrittenBy result");
+
+    log.debug({ result }, "getArticlesWrittenBy result");
+
+    const data = result.map(p => toArticle(p));
+
     return {
       success: true,
       data,
@@ -157,15 +175,19 @@ export const getProposalsWrittenBy = async (address) => {
 
 export const getProposalsInReviewBy = async (address) => {
   try {
-    const data = await db('edit_stream').innerJoin(
+    const result = await db('edit_stream').innerJoin(
       'proposal',
-      'edit_stream_id',
-      'edit_stream_id'
+      'proposal.edit_stream_id',
+      'edit_stream.edit_stream_id'
     ).where({
       from_address: address,
       proposal_state_id: ProposalState.IN_REVIEW
     }).orderBy('created', 'DESC').select();
-    log.debug({ data }, "getProposalsInReviewBy result");
+
+    log.debug({ result }, "getProposalsInReviewBy result");
+
+    const data = result.map(p => toArticle(p));
+
     return {
       success: true,
       data,
@@ -183,10 +205,14 @@ export const getProposalsInReview = async (limit, page) => {
     limit = limit ? limit : 25;
     page = page ? page : 0;
     const offset = page * limit;
-    const data = await db('proposal').where({
+    const result = await db('proposal').where({
       proposal_state_id: ProposalState.IN_REVIEW
     }).orderBy('created', 'DESC').offset(offset).limit(limit).select();
-    log.debug({ data }, "getProposalsInReviewBy result");
+
+    log.debug({ result }, "getProposalsInReviewBy result");
+
+    const data = result.map(p => toArticle(p));
+
     return {
       success: true,
       data,
