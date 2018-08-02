@@ -1,5 +1,8 @@
 import { db } from '../db';
 import { TxState } from '../../shared/constants';
+import { getLogger } from '../../lib/logger';
+
+const log = getLogger('api-watch');
 
 export const addWatch = async (obj) => {
   try {
