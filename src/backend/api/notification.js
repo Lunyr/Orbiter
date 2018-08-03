@@ -8,7 +8,6 @@ const log = getLogger('api-notification');
 
 export const addNotification = async (address, type, dataObj) => {
   try {
-    dataObj = fromNotification(dataObj);
     const data = await db('notification').insert({
       hashed_address: web3.utils.sha3(address),
       type,
