@@ -1,15 +1,20 @@
 import { db } from '../db';
-import { ProposalState, TransactionState } from '../../shared/constants';
+import { ProposalState, TxState } from '../../shared/constants';
 import { getLogger } from '../../lib/logger';
+import { toVote, fromVote } from '../assemblers';
 
 const log = getLogger('api-vote');
 
 export const getVote = async (voteId) => {
   try {
-    const data = await db('vote').where({
+    const result = await db('vote').where({
       vote_id: voteId
     }).select();
-    log.debug({ data }, "getVote result");
+
+    log.debug({ result }, "getVote result");
+
+    const data = result.map(v => toVote(v));
+
     return {
       success: true,
       data,
@@ -24,10 +29,14 @@ export const getVote = async (voteId) => {
 
 export const getDirtyVotes = async () => {
   try {
-    const data = await db('vote').where({
+    const result = await db('vote').where({
       dirty: true
     }).select();
-    log.debug({ data }, "getDirtyVotes result");
+
+    log.debug({ result }, "getDirtyVotes result");
+
+    const data = result.map(v => toVote(v));
+
     return {
       success: true,
       data,
@@ -42,6 +51,7 @@ export const getDirtyVotes = async () => {
 
 export const addVote = async (voteObj) => {
   try {
+    voteObj = fromVote(voteObj);
     const data = await db('vote').insert(voteObj);
     log.debug({ data }, "addVote result");
     return {
@@ -58,6 +68,7 @@ export const addVote = async (voteObj) => {
 
 export const updateVote = async (voteId, voteObj) => {
   try {
+    voteObj = fromVote(voteObj);
     const data = await db('vote').where({
       vote_id: voteId
     }).update(voteObj);
@@ -90,7 +101,7 @@ export const getProposalVoteStats = async (proposalId, fromAddress) => {
           WHERE v.from_address = ?
           AND v.proposal_id = ?) AS user;`,
       [
-        TransactionState.PENDING,
+        TxState.PENDING,
         proposalId,
         proposalId,
         fromAddress,
@@ -118,10 +129,14 @@ export const getProposalVoteStats = async (proposalId, fromAddress) => {
 
 export const getProposalVotes = async (proposalId) => {
   try {
-    const data = await db('vote').where({
+    const result = await db('vote').where({
       proposal_id: proposalId
     }).select();
-    log.debug({ data }, "getProposalVotes result");
+
+    log.debug({ result }, "getProposalVotes result");
+
+    const data = result.map(v => toVote(v));
+
     return {
       success: true,
       data,
@@ -162,7 +177,7 @@ export const getUsersRecentVotes = async (fromAddress, limit) => {
     log.debug({ data }, "getUsersRecentVotes result");
     return {
       success: true,
-      data: (typeof data.length !== 'undefined' && data.length > 0),
+      data,
     };
   } catch (error) {
     return {

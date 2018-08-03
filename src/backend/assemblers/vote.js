@@ -1,3 +1,4 @@
+import { clearUndefined } from './utils';
 
 /**
  * toVote serializes a vote
@@ -25,4 +26,34 @@ export const toVote = (vote) => {
     accepted : vote.accepted,
     dirty: vote.dirty,
   };
+};
+
+/**
+ * fromVote serializes a vote for the DB
+ * @param {object} - The vote to convert
+ * @return {object} - The newly assembled raw vote object
+ */
+export const fromVote = (vote, isPartial = false) => {
+  let result = {
+    vote_id: vote.id,
+    acceptance: vote.acceptance,
+    proposal_id: vote.proposalId,
+    from_address: vote.fromAddress,
+    survey_hash: vote.surveyHash,
+    notes: vote.notes,
+    overall: vote.overallFeeling,
+    standard: vote.standardOfWriting,
+    comprehensive: vote.comprehensiveCoverage,
+    viewpoints: vote.viewpointsFairness,
+    accuracy: vote.accuracy,
+    sources: vote.sources,
+    thorough: vote.thoroughResearch,
+    created: vote.createdAt,
+    updated: vote.updatedAt,
+    checklist: vote.checklist,
+    accepted : vote.accepted,
+    dirty: vote.dirty,
+  };
+  if (isPartial) result = clearUndefined(result);
+  return result;
 };
