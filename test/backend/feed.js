@@ -12,12 +12,7 @@ const {
 
 describe('Feed API', () => {
   before(async () => {
-    try {
-      await mock.mockUp(db);
-    } catch (err) {
-      if (err.indexOf('UNIQUE') === -1)
-        throw err;
-    }
+    await mock.mockUp(db);
   });
 
   it('should get votes for the feed', async () => {
