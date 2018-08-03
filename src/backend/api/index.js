@@ -59,3 +59,9 @@ export {
   addDraft,
   editDraft,
 } from './draft';
+export {
+  getFeed,
+  getFeedArticlesAccepted,
+  getFeedArticlesInReview,
+  getFeedVotes
+} from './feed';
