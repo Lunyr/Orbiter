@@ -3,7 +3,7 @@ import createButtons from './createButtons';
 import createForms from './createForms';
 import createTypography from './createTypography';
 
-const borderRadius = 4;
+const borderRadius = 2;
 
 const boxShadows = {
   large: '0 22px 60px 0 rgba(38,39,82,0.15)',
@@ -12,11 +12,10 @@ const boxShadows = {
 };
 
 const colorMapping = {
-  primary: Color('#f14e10'),
-  primaryLight: Color('#b6d5de'),
-  primaryDark: Color('#03566d'),
+  primary: Color('#626DFF'),
+  company: Color('#f14e10'),
   accent: Color('#ff845e'),
-  black: Color('#3c394c'),
+  black: Color('#1D1E22'),
   darkestGray: Color('#242C2F'),
   darkerGray: Color('#3A3F45'),
   darkGray: Color('#777777'),
@@ -28,6 +27,7 @@ const colorMapping = {
   success: Color('#6EB727'),
   warning: Color('#FFFF99'),
   error: Color('#F14E10'),
+  link: Color('#6589DE'),
 };
 
 const gradients = {
@@ -103,8 +103,8 @@ export default {
     spacing,
     config: {
       base: {
-        background: colorMapping.lightGrey,
-        color: colorMapping.darkGrey,
+        background: colorMapping.lightGray,
+        color: colorMapping.darkGray,
       },
       primary: {
         background: colorMapping.primary,

@@ -2,7 +2,7 @@
 export default (params) => {
   const { borderRadius, colors, fontSize, fontFamily, spacing } = params;
   const baseFieldStyle = {
-    height: 38,
+    height: 42,
     width: `calc(100% - ${spacing * 2}px)`,
     backgroundColor: colors.white.hsl().string(),
     border: '1px solid',
@@ -16,13 +16,13 @@ export default (params) => {
     transition: 'box-shadow 0.15s linear',
     fontFamily,
     '&:hover': {
-      boxShadow: `0 0 4px 0 ${colors.primary.hsl().string()}`,
+      boxShadow: `0 0 4px 0 ${colors.white.hsl().string()}`,
     },
     '&:active': {
-      boxShadow: `0 0 4px 0 ${colors.primary.hsl().string()}`,
+      boxShadow: `0 0 4px 0 ${colors.white.hsl().string()}`,
     },
     '&:focus': {
-      boxShadow: `0 0 4px 0 ${colors.primary.hsl().string()}`,
+      boxShadow: `0 0 4px 0 ${colors.white.hsl().string()}`,
     },
   };
   return {
