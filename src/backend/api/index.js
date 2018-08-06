@@ -65,3 +65,4 @@ export {
   getFeedArticlesInReview,
   getFeedVotes
 } from './feed';
+export { getDiscover } from './discover';
