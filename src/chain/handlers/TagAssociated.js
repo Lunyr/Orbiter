@@ -35,7 +35,7 @@ export default async (job) => {
   job.progress(50);
 
   // Briefly this event had an argument with the underscore
-  const assocResult = await associateTag(tagResult.data[0].tag_id, evData.editStreamId || evData._editStreamId);
+  const assocResult = await associateTag(tagResult.data[0].id, evData.editStreamId || evData._editStreamId);
 
   if (!assocResult.success || assocResult.data.length < 1) {
     throw new Error(assocResult.error);

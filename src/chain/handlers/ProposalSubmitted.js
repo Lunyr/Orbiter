@@ -50,8 +50,8 @@ export default async (job) => {
     // TODO: Check more values, like contentHash
     const conflictingProp = proposalCheck.data[0];
     if (
-      proposalCheck.edit_stream_id == evData.editStreamId
-      && proposalCheck.proposal_id == evData.proposalId
+      proposalCheck.editStreamId == evData.editStreamId
+      && proposalCheck.proposalId == evData.proposalId
     ) {
       return;
     } else {
@@ -62,18 +62,18 @@ export default async (job) => {
   job.progress(33);
 
   let proposal = {
-    proposal_id: evData.proposalId,
-    parent_id: evData.parentId == 0 ? null : evData.parentId,
-    proposal_state_id: ProposalState.IN_REVIEW,
-    edit_stream_id: evData.editStreamId,
-    from_address: evData.proposer,
-    content_hash: evData.contentHash,
-    doc_uuid: null,
-    image_offset: null,
-    hero_hash: null,
+    id: evData.proposalId,
+    parentId: evData.parentId == 0 ? null : evData.parentId,
+    state: ProposalState.IN_REVIEW,
+    editStreamId: evData.editStreamId,
+    fromAddress: evData.proposer,
+    contentHash: evData.contentHash,
+    uuid: null,
+    imageOffsetRatio: null,
+    heroImageHash: null,
     title: null,
-    reference_map: null,
-    additional_content: null,
+    referenceMap: null,
+    additionalContent: null,
     description: null,
     megadraft: null,
   }
@@ -120,12 +120,12 @@ export default async (job) => {
        * If we've tried 3 times and still can't get the IPFS data, it must be 
        * lost in the ether.  So, we're going to do our best to cope here
        */
-      proposal.doc_uuid = null;
-      proposal.image_offset = null;
-      proposal.hero_hash = null;
+      proposal.uuid = null;
+      proposal.imageOffsetRatio = null;
+      proposal.heroImageHash = null;
       proposal.title = null;
-      proposal.reference_map = null;
-      proposal.additional_content = null;
+      proposal.referenceMap = null;
+      proposal.additionalContent = null;
       proposal.description = null;
       proposal.megadraft = null;
 
@@ -166,12 +166,12 @@ export default async (job) => {
       }
 
       // Populate proposal with data from IPFS
-      proposal.doc_uuid = doc_uuid || null;
-      proposal.image_offset = content.imageOffsetRatio || null;
-      proposal.hero_hash = content.heroImageHash || null;
+      proposal.uuid = doc_uuid || null;
+      proposal.imageOffsetRatio = content.imageOffsetRatio || null;
+      proposal.heroImageHash = content.heroImageHash || null;
       proposal.title = content.title.replace(new RegExp('_', 'g'), ' ');
-      proposal.reference_map = refMap || null;
-      proposal.additional_content = additional || null;
+      proposal.referenceMap = refMap || null;
+      proposal.additionalContent = additional || null;
       proposal.description = content.description;
       proposal.megadraft = content.megadraft;
 
@@ -195,7 +195,7 @@ export default async (job) => {
       lang = content.lang;
     }
     await addEditStream({
-      edit_stream_id: evData.editStreamId,
+      id: evData.editStreamId,
       title: proposal.title,
       lang,
     });

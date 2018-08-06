@@ -7,7 +7,7 @@ import { TxType } from '../../shared/constants';
 import { 
   addNotification,
   getTag,
-  associateTag,
+  deleteTagAssociation,
 } from '../../backend/api';
 
 const log = logger.getLogger('TagDisassociated');
@@ -38,7 +38,7 @@ export default async (job) => {
 
   job.progress(50);
 
-  const deleteResult = await deleteTagAssociation(tagAssocResult.data[0].tag_id, editStreamId);
+  const deleteResult = await deleteTagAssociation(tagAssocResult.data[0].id, editStreamId);
 
   if (!deleteResult.success || deleteResult.data.length < 1) {
     throw new Error(deleteResult.error);

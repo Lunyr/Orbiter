@@ -1,8 +1,13 @@
 import { db } from '../db';
 import { TxState } from '../../shared/constants';
+import { getLogger } from '../../lib/logger';
+import { toTxStatus, fromTxStatus } from '../assemblers';
+
+const log = getLogger('api-watch');
 
 export const addWatch = async (obj) => {
   try {
+    obj = fromTxStatus(obj);
     const data = await db('watch').insert(obj);
     return {
       success: true,
@@ -18,7 +23,10 @@ export const addWatch = async (obj) => {
 
 export const getWatch = async (txHash) => {
   try {
-    const data = await db('watch').where({ hash: txHash });
+    const result = await db('watch').where({ hash: txHash });
+
+    const data = result.map(w => toTxStatus(w));
+
     return {
       success: true,
       data,
@@ -33,9 +41,12 @@ export const getWatch = async (txHash) => {
 
 export const getPendingWatch = async () => {
   try {
-    const data = await db('watch').where({
+    const result = await db('watch').where({
       transaction_state_id: TxState.PENDING
-    }).where('created', '<=', new Date(new Date() - (5 * 60 * 1000)));
+    }).where('created', '<=', new Date(new Date() - (5 * 60 * 1000)).toISOString());
+
+    const data = result.map(w => toTxStatus(w));
+
     return {
       success: true,
       data,

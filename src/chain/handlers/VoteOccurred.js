@@ -58,8 +58,8 @@ export default async (job) => {
     // TODO: Check more values, like contentHash
     const conflictingVote = voteCheck.data[0];
     if (
-      conflictingVote.vote_id == evData.voteId
-      && conflictingVote.proposal_id == evData.proposalId
+      conflictingVote.id == evData.voteId
+      && conflictingVote.proposalId == evData.proposalId
     ) {
       return;
     } else {
@@ -70,7 +70,7 @@ export default async (job) => {
   job.progress(20);
 
   // Add notification
-  await addNotification(proposal.from_address, 'VoteOccurred', {
+  await addNotification(proposal.fromAddress, 'VoteOccurred', {
       voter: evData.voter,
       proposalId: evData.proposalId,
       title: proposal.title,
@@ -78,19 +78,19 @@ export default async (job) => {
 
   // Populate what we can from the blockchain
   let vote = {
-    vote_id: evData.voteId,
-    proposal_id: evData.proposalId,
-    from_address: evData.voter,
+    id: evData.voteId,
+    proposalId: evData.proposalId,
+    fromAddress: evData.voter,
     acceptance: typeof evData.acceptance !== 'boolean' ? evData.acceptance : null,
-    survey_hash: evData.surveyHash,
+    surveyHash: evData.surveyHash,
     accepted: typeof evData.acceptance === 'boolean' ? evData.acceptance : null,
-    overall: 0,
-    standard: 0,
-    comprehensive: 0,
-    viewpoints: 0,
+    overallFeeling: 0,
+    standardOfWriting: 0,
+    comprehensiveCoverage: 0,
+    viewpointsFairness: 0,
     accuracy: 0,
     sources: 0,
-    thorough: 0,
+    thoroughResearch: 0,
     checklist: null,
     notes: "",
   }
@@ -128,13 +128,13 @@ export default async (job) => {
       if (typeof content.acceptance !== 'boolean') {
         Object.assign(vote, {
           notes: content.notes,
-          overall: content.overallFeeling,
-          standard: content.standardOfWriting,
-          comprehensive: content.comprehensiveCoverage,
-          viewpoints: content.viewpointsFairness,
+          overallFeeling: content.overallFeeling,
+          standardOfWriting: content.standardOfWriting,
+          comprehensiveCoverage: content.comprehensiveCoverage,
+          viewpointsFairness: content.viewpointsFairness,
           accuracy: content.accuracy,
           sources: content.sources,
-          thorough: content.thoroughResearch,
+          thoroughResearch: content.thoroughResearch,
         });
       }
       // New format since 2/2018

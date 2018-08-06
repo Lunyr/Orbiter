@@ -52,11 +52,11 @@ const cleanupVotes = () => {
 
         // Check each one no more than once per hour
         if (
-          typeof DIRTY_RECORDS.votes[vote.vote_id] === 'undefined'
-          || new Date() - DIRTY_RECORDS.votes[vote.vote_id] > 3600000
+          typeof DIRTY_RECORDS.votes[vote.id] === 'undefined'
+          || new Date() - DIRTY_RECORDS.votes[vote.id] > 3600000
         ) {
           // Look for the IPFS data
-          const hexHash = vote.survey_hash;
+          const hexHash = vote.surveyHash;
           const qmHash = multihashes.toB58String(multihashes.fromHexString('1220' + hexHash.slice(2)));
           const content = await utils.ipfsFetch(qmHash, 30000).catch(err => {
             // Ignore the timeout error
@@ -65,7 +65,7 @@ const cleanupVotes = () => {
             }
           });
 
-          DIRTY_RECORDS.votes[vote.vote_id] = new Date();
+          DIRTY_RECORDS.votes[vote.id] = new Date();
 
           // If we found it, update the vote
           if (content) {
@@ -73,13 +73,13 @@ const cleanupVotes = () => {
             if (typeof content.acceptance !== 'boolean') {
               updatedContent = {
                 notes: content.notes,
-                overall: content.overallFeeling,
-                standard: content.standardOfWriting,
-                comprehensive: content.comprehensiveCoverage,
-                viewpoints: content.viewpointsFairness,
+                overallFeeling: content.overallFeeling,
+                standardOfWriting: content.standardOfWriting,
+                comprehensiveCoverage: content.comprehensiveCoverage,
+                viewpointsFairness: content.viewpointsFairness,
                 accuracy: content.accuracy,
                 sources: content.sources,
-                thorough: content.thoroughResearch,
+                thoroughResearch: content.thoroughResearch,
               };
             }
             // New format since 2/2018
@@ -94,20 +94,20 @@ const cleanupVotes = () => {
             updatedContent.dirty = false;
 
             try {
-              log.info({ vote_id: vote.vote_id }, "Updating vote");
-              const updateResult = await updateVote(vote.vote_id, updatedContent);
+              log.info({ vote_id: vote.id }, "Updating vote");
+              const updateResult = await updateVote(vote.id, updatedContent);
               if (!updateResult.success) {
                 throw new Error(updateResult.error);
               }
             } catch (err) {
               log.error({ 
-                vote_id: vote.vote_id, 
+                vote_id: vote.id, 
                 error: err.message
               }, "Could not update vote!")
             }
           }
         } else {
-          log.debug({ vote_id: vote.vote_id }, "Content still missing in IPFS.")
+          log.debug({ vote_id: vote.id }, "Content still missing in IPFS.")
         }
       }
 
@@ -143,11 +143,11 @@ const cleanupProposals = () => {
 
         // Check each one no more than once per hour
         if (
-          typeof DIRTY_RECORDS.proposals[proposal.proposal_id] === 'undefined'
-          || new Date() - DIRTY_RECORDS.proposals[proposal.proposal_id] > 3600000
+          typeof DIRTY_RECORDS.proposals[proposal.id] === 'undefined'
+          || new Date() - DIRTY_RECORDS.proposals[proposal.id] > 3600000
         ) {
           // Look for the IPFS data
-          const hexHash = proposal.content_hash;
+          const hexHash = proposal.contentHash;
           const qmHash = multihashes.toB58String(multihashes.fromHexString('1220' + hexHash.slice(2)));
           const content = await utils.ipfsFetch(qmHash, 30000).catch(err => {
             // Ignore the timeout error
@@ -156,7 +156,7 @@ const cleanupProposals = () => {
             }
           });
 
-          DIRTY_RECORDS.proposals[proposal.proposal_id] = new Date();
+          DIRTY_RECORDS.proposals[proposal.id] = new Date();
 
           if (content) {
             let updatedContent = {};
@@ -190,12 +190,12 @@ const cleanupProposals = () => {
             }
 
             // Populate proposal with data from IPFS
-            updatedContent.doc_uuid = doc_uuid || null;
-            updatedContent.image_offset = content.imageOffsetRatio || null;
-            updatedContent.hero_hash = content.heroImageHash || null;
+            updatedContent.uuid = doc_uuid || null;
+            updatedContent.imageOffsetRatio = content.imageOffsetRatio || null;
+            updatedContent.heroImageHash = content.heroImageHash || null;
             updatedContent.title = content.title.replace(new RegExp('_', 'g'), ' ');
-            updatedContent.reference_map = refMap || null;
-            updatedContent.additional_content = additional || null;
+            updatedContent.referenceMap = refMap || null;
+            updatedContent.additionalContent = additional || null;
             updatedContent.description = content.description;
             updatedContent.megadraft = content.megadraft;
 
@@ -203,20 +203,20 @@ const cleanupProposals = () => {
             updatedContent.dirty = false
 
             try {
-              log.info({ proposal_id: proposal.proposal_id }, "Updating proposal");
-              const updateResult = await updateVote(proposal.proposal_id, updatedContent);
+              log.info({ proposal_id: proposal.id }, "Updating proposal");
+              const updateResult = await updateProposal(proposal.id, updatedContent);
               if (!updateResult.success) {
                 throw new Error(updateResult.error);
               }
             } catch (err) {
               log.error({ 
-                proposal_id: proposal.proposal_id, 
+                proposal_id: proposal.id, 
                 error: err.message
               }, "Could not update vote!")
             }
           } else {
             log.debug({ 
-              proposal_id: proposal.proposal_id
+              proposal_id: proposal.id
             }, "Content still missing in IPFS.");
           }
         }
