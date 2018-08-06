@@ -31,13 +31,14 @@ export const getArticles = async (limit, page) => {
       .select();
 
     // repack and assemble for lookup by proposal_id
-    let votesByProposal = {};
-    votesResult.map(v => {
-      if (!(votesByProposal[v.proposal_id] instanceof Array)) {
-        votesByProposal[v.proposal_id] = [];
+    const votesByProposal = votesResult.reduce((acc, v) => {
+      if (!Array.isArray(acc[v.proposal_id])) {
+        acc[v.proposal_id] = [];
       }
-      votesByProposal[v.proposal_id].push(toVote(v));
-    });
+      acc[v.proposal_id].push(toVote(v));
+
+      return acc;
+    }, {});
 
     // Repack and assemble objects for frontend use
     const data = result.reduce((acc, a) => {
