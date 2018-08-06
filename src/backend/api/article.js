@@ -41,7 +41,7 @@ export const getArticles = async (limit, page) => {
 
     // Repack and assemble objects for frontend use
     const data = result.reduce((acc, a) => {
-      if (!(acc instanceof Array)) acc = [toArticle(acc)];
+      if (!Array.isArray(acc)) acc = [toArticle(acc)];
       
       acc.push(toArticle(a));
 
