@@ -23,4 +23,4 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
         
-      - run: yarn test test/**/*.js
+      - run: xvfb-run yarn test test/**/*.js
