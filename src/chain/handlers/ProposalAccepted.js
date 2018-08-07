@@ -61,7 +61,7 @@ export default async (job) => {
   }
 
   if (editStreamPatch) {
-    const updateEditStreamResult = await updateEditStream(editStreamCheck.data[0].edit_stream_id, editStreamPatch);
+    const updateEditStreamResult = await updateEditStream(editStreamCheck.data[0].editStreamId, editStreamPatch);
     if (!updateEditStreamResult.success) {
       throw new Error(updateEditStreamResult.error);
     }
@@ -75,7 +75,7 @@ export default async (job) => {
   job.progress(80);
 
   // Create a notification for the user
-  const notifResult = await addNotification(proposal.from_address, 'ProposalAccepted', {
+  const notifResult = await addNotification(proposal.fromAddress, 'ProposalAccepted', {
     proposalId: evData.proposalId,
     editStreamId: evData.editStreamId,
     title: proposal.title,

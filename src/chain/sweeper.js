@@ -13,6 +13,7 @@ import {
   getWatch,
   setWatchState,
   getDraftByProposalId,
+  setDraftToDraft,
 } from '../backend/api';
 
 const log = logger.getLogger('sweeper');
@@ -95,11 +96,11 @@ export class Sweeper {
 
       if ( (txState === TxState.FAILURE || txState === TxState.DROPPED) && txs[i].type === 'publish') {
         
-        log.info({ proposal_id: txs[i].proposal_id }, "Reverting draft")
+        log.info({ proposal_id: txs[i].proposalId }, "Reverting draft")
         
-        const draft = await getDraftByProposalId(txs[i].proposal_id, DraftState.SUBMITTED);
+        const draft = await getDraftByProposalId(txs[i].proposalId, DraftState.SUBMITTED);
         if (draft.success && draft.data.length > 0) {
-          const draftUpdateResult = await setDraftToDraft(draft.data[0].draft_id);
+          const draftUpdateResult = await setDraftToDraft(draft.data[0].id);
           if (!draftUpdateResult.success) {
             throw new Error(draftUpdateResult.error);
           }
@@ -114,19 +115,19 @@ export class Sweeper {
 
         // Notify user
         await addNotification(txs[i].from_address, 'TxFailed', {
-          txHash: txs[i].hash,
+          txHash: txs[i].id,
           state:  txState,
           type:   txs[i].type,
         });
       } else if (txState === TxState.DROPPED) {
-        log.info({ txHash: txs[i].hash }, 'Found dropped transaction.');
+        log.info({ txHash: txs[i].id }, 'Found dropped transaction.');
 
         // Set failed in DB
         await this.setTransactionState(txs[i], txState);
 
         // Notify user
-        await addNotification(txs[i].from_address, 'TxDropped', {
-          txHash: txs[i].hash,
+        await addNotification(txs[i].fromAddress, 'TxDropped', {
+          txHash: txs[i].id,
           state:  txState,
           type:   txs[i].type,
         });
@@ -135,8 +136,8 @@ export class Sweeper {
         await this.setTransactionState(txs[i], txState);
 
         // Notify user
-        await addNotification(txs[i].from_address, 'TxAccepted', {
-          txHash: txs[i].hash,
+        await addNotification(txs[i].fromAddress, 'TxAccepted', {
+          txHash: txs[i].id,
           state:  txState,
           type:   txs[i].type,
         });
@@ -250,7 +251,7 @@ export class Sweeper {
     log.debug({ txHash: tx.hash }, 'Requesting transaction receipt.');
 
     // Get the receipt
-    let receipt = await this.getTransactionReceipt(tx.hash);
+    let receipt = await this.getTransactionReceipt(tx.id);
 
     if (receipt) {
       /**
@@ -264,7 +265,7 @@ export class Sweeper {
 
       if (isByzantium) {
         if (receipt.status === 0 || receipt.status === '0x0') {
-          log.info({ txHash: tx.hash }, "Transaction failed");
+          log.info({ txHash: tx.id }, "Transaction failed");
           return TxState.FAILURE;
         } else {
           return TxState.SUCCESS;
@@ -277,7 +278,7 @@ export class Sweeper {
         if (receipt.logs.length > 0 && receipt.gasUsed < 1e6) {
           return TxState.SUCCESS;
         } else {
-          log.info({ txHash: tx.hash }, "Transaction failed");
+          log.info({ txHash: tx.id }, "Transaction failed");
           return TxState.FAILURE;
         }
       }
@@ -293,11 +294,11 @@ export class Sweeper {
        *
        * TODO: review this logic
        */
-      let pendingTx = await this.getTransaction(tx.hash);
+      let pendingTx = await this.getTransaction(tx.id);
       if (!pendingTx) {
-        const cutoff = Date.parse(tx.created) + settings.sweeper.maxTransactionAge;
+        const cutoff = Date.parse(tx.createdAt) + settings.sweeper.maxTransactionAge;
         if (cutoff < new Date()) {
-          log.info({ txHash: tx.hash }, "Transaction dropped");
+          log.info({ txHash: tx.id }, "Transaction dropped");
           return TxState.DROPPED;
         } else {
           return TxState.PENDING;
@@ -311,11 +312,11 @@ export class Sweeper {
    * @param {object} A transaction
    */
   async setTransactionState(tx, state) {
-    log.debug({ txHash: tx.hash }, 'Setting transaction state in database.');
+    log.debug({ txHash: tx.id }, 'Setting transaction state in database.');
     // Set state in DB
-    const watchCheck = await getWatch(tx.hash);
+    const watchCheck = await getWatch(tx.id);
     if (watchCheck.success && watchCheck.data.length > 0) {
-      const updateResult = await setWatchState(tx.hash, state);
+      const updateResult = await setWatchState(tx.id, state);
       if (!updateResult.success) {
         throw new Error(updateResult.error);
       }

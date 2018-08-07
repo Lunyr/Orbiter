@@ -1,4 +1,7 @@
 import { db } from '../db';
+import { getLogger } from '../../lib/logger';
+
+const log = getLogger('api-transaction');
 
 export const addTx = async (tx) => {
   try {

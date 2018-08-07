@@ -66,7 +66,7 @@ export default async (job) => {
   job.progress(80);
 
   // Create a notification for the user
-  const notifResult = await addNotification(proposal.from_address, 'ProposalExpired', {
+  const notifResult = await addNotification(proposal.fromAddress, 'ProposalExpired', {
     proposalId: evData.proposalId,
     editStreamId: evData.editStreamId,
     title: proposal.title,
