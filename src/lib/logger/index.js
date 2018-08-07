@@ -14,7 +14,7 @@
 import os from 'os';
 import pjson from '../../../package.json';
 import bunyan from 'bunyan';
-import settings from '../../shared/settings';
+import { default as settings } from '../../shared/defaults';
 import Raven from 'raven';
 if (!settings.isDevelopment) {
   Raven.config(
@@ -37,7 +37,7 @@ if (!settings.isDevelopment) {
  * The general logger, that generally shouldn't be used except for root level 
  * components or edge cases.
  */
-let log = bunyan.createLogger({
+export let log = bunyan.createLogger({
   name: 'Lunyr-Services',
   level: settings.logging.logLevel,
 });
@@ -49,12 +49,8 @@ log.info("logger initialized.");
  * @param {string} The name of the module the logger is for
  * @return {Logger} The Logger
  */
-function getLogger(name) {
+export const getLogger = (name) => {
   return log.child({ module: name })
-}
+};
 
-module.exports = {
-  Raven,
-  log,
-  getLogger
-}
+export { Raven };

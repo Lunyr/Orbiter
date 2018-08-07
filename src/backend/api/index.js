@@ -66,3 +66,4 @@ export {
   getFeedVotes
 } from './feed';
 export { getDiscover } from './discover';
+export { getUserSettings, setUserSetting } from './setting';

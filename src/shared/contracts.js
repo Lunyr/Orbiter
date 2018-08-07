@@ -1,5 +1,5 @@
 import { web3 } from './web3'; 
-import settings from './settings';
+import { settings } from './settings';
 import { getLogger } from '../lib/logger';
 
 const log = getLogger('contracts');

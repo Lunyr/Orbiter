@@ -1,7 +1,7 @@
 /**
  * This is the job script.  It pulls jobs from the queue
  */
-import settings from '../shared/settings';
+import { settings } from '../shared/settings';
 import logger from '../lib/logger';
 import eventsQueue from './queue';
 import utils from './utils'

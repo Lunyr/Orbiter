@@ -5,7 +5,7 @@
  */
 import fetch from 'node-fetch';
 import logger from '../lib/logger';
-import settings from '../shared/settings';
+import { settings } from '../shared/settings';
 import { TxState, DraftState, ProposalState } from '../shared/constants';
 import {
   addNotification,

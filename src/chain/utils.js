@@ -1,12 +1,12 @@
 import multihashes from 'multihashes';
 import fetch from 'node-fetch';
 import ipfsAPI from 'ipfs-api';
-import logger from '../lib/logger';
-import settings from '../shared/settings';
+import { getLogger } from '../lib/logger';
+import { settings } from '../shared/settings';
 import { getWatch, setWatchState } from '../backend/api';
 import { TxState, TxType } from '../shared/constants';
 
-const log = logger.getLogger('events-utils');
+const log = getLogger('events-utils');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, {protocol: 'https'});
 export const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c77289f9ed46d843561e6';
 

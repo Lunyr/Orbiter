@@ -3,7 +3,7 @@ import consumer from './consumer';
 import handler from './handler';
 import janitor from './janitor';
 import sweeper from './sweeper';
-import settings from '../shared/settings';
+import { settings } from '../shared/settings';
 
 const log = getLogger('events');
 

@@ -1,5 +1,4 @@
 import { db } from '../db';
-import settings from '../../shared/settings';
 import { web3 } from '../../shared/web3';
 import { getLogger } from '../../lib/logger';
 import { toNotification, fromNotification } from '../assemblers';
