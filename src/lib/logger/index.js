@@ -37,7 +37,7 @@ if (!settings.isDevelopment) {
  * The general logger, that generally shouldn't be used except for root level 
  * components or edge cases.
  */
-export let log = bunyan.createLogger({
+export const log = bunyan.createLogger({
   name: 'Lunyr-Services',
   level: settings.logging.logLevel,
 });
