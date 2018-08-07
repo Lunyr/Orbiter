@@ -12,6 +12,10 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
 
+      - run: apt-get update
+
+      - run: apt-get -y install libgtkextra-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
+
       - run: yarn install --production=false
 
       - save_cache:
