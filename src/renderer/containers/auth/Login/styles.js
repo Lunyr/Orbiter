@@ -4,7 +4,7 @@ export default (theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
-    backgroundColor: theme.colors.darkerGray,
+    backgroundColor: theme.colors.darkestGray,
     color: theme.colors.white,
     height: '100%',
     width: '100%',
@@ -30,7 +30,7 @@ export default (theme) => ({
   },
   help: {
     ...theme.typography.body,
-    color: theme.colors.lightGray,
+    color: 'rgba(255, 255, 255, 0.9)',
   },
   help__link: {
     ...theme.typography.body,
@@ -41,5 +41,9 @@ export default (theme) => ({
     '&:hover': {
       textDecoration: 'underline',
     },
+  },
+  logo: {
+    marginRight: theme.spacing,
+    marginBottom: theme.spacing,
   },
 });

@@ -2,9 +2,20 @@ import React from 'react';
 import injectStyles from 'react-jss';
 import { Field, reduxForm } from 'redux-form';
 import { injectIntl } from 'react-intl';
-import { Forms, LoadingIndicator } from '../../../components';
+import { withRouter } from 'react-router-dom';
+import { ButtonGroup, Forms, LoadingIndicator } from '../../../components';
 
-const { ErrorBlock, Fieldset, Footer, Form, Group, InputField, Label, SubmitButton } = Forms;
+const {
+  ActionButton,
+  ErrorBlock,
+  Fieldset,
+  Footer,
+  Form,
+  Group,
+  InputField,
+  Label,
+  SubmitButton,
+} = Forms;
 
 class LoginForm extends React.Component {
   submit = (values) => {
@@ -12,7 +23,7 @@ class LoginForm extends React.Component {
   };
 
   render() {
-    const { classes, error, handleSubmit, intl, submitting } = this.props;
+    const { classes, error, handleSubmit, history, intl, submitting } = this.props;
     return (
       <Form className={classes.form} onSubmit={handleSubmit(this.submit)}>
         <ErrorBlock error={error} />
@@ -52,10 +63,18 @@ class LoginForm extends React.Component {
           </Group>
         </Fieldset>
         <Footer className={classes.footer}>
-          <SubmitButton
-            submitting={submitting}
-            value={intl.formatMessage({ id: 'login-button', defaultMessage: 'Log In' })}
-          />
+          <ButtonGroup>
+            <ActionButton
+              className={classes.cancel}
+              type="text"
+              onClick={history.goBack}
+              value="Cancel"
+            />
+            <SubmitButton
+              submitting={submitting}
+              value={intl.formatMessage({ id: 'login-button', defaultMessage: 'Log In' })}
+            />
+          </ButtonGroup>
         </Footer>
       </Form>
     );
@@ -89,8 +108,13 @@ const styles = (theme) => ({
   footer: {
     marginTop: theme.spacing,
   },
+  cancel: {
+    color: theme.colors.white,
+  },
 });
 
-export default reduxForm({
-  form: 'forms.login',
-})(injectIntl(injectStyles(styles)(LoginForm)));
+export default withRouter(
+  reduxForm({
+    form: 'forms.login',
+  })(injectIntl(injectStyles(styles)(LoginForm)))
+);

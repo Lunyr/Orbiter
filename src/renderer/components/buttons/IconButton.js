@@ -15,15 +15,17 @@ const IconButton = ({ id, className, classes, icon, tooltip, ...rest }) => (
         <span data-tip data-for={id}>
           {icon}
         </span>
-        <Tooltip id={id} place="top" type="dark" effect="float" aria-haspopup="true">
-          {tooltip}
-        </Tooltip>
+        {tooltip && (
+          <Tooltip id={id} place="top" type="dark" effect="float" aria-haspopup="true">
+            {tooltip}
+          </Tooltip>
+        )}
       </React.Fragment>
     }
   />
 );
 
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
     display: 'flex',
     alignItems: 'center',

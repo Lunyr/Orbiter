@@ -4,7 +4,7 @@ export default ({ height, multi }) => ({
   control: (base, { isDisabled }) => ({
     ...base,
     ...theme.forms.select,
-    border: 'none !important',
+    border: '1px solid rgba(0, 0, 0, 0.1)',
     color: isDisabled ? theme.colors.black : theme.colors.darkGray,
     background: isDisabled ? theme.colors.lightestGray : 'inherit',
     height,
@@ -13,7 +13,7 @@ export default ({ height, multi }) => ({
       height: 'auto',
     }),
   }),
-  menuPortal: styles => ({
+  menuPortal: (styles) => ({
     ...styles,
     zIndex: 10000,
   }),

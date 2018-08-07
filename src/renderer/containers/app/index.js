@@ -5,8 +5,8 @@ import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
 import Loadable from 'react-loadable';
 import { AsyncLoader, Modal, TwoColumn } from '../../components';
-import Sidebar from './Sidebar';
-import Header from './Header';
+import Sidebar from './Sidebar/';
+import Header from './Header/';
 import Footer from './Footer';
 
 const Login = Loadable({
