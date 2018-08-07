@@ -39,7 +39,14 @@ class App extends React.Component {
           <Header height={headerHeight} />
           <div className={classes.container}>
             <Switch location={isModal ? location : this.previousLocation}>
-              <Route component={() => <div>Another Page</div>} />
+              <Route exact path="/articles/unreviewed" component={() => <div>Peer Review</div>} />
+              <Route exact path="/tagging" component={() => <div>Tagging</div>} />
+              <Route exact path="/writing-manual" component={() => <div>Writing Manual</div>} />
+              <Route exact path="/advertising" component={() => <div>Advertising</div>} />
+              <Route exact path="/about" component={() => <div>About</div>} />
+              <Route exact path="/faq" component={() => <div>FAQ</div>} />
+              <Route exact path="/announcements" component={() => <div>Announcements</div>} />
+              <Route component={() => <div>Feed Here</div>} />
             </Switch>
             {isModal && (
               <React.Fragment>
