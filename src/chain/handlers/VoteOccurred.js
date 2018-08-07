@@ -118,9 +118,9 @@ export default async (job) => {
        * If we've tried 3 times and still can't get the IPFS data, it must be 
        * lost to the ether.  So, we're going to do our best to cope here
        */
-      if (job.opts.attempts < settings.eventLogConfig.attempts) {
+      if (job.attempts < settings.eventLogConfig.attempts) {
         throw new Error('Unable to find ipfs file @ ' + evData.contentHash)
-      } else if (job.opts.attempts >= settings.eventLogConfig.attempts) {
+      } else if (job.attempts >= settings.eventLogConfig.attempts) {
         vote.dirty = true;
       }
     } else {
