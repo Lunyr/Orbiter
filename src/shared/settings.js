@@ -1,47 +1,56 @@
-import db from '../backend/db';
+import _ from 'lodash';
+import { default as settings } from './defaults';
+import { getUserSettings } from '../backend/api';
 
-// TODO: Load user config and maybe some helper functions to set settings
+/**
+ * User Settings
+ * =============
+ * User settings(other than defaults) are stored in sqlite in a key/value type
+ * structure.  Use the data layer(API) call setUserSetting() to set any settings.
+ * The keys(name) of each setting should be a dot notation matching the defaults 
+ * settings structure.  For instance, to set the JSON-RPC provider, you would 
+ * set the setting with this key: 'jsonRPC.current' to the value of the HTTP
+ * endpoint.
+ *
+ * Example
+ * =======
+ *    await setUserSetting(
+ *      '0xdeadbeef...',
+ *      'jsonRPC.current',
+ *      'http://localhost:8545/'
+ *    );
+ */
 
-const isDevelopment = () => {
-  return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+/**
+ * loadUserSettings will overlay a user's saved settings from SQLite onto the 
+ * currently running settings.  It also returns the settings object should that
+ * be useful to you for some reason.
+ * @param {string} address it the user's address the settings are saved as
+ * @returns {object} the settings object
+ */
+export const loadUserSettings = async (address) => {
+  const settingResults = await getUserSettings(address);
+  if (!settingResults.success) throw new Error(settingResults.error);
+
+  // Overlay the DB results onto our defaults
+  settingResults.data.map(s => {
+    if (_.get(settings, s.name) !== 'undefined') {
+      let val = s.value;
+      if (typeof _.get(settings, s.name) === 'boolean') {
+        // Bools in SQLite are 1/0, so do a little coaxing
+        if (
+          (typeof s.value === 'string' && s.value === '1')
+          || (typeof s.value !== 'string' && s.value)
+        ) {
+          val = true;
+        } else {
+          val = false;
+        }
+      }
+      _.set(settings, s.name, val);
+    }
+  });
+  return settings;
 };
 
-const jsonRPC = {
-    mainnet: 'https://mainnet.infura.io/kHjl2LF2ra5jYPjrWdqB',
-    ropsten: 'https://ropsten.infura.io/kHjl2LF2ra5jYPjrWdqB',
-    lunyr_testnet: 'https://testrpc.lunyr.com/',
-    current: null,
-};
-jsonRPC.current = isDevelopment() ? jsonRPC.lunyr_testnet : jsonRPC.mainnet;
-
-export default {
-  isDevelopment: isDevelopment(),
-  privacy: {
-    errorReporting: true,
-  },
-  logging: {
-    logLevel: isDevelopment() ? 20 : 30
-  },
-  ipfs: {
-    //APIRoot: 'https://ipfs.infura.io:5001',
-    host: 'ipfs.infura.io',
-    port: 5001,
-  },
-  jsonRPC,
-  router: {
-    addresses: {
-        1: '0x98857edD3543D0b7000eCBcc804c82108D08fd30',
-        23332: '0x865d206cf5758541c0c49e8e76619eebdc30268c',
-    },
-    abi: [{"constant":true,"inputs":[{"name":"_name","type":"string"}],"name":"getTargetCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"string"}],"name":"get","outputs":[{"name":"","type":"address"},{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"string"},{"name":"_setter","type":"address"},{"name":"val","type":"bool"}],"name":"setSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newAdmin","type":"address"}],"name":"setAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"string"},{"name":"_payload","type":"bytes32"}],"name":"setAsset","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"string"},{"name":"idx","type":"uint256"}],"name":"getIdx","outputs":[{"name":"","type":"address"},{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"string"},{"name":"_addr","type":"address"},{"name":"_abiHash","type":"bytes32"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_nextContract","type":"address"}],"name":"setNext","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_name","type":"string"}],"name":"getAsset","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_name","type":"string"}],"name":"reset","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"nextContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"admin","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_admin","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":false,"stateMutability":"nonpayable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"name","type":"string"},{"indexed":false,"name":"addr","type":"address"},{"indexed":false,"name":"abiHash","type":"bytes32"}],"name":"NamethSet","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"name","type":"string"},{"indexed":false,"name":"abiHash","type":"bytes32"}],"name":"NamethSetAsset","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"name","type":"string"}],"name":"NamethReset","type":"event"}]
-  },
-  sentry: {
-    endpoint: 'https://fd8f67edaa0447b58574066bad752943:45704cf0de7f4fb7af9cd4ba67ba52e0@sentry.io/262240'
-  },
-  eventLogConfig: {
-    attempts: 5
-  },
-  sweeper: {
-    maxTransactionAge: 10 * 60 * 1000 // 10 minutes
-  }
-}
+export { settings };

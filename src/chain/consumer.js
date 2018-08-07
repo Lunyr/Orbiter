@@ -14,7 +14,7 @@ import abiDecoder from 'abi-decoder';
 import { getLogger, Raven } from '../lib/logger';
 import { ipfsFetch } from './utils';
 import eventsQueue from './queue';
-import settings from '../shared/settings';
+import { settings } from '../shared/settings';
 import { web3 } from '../shared/web3'; 
 
 const log = getLogger('consumer');

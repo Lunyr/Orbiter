@@ -203,6 +203,16 @@ export default async (db) => {
       t.text('megadraft');
     });
 
+    // User Settings
+    await db.schema.createTable('setting', (t) => {
+      t.increments('setting_id').primary();
+      t.timestamp('created').defaultTo(db.fn.now());
+      t.timestamp('updated').defaultTo(null);
+      t.string('hashed_address', 68);
+      t.string('name');
+      t.string('value');
+    });
+
   } catch (error) {
     console.error(error);
   }
