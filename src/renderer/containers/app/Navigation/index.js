@@ -136,22 +136,6 @@ const mapStateToProps = (state, { intl }) => {
         icon: <LocationSearchingIcon />,
       },
       {
-        to: '/vision',
-        display: intl.formatMessage({
-          id: 'link_vision',
-          defaultMessage: 'Vision',
-        }),
-        icon: <StarIcon />,
-      },
-      {
-        to: '/downloads',
-        display: intl.formatMessage({
-          id: 'link_desktopApplication',
-          defaultMessage: 'Downloads',
-        }),
-        icon: <DesktopIcon />,
-      },
-      {
         to: '/faq',
         display: intl.formatMessage({
           id: 'link_faq',
