@@ -16,6 +16,7 @@ import { ipfsFetch } from './utils';
 import eventsQueue from './queue';
 import { settings } from '../shared/settings';
 import { web3 } from '../shared/web3'; 
+import { initRouter } from '../shared/contracts'; 
 
 const log = getLogger('consumer');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, {protocol: 'http'});
@@ -91,8 +92,7 @@ const getAddresses = async () => {
   const networkId = await web3.eth.net.getId();
 
   // Get the instance of the contract
-  log.debug({ server: settings.jsonRPC.current, networkId, address: settings.router.addresses[networkId] }, "Connecting to routing contract");
-  const router = new web3.eth.Contract(settings.router.abi, settings.router.addresses[networkId]);
+  const router = await initRouter();
 
   let targets = [].concat.apply([], await Promise.all([
     await getContractInstances(router, 'peerreview'),

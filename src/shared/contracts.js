@@ -24,7 +24,7 @@ export const initRouter = async (addr) => {
   // If an address was provided, use it
   addr = addr ? addr : settings.router.addresses[NETWORK_ID];
 
-  log.debug({ abi: settings.router.abi, address: addr}, "Initializing router contract...");
+  log.debug({ networkId: NETWORK_ID, abi: settings.router.abi, address: addr}, "Initializing router contract...");
 
   // Init the router
   let router = new web3.eth.Contract(settings.router.abi, addr);
