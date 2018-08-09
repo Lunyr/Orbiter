@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import { default as settings } from './defaults';
-import { getUserSettings } from '../backend/api';
 
 /**
  * User Settings
@@ -29,11 +28,16 @@ import { getUserSettings } from '../backend/api';
  * @returns {object} the settings object
  */
 export const loadUserSettings = async (address) => {
-  const settingResults = await getUserSettings(address);
-  if (!settingResults.success) throw new Error(settingResults.error);
+  const settingResults = await await db('setting').where({
+    hashed_address: web3.utils.sha3(address),
+  });
+  if (settingResults.length < 1) {
+    log.debug("User has no settings to load");
+    return;
+  }
 
   // Overlay the DB results onto our defaults
-  settingResults.data.map(s => {
+  settingResults.map(s => {
     if (_.get(settings, s.name) !== 'undefined') {
       let val = s.value;
       if (typeof _.get(settings, s.name) === 'boolean') {

@@ -4,7 +4,7 @@
  * TODO: Refactor to use utility functions of this module
  */
 import fetch from 'node-fetch';
-import logger from '../lib/logger';
+import { getLogger, Raven } from '../lib/logger';
 import { settings } from '../shared/settings';
 import { TxState, DraftState, ProposalState } from '../shared/constants';
 import {
@@ -16,8 +16,7 @@ import {
   setDraftToDraft,
 } from '../backend/api';
 
-const log = logger.getLogger('sweeper');
-const Raven = logger.Raven;
+const log = getLogger('sweeper');
 
 /**
  * Sweeper is a pending transaction processor that handles things like setting

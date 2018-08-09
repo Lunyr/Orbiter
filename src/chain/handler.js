@@ -2,14 +2,13 @@
  * This is the job script.  It pulls jobs from the queue
  */
 import { settings } from '../shared/settings';
-import logger from '../lib/logger';
+import { getLogger, Raven } from '../lib/logger';
 import eventsQueue from './queue';
 import utils from './utils'
 import { addEvent, addTx } from '../backend/api';
 import { TxState, TxTypeTranslation } from '../shared/constants';
 
-const log = logger.getLogger('handler');
-const Raven = logger.Raven;
+const log = getLogger('handler');
 
 /**
  * @dev loadHandler will require() handler modules only when they haven't 
