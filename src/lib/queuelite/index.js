@@ -186,7 +186,6 @@ export default (tableName, maxAttempts) => {
   const process = async (handler) => {
     let interval = 5;
     const processOne = async (handler) => {
-      console.log("PINGPNG PINGPNG PINGPNG PINGPNG PINGPNG");
       const record = await get();
       if (record) {
         log.debug({ job_id: record.job_id }, "Processing record");
