@@ -4,8 +4,9 @@
  * TODO: Refactor to use utility functions of this module
  */
 import fetch from 'node-fetch';
-import { getLogger, Raven } from '../lib/logger';
+import { getLogger } from '../lib/logger';
 import { settings } from '../shared/settings';
+import { handleError } from '../shared/handlers';
 import { TxState, DraftState, ProposalState } from '../shared/constants';
 import {
   addNotification,
@@ -55,7 +56,7 @@ export class Sweeper {
             await that.processTransactions(txs);
           } catch(err) {
             log.error(err);
-            Raven.captureException(err);
+            handleError(err);
           }
         } else {
           log.debug('No pending transactions found.');

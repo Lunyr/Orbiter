@@ -1,5 +1,7 @@
 import { app } from 'electron';
 import findProcess from 'find-process';
+import { settings } from '../shared/settings';
+import { handleError } from '../shared/handlers';
 import installExtensions from './installExtensions';
 import windowConfig from './windowConfig';
 import createStore from './createStore';
@@ -7,7 +9,6 @@ import createTray from './createTray';
 import createWindow from './createWindow';
 import { db } from '../backend/db';
 import seed from '../backend/seed';
-import settings from '../shared/settings';
 import { getLogger, Raven } from '../lib/logger';
 import ChainDaemon from './ChainDaemon';
 
@@ -101,8 +102,8 @@ app.on("will-quit", (e) => {
 app.on("quit", (e) => { console.log("QUIT") });
 
 process.on('uncaughtException', (error) => {
-  if (isDevelopment) console.log(error);
   log.error({ errMsg: error.message }, "Unhandled error in Orbiter!");
+  handleError(error);
 });
 
 export { db };

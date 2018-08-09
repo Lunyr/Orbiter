@@ -1,6 +1,7 @@
 import path from 'path';
 import { spawn, execSync } from 'child_process';
 import { getLogger, Raven } from '../lib/logger';
+import { handleError } from '../shared/handlers';
 
 const log = getLogger('ChainDaemon');
 
@@ -19,7 +20,10 @@ export default class ChainDaemon {
     this.subprocess = spawn('node', [ChainDaemon.path], { stdio: ['pipe','inherit','inherit'] });
 
     this.subprocess.on('exit', () => this.fire('exit'));
-    this.subprocess.on('error', error => console.log(`ChainDaemon: ${error}`));
+    this.subprocess.on('error', error => {
+      log.error({ errorMessage: error.message }, "Unhandled error in Chain Daemon");
+      handleError(error);
+    });
 
     this.on('exit', this.quit);
   }
