@@ -79,7 +79,6 @@ describe('Draft Data API', () => {
     });
 
     assert(updateResult.success, "Draft update failed");
-    // TODO: Why does update() not return an array like insert()?
     assert.equal(updateResult.data, 1, "Should have updated 1 row");
 
     const afterResult = await getDraft(mock.UUID2);
