@@ -1,7 +1,7 @@
 import _ from 'lodash';
+import Web3 from 'web3';
 import { default as settings } from './defaults';
 import { db } from '../backend/db';
-import { web3 } from './web3';
 
 /**
  * User Settings
@@ -31,7 +31,7 @@ import { web3 } from './web3';
  */
 export const loadUserSettings = async (address) => {
   const settingResults = await await db('setting').where({
-    hashed_address: web3.utils.sha3(address),
+    hashed_address: Web3.utils.sha3(address),
   });
   if (settingResults.length < 1) {
     log.debug("User has no settings to load");
