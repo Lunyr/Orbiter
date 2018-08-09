@@ -221,8 +221,11 @@ const consumeEvents = (record, queue) => {
     setInterval(async () => {
       try {
         const logs = await getLogs(record, startBlock);
-        startBlock = processLogs(logs, queue);
-        log.debug({ startBlock }, "New startBlock");
+        const latestBlock = processLogs(logs, queue);
+        if (latestBlock != startBlock) {
+          log.info({ latestBlock }, "New startBlock");
+          startBlock = latestBlock;
+        }
       } catch (err) {
         log.error({ error: err.message }, "Unhandled error in consumeEvents()");
         if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
