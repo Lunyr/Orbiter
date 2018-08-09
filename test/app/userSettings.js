@@ -29,5 +29,5 @@ describe('User Settings', () => {
   it('should load user settings from DB', async () => {
     const newSettings = await loadUserSettings(mock.ADDRESS1);
     assert.isFalse(settings.privacy.errorReporting);
-  });
+  }).timeout(5000);
 });
