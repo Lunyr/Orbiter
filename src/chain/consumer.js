@@ -168,11 +168,14 @@ const getLogs = async (record, fromBlock) => {
  *  them and creates jobs for handlers to process later.
  * @param {array} logs are the individual event log records from the blockchain
  * @param {object} queue is the Bull job queue instance to add jobs to
+ * @returns {string} a hex number of the latest block number with a processed 
+ *    event
  */
 const processLogs = (logs, queue) => {
   if (typeof logs === 'undefined' || !logs) return null;
   if (!(logs instanceof Array)) throw new Error("Logs given to processLogs are not an array");
   let eventCount = 0;
+  let latestBlock = "0x0";
   log.debug(`Processing ${logs.length} logs`);
   for (let i=0; i<logs.length; i++) {
     try {
@@ -190,6 +193,7 @@ const processLogs = (logs, queue) => {
             event: decoded
           }
         );
+        latestBlock = logs[i].blockNumber;
       }
     } catch (err) {
       log.error({ message: err.message, evntLog: logs[i] }, "Error decoding logs!");
@@ -200,6 +204,7 @@ const processLogs = (logs, queue) => {
   if (eventCount === 0) {
     log.warn({ tx: logs[0].transactionHash }, "No logs were decoded from this tx.")
   }
+  return latestBlock;
 };
 
 /**
@@ -216,8 +221,8 @@ const consumeEvents = (record, queue) => {
     setInterval(async () => {
       try {
         const logs = await getLogs(record, startBlock);
-        // TODO: set startBlock to where we need it
-        processLogs(logs, queue);
+        startBlock = processLogs(logs, queue);
+        log.debug({ startBlock }, "New startBlock");
       } catch (err) {
         log.error({ error: err.message }, "Unhandled error in consumeEvents()");
         if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
