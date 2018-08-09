@@ -36,6 +36,22 @@ const IGNORE_CONTRACTS = [
 ];
 
 /**
+ * Return the next block number in hex string format provided the current block 
+ *    number.
+ * @param {mixed} blockNumber
+ * @return {string} the next block number
+ */
+const nextBlock = (blockNumber) => {
+  if (typeof blockNumber === 'string') {
+    return '0x' + (parseInt(blockNumber, 16) + 1).toString(16);
+  } else if (typeof blockNumber === 'number') {
+    return '0x' + (blockNumber + 1).toString(16);
+  } else {
+    throw new Error("Invalid blockNumber provided");
+  }
+};
+
+/**
  * Get the addresses and ABI for a Lunyr contract from our router contract
  * @param {object} router is the initialized contract instance of the router contract
  * @param {string} name is the name of the contract we're getting the instances for
@@ -202,7 +218,7 @@ const processLogs = (logs, queue) => {
     }
   }
   if (eventCount === 0) {
-    log.warn({ tx: logs[0].transactionHash }, "No logs were decoded from this tx.")
+    log.warn({ tx: logs.length > 0 ? logs[0].transactionHash : 'unknown' }, "No logs were decoded from this tx.")
   }
   return latestBlock;
 };
@@ -223,8 +239,8 @@ const consumeEvents = (record, queue) => {
         const logs = await getLogs(record, startBlock);
         const latestBlock = processLogs(logs, queue);
         if (latestBlock != startBlock) {
-          log.info({ latestBlock }, "New startBlock");
-          startBlock = latestBlock;
+          startBlock = nextBlock(latestBlock);
+          log.info({ contract: record.address, startBlock }, "New startBlock");
         }
       } catch (err) {
         log.error({ error: err.message }, "Unhandled error in consumeEvents()");
