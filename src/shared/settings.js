@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import { default as settings } from './defaults';
+import { db } from '../backend/db';
+import { web3 } from './web3';
 
 /**
  * User Settings
