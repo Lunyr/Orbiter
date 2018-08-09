@@ -18,5 +18,5 @@ describe('Discover Data API', () => {
 
     assert.equal(typeof result.data, 'object');
     assert.isAbove(result.data.en.categories.length, 0);
-  }).timeout(30000);
+  }).timeout(60000);
 });
