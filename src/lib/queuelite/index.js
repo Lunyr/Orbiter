@@ -75,6 +75,7 @@ export default (tableName, maxAttempts) => {
         job_id: job_id,
         args: JSON.stringify(obj)
       });
+      log.debug({ result }, "QueueLite.put() inserted");
     } catch (err) {
       if (typeof err.message !== 'undefined' && err.message.indexOf('UNIQUE') > -1) {
         log.debug({ job_id }, "Job already added")
@@ -83,7 +84,6 @@ export default (tableName, maxAttempts) => {
         throw err;
       }
     }
-    log.debug({ result }, "QueueLite.put() inserted");
     return result;
   };
 
