@@ -1,6 +1,6 @@
 # Orbiter
 
-[![CircleCI](https://circleci.com/gh/Lunyr/Orbiter/tree/master.svg?style=svg)](https://circleci.com/gh/Lunyr/Orbiter/tree/master)
+[![CircleCI](https://circleci.com/gh/Lunyr/Orbiter/tree/master.svg?style=svg&circle-token=3b4d992ec4996123226a816aaba2b7da60bce6ea)](https://circleci.com/gh/Lunyr/Orbiter/tree/master)
 
 A decentralized Lunyr electron application 
 
