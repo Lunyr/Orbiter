@@ -1,37 +1,20 @@
 /**
  * This is the event handler for PeerReview.CBNBurned
  */
-import logger from '../../lib/logger';
-import utils from '../utils';
+import { getLogger } from '../../lib/logger';
+import { handlerWrapper } from '../utils';
 import { 
   addNotification
 } from '../../backend/api';
 
-const log = logger.getLogger('CBNBurned');
+const EVENT_NAME = 'CBNBurned';
+const log = getLogger(EVENT_NAME);
 
-export default async (job) => {
-  log.debug("CBNBurned handler reached");
-
-  job.progress(1);
-
-  // Sanity check
-  if (job.data.event.name !== 'CBNBurned')
-    throw new Error('Invalid event for this handler');
-
-  const evData = utils.getEventData(job.data.event);
-  const txHash = job.data.txHash;
-
-  job.progress(10);
-  
-  await addNotification(evData.user, 'CBNBurned', {
-    user: evData.user,
-    cbnBurned: evData.cbnBurned,
+export default async (job, txHash, evData) => {
+  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+    await addNotification(evData.user, EVENT_NAME, {
+      user: evData.user,
+      cbnBurned: evData.cbnBurned,
+    });
   });
-
-  job.progress(50);
-
-  await utils.completeTransaction(txHash);
-
-  job.progress(100);
-
 };

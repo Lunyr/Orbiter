@@ -1,37 +1,24 @@
 /**
  * This is the event handler for PeerReview.WithdrawalAttemptFailedTransferFailure
  */
-import logger from '../../lib/logger';
-import utils from '../utils';
+import { getLogger } from '../../lib/logger';
+import { handlerWrapper } from '../utils';
 import { 
   addNotification
 } from '../../backend/api';
 
-const log = logger.getLogger('WithdrawalAttemptFailedTransferFailure');
+const EVENT_NAME = 'WithdrawalAttemptFailedTransferFailure';
+const log = getLogger(EVENT_NAME);
 
-export default async (job) => {
-  log.debug("WithdrawalAttemptFailedTransferFailure handler reached");
+export default async (job, txHash, evData) => {
+  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+    job.progress(10);
+    
+    await addNotification(evData.withdrawer, EVENT_NAME, {
+      withdrawer: evData.withdrawer,
+      amount: evData.amount,
+    });
 
-  job.progress(1);
-
-  // Sanity check
-  if (job.data.event.name !== 'WithdrawalAttemptFailedTransferFailure')
-    throw new Error('Invalid event for this handler');
-
-  const evData = utils.getEventData(job.data.event);
-  const txHash = job.data.txHash;
-
-  job.progress(10);
-  
-  await addNotification(evData.withdrawer, 'WithdrawalAttemptFailedTransferFailure', {
-    withdrawer: evData.withdrawer,
-    amount: evData.amount,
+    job.progress(50);
   });
-
-  job.progress(50);
-
-  await utils.completeTransaction(txHash, TxType.BID);
-
-  job.progress(100);
-
 };

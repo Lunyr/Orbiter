@@ -1,21 +1,14 @@
 /**
  * This is the event handler for PeerReview.WithdrawalAttemptFailedTooEarly
  */
+import { handlerWrapper } from '../utils';
 
-export default async (job) => {
-  log.debug({ job: job }, "WithdrawalAttemptFailedTooEarly handler reached");
+const EVENT_NAME = 'WithdrawalAttemptFailedTooEarly';
 
-  job.progress(1);
-
-  // Sanity check
-  if (job.data.event.name !== 'WithdrawalAttemptFailedTooEarly')
-    throw new Error('Invalid event for this handler');
-
+export default async (job, txHash, evData) => {
   /**
    * This isn't a thing anymore, so it's just a placeholder to keep the jobs 
    * from erroring.
    */
-
-  job.progress(100);
-
+  return await handlerWrapper(EVENT_NAME, txHash, job, null, () => {});
 };

@@ -4,7 +4,7 @@
 import { settings } from '../shared/settings';
 import { getLogger, Raven } from '../lib/logger';
 import eventsQueue from './queue';
-import utils from './utils'
+import { getEventData, getTransaction, getTransactionReceipt } from './utils'
 import { addEvent, addTx } from '../backend/api';
 import { TxState, TxTypeTranslation } from '../shared/constants';
 
@@ -73,13 +73,14 @@ const eventRouter = async (job) => {
       log.debug("Event known");
 
       // Assemble event object
-      const evData = utils.getEventData(job.data.event);
+      const evData = getEventData(job.data.event);
+      const txHash = job.data.txHash;
 
       // Add event to the DB
       try {
         await addEvent({
           contract_address: job.data.address,
-          transaction_hash: job.data.txHash,
+          transaction_hash: txHash,
           log_index: parseInt(job.data.logIndex),
           block_number: parseInt(job.data.blockNumber),
           name: job.data.event.name,
@@ -93,14 +94,14 @@ const eventRouter = async (job) => {
       }
 
       // Add tx to the DB
-      const txFromChain = await utils.getTransaction(job.data.txHash);
+      const txFromChain = await getTransaction(txHash);
       if (txFromChain) {
-        const receiptFromChain = await utils.getTransactionReceipt(job.data.txHash);
+        const receiptFromChain = await getTransactionReceipt(txHash);
         if (!receiptFromChain) {
-          throw new Error(`Unable to get the receipt for ${job.data.txHash}`);
+          throw new Error(`Unable to get the receipt for ${txHash}`);
         }
         let txToStore = { 
-          hash: job.data.txHash,
+          hash: txHash,
           nonce: txFromChain.nonce,
           from_address: txFromChain.from,
           to_address: txFromChain.to,
@@ -133,7 +134,7 @@ const eventRouter = async (job) => {
           }
         }
       } else {
-        log.error({ txHash: job.data.txHash }, "Unable to find transaction for event in DB or on chain.");
+        log.error({ txHash }, "Unable to find transaction for event in DB or on chain.");
       }
 
       // Load the handler
@@ -144,11 +145,11 @@ const eventRouter = async (job) => {
       }
 
       // Have the handler process the job
-      const handlerResult = await handler(job);
+      const handlerResult = await handler(job, txHash, evData);
       return handlerResult;
 
     } else {
-      log.warn("Event without handler!");
+      log.warn({ event: job.data.event.name }, "Event without handler!");
       throw new Error('No handler for this job');
     }
   } catch (err) {

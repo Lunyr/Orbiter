@@ -1,8 +1,8 @@
 /**
  * This is the event handler for Tagger.TagProposed
  */
-import logger from '../../lib/logger';
-import utils from '../utils';
+import { getLogger } from '../../lib/logger';
+import { handlerWrapper } from '../utils';
 import { TxType } from '../../shared/constants';
 import { 
   addNotification,
@@ -11,52 +11,39 @@ import {
   addTagProposal,
 } from '../../backend/api';
 
-const log = logger.getLogger('TagProposed');
+const EVENT_NAME = 'TagProposed';
+const log = getLogger(EVENT_NAME);
 
-export default async (job) => {
-  log.debug("TagProposed handler reached");
+export default async (job, txHash, evData) => {
+  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+    job.progress(10);
 
-  job.progress(1);
+    let tagCheck = await getTag(evData.tagName);
 
-  // Sanity check
-  if (job.data.event.name !== 'TagProposed')
-    throw new Error('Invalid event for this handler');
+    job.progress(50);
 
-  const evData = utils.getEventData(job.data.event);
-  const txHash = job.data.txHash;
-
-  job.progress(10);
-
-  const tagCheck = await getTag(evData.tagName);
-
-  job.progress(50);
-
-  if (!tagCheck.success || tagCheck.data.length < 1) {
-    tagCheck = await addTag(evData.tagName);
-    if (!tagCheck.sucess) {
-      throw new Error(tagCheck.error);
+    if (!tagCheck.success || tagCheck.data.length < 1) {
+      tagCheck = await addTag(evData.tagName);
+      if (!tagCheck.sucess) {
+        throw new Error(tagCheck.error);
+      }
     }
-  }
 
-  job.progress(65);
+    job.progress(65);
 
-  const tagPropResult = await addTagProposal(tagCheck.data[0].tag_id, evData.creator);
-  if (!tagPropResult.success) {
-    throw new Error(tagPropResult.error);
-  }
+    const tagPropResult = await addTagProposal(tagCheck.data[0].tag_id, evData.creator);
+    if (!tagPropResult.success) {
+      throw new Error(tagPropResult.error);
+    }
 
-  job.progress(80);
+    job.progress(80);
 
-  // Add notification
-  await addNotification(evData.creator, 'TagProposed', {
-    proposer: evData.creator,
-    tagName: evData.tagName,
+    // Add notification
+    await addNotification(evData.creator, EVENT_NAME, {
+      proposer: evData.creator,
+      tagName: evData.tagName,
+    });
+
+    job.progress(90);
   });
-
-  job.progress(90);
-
-  await utils.completeTransaction(txHash, TxType.TAG);
-
-  job.progress(100);
-
 };
