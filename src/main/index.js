@@ -7,12 +7,12 @@ import createTray from './createTray';
 import createWindow from './createWindow';
 import { db } from '../backend/db';
 import seed from '../backend/seed';
-import settings from '../shared/settings';
+import { settings } from '../shared/settings';
 import { getLogger, Raven } from '../lib/logger';
 import ChainDaemon from './ChainDaemon';
 
 const log = getLogger('orbiter');
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = settings.isDevelopment;
 
 // Just for remote loading the initial client state
 global.state = {};
@@ -59,7 +59,7 @@ const onReady = async () => {
   if (!isDaemonRunning) {
     chainDaemon = new ChainDaemon();
     chainDaemon.on('exit', () => {
-      if (!settings.isDevelopment) {
+      if (!isDevelopment) {
         chainDaemon = null;
       }
     });
