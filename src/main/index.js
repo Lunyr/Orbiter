@@ -9,7 +9,6 @@ import createTray from './createTray';
 import createWindow from './createWindow';
 import { db } from '../backend/db';
 import seed from '../backend/seed';
-import { settings } from '../shared/settings';
 import { getLogger, Raven } from '../lib/logger';
 import ChainDaemon from './ChainDaemon';
 
