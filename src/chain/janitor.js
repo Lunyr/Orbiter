@@ -161,22 +161,10 @@ const cleanupProposals = () => {
           if (content) {
             let updatedContent = {};
             /**
-             * This is some weird stuff with postgres.  If the JSON is an array, it 
-             * must be inserted using a string.  Otherwise, PG tries to convert the 
-             * value into a postgres array instead of a JSON array.  This is dumb, I
-             * don't know why.
-             *
-             * Ref: https://github.com/brianc/node-postgres/issues/442
+             * all JSON must be a string for SQLite
              */
-            let refMap = content.referenceMap;
-            if (typeof refMap === 'object' && refMap instanceof Array) {
-              refMap = JSON.stringify(refMap);
-            }
-
-            let additional = content.additionalContent ;
-            if (typeof additional === 'object' && additional instanceof Array) {
-              additional = JSON.stringify(additional);
-            }
+            let refMap = JSON.stringify(content.referenceMap);
+            let additional = JSON.stringify(content.additionalContent);
 
             /**
              * Early on, there were a bunch of UUIDs submitted and saved to IPFS with
