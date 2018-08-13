@@ -67,3 +67,4 @@ export {
 } from './feed';
 export { getDiscover } from './discover';
 export { getUserSettings, setUserSetting } from './setting';
+export { searchArticles } from './search';
