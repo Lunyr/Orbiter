@@ -26,4 +26,11 @@ describe('Search API', () => {
       'Search term not found in expected fields'
     );
   });
+
+  it('should find articles with multiple search terms', async () => {
+    const searchTerm = 'bunch proposals';
+    const result = await searchArticles(searchTerm);
+    assert.isTrue(result.success, result.error);
+    assert.isAbove(result.data.length, 1, 'Should have found multiple articles');
+  });
 });

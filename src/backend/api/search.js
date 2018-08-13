@@ -7,7 +7,7 @@ const log = getLogger('api-search');
 
 export const searchArticles = async (term) => {
   try {
-    const searchTerm = `%${term}%`;
+    const searchTerm = `%${term.replace(/\s+/g, '%')}%`;
     const result = await db.raw(
       `SELECT p.*
         FROM proposal p
