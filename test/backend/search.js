@@ -15,7 +15,7 @@ describe('Search API', () => {
   });
 
   it('should find an article by search term', async () => {
-    const searchTerm = 'article';
+    const searchTerm = 'weirdos';
     const result = await searchArticles(searchTerm);
     assert.isTrue(result.success, result.error);
     assert.equal(result.data.length, 1, 'Should have found one article');
