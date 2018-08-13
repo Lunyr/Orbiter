@@ -16,7 +16,7 @@ import pjson from '../../../package.json';
 import bunyan from 'bunyan';
 import { default as settings } from '../../shared/defaults';
 import Raven from 'raven';
-if (!settings.isDevelopment) {
+if (!settings.isDevelopment && settings.privacy.errorReporting) {
   Raven.config(
     settings.sentry.endpoint,
     {

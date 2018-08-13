@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import ipfsAPI from 'ipfs-api';
 import { getLogger } from '../lib/logger';
 import { settings } from '../shared/settings';
+import { handleError } from '../shared/handlers';
 import { getWatch, setWatchState } from '../backend/api';
 import { TxState, TxType } from '../shared/constants';
 
@@ -114,8 +115,7 @@ export const getTransaction = async (txHash) => {
   const result = await fetch(settings.jsonRPC.current, options)
     .catch(err => { 
       log.error({ err: err }, 'error fetching from nodes'); 
-      if (!settings.isDevelopment) Raven.captureException(err);
-      else console.log(err);
+      handleError(err);
     });
   
   if (!result) return null;
@@ -155,8 +155,7 @@ export const getTransactionReceipt = async (txHash) => {
   const result = await fetch(settings.jsonRPC.current, options)
     .catch(err => { 
       log.error({ err: err }, 'error fetching from nodes'); 
-      if (!settings.isDevelopment) Raven.captureException(err);
-      else console.log(err);
+      handleError(err);
     });
   
   if (!result) return null;
@@ -196,8 +195,7 @@ export const getBlockByNumber = async (blockNo) => {
   const result = await fetch(settings.jsonRPC.current, options)
     .catch(err => { 
       log.error({ err: err }, 'error fetching from nodes'); 
-      if (!settings.isDevelopment) Raven.captureException(err);
-      else console.log(err);
+      handleError(err);
     });
   
   if (!result) return null;

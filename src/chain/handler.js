@@ -2,11 +2,12 @@
  * This is the job script.  It pulls jobs from the queue
  */
 import { settings } from '../shared/settings';
-import { getLogger, Raven } from '../lib/logger';
+import { getLogger } from '../lib/logger';
 import eventsQueue from './queue';
 import { getEventData, getTransaction, getTransactionReceipt } from './utils'
 import { addEvent, addTx } from '../backend/api';
 import { TxState, TxTypeTranslation } from '../shared/constants';
+import { handleError } from '../shared/handlers';
 
 const log = getLogger('handler');
 
@@ -24,8 +25,7 @@ const loadHandler = (name) => {
     return LOADED_HANDLERS[name];
   } catch (err) {
     log.error({ error: err.message }, "Error loading handler!");
-    if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
-    else console.log(err);
+    handleError(err);
   }
 }
 
@@ -155,8 +155,7 @@ const eventRouter = async (job) => {
   } catch (err) {
     // Make sure we know about this error
     log.error({ error: err.message }, "Unhandled error in a handler!");
-    if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
-    else console.log(err);
+    handleError(err);
     // Make sure the queue knows this errored
     throw err;
   }
