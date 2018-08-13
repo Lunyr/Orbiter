@@ -1,9 +1,9 @@
-import { getLogger, Raven } from '../lib/logger';
+import { getLogger } from '../lib/logger';
+import { handleError } from '../shared/handlers';
 import consumer from './consumer';
 import handler from './handler';
 import janitor from './janitor';
 import sweeper from './sweeper';
-import { settings } from '../shared/settings';
 
 const log = getLogger('events');
 
@@ -24,8 +24,7 @@ export const init = () => {
     log.error({ msg: msg }, "Services exited abnormally!");
   }).catch((err) => {
     log.error({ error: err.message }, "Unhandled error in Services!");
-    if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
-    else console.log(err);
+    handleError(err);
   });
 };
 

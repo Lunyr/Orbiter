@@ -11,12 +11,13 @@ import Web3 from 'web3';
 import multihashes from 'multihashes';
 import ipfsAPI from 'ipfs-api';
 import abiDecoder from 'abi-decoder';
-import { getLogger, Raven } from '../lib/logger';
+import { getLogger } from '../lib/logger';
 import { ipfsFetch } from './utils';
 import eventsQueue from './queue';
 import { settings } from '../shared/settings';
 import { web3 } from '../shared/web3'; 
 import { initRouter } from '../shared/contracts'; 
+import { handleError } from '../shared/handlers';
 
 const log = getLogger('consumer');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, {protocol: 'http'});
@@ -90,8 +91,7 @@ const getContractInstances = async (router, name) => {
         })
       } catch (err) {
         log.error({ hash: abiHash, contract: name, address: addr }, "Unable to fetch ABI for contract!")
-        if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
-        else console.log(err);
+        handleError(err);
       }
     }
   }
@@ -105,8 +105,6 @@ const getContractInstances = async (router, name) => {
  * @return {object} - Object of addresses with keys as contract name
  */
 const getAddresses = async () => {
-  const networkId = await web3.eth.net.getId();
-
   // Get the instance of the contract
   const router = await initRouter();
 
@@ -115,8 +113,6 @@ const getAddresses = async () => {
     await getContractInstances(router, 'auctioneer'),
     await getContractInstances(router, 'tagger'),
   ]));
-
-  //log.debug({ targets }, "Consumer TARGETS");
 
   // Get the Addresses we need
   return targets;
@@ -163,8 +159,7 @@ const getLogs = async (record, fromBlock) => {
   const result = await fetch(settings.jsonRPC.current, options)
     .catch(err => { 
       log.error({ err: err }, 'error fetching from infura'); 
-      if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
-      else console.log(err);
+      handleError(err);
     });
 
   FETCH_IN_PROGRESS[record.address] = false;
@@ -213,8 +208,7 @@ const processLogs = (logs, queue) => {
       }
     } catch (err) {
       log.error({ message: err.message, evntLog: logs[i] }, "Error decoding logs!");
-      if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
-      else console.log(err);
+      handleError(err);
     }
   }
   if (eventCount === 0) {
@@ -244,8 +238,7 @@ const consumeEvents = (record, queue) => {
         }
       } catch (err) {
         log.error({ error: err.message }, "Unhandled error in consumeEvents()");
-        if (!settings.isDevelopment && typeof process.env.DEBUG === 'undefined') Raven.captureException(err);
-        else console.log(err);
+        handleError(err);
       }
     }, 30000);
   });
