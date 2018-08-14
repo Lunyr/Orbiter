@@ -90,6 +90,26 @@ const mockUp = async (db) => {
     });
   }
 
+  // Create some test data for search
+  await db('edit_stream').insert({ edit_stream_id: 74, title: 'Prose', lang: 'en' });
+
+  await db('proposal').insert({
+    proposal_id: 74,
+    proposal_state_id: ProposalState.ACCEPTED,
+    edit_stream_id: 75,
+    from_address: ADDRESS1,
+    image_offset: 0.1,
+    content_hash: HASH1,
+    lang: 'en',
+    doc_uuid: UUID1,
+    hero_hash: HASH2,
+    title: 'Prose',
+    reference_map: '[]',
+    additional_content: '[]',
+    description: 'This is awful prose in a thing some weirdos might call an article',
+    megadraft: null
+  });
+
   // Add an active tag, inactive tag, and accompanying info
   await db('tag').insert({ active: true, name: 'first' });
   await db('tag_proposal').insert({ tag_id: 1, from_address: ADDRESS1 });
