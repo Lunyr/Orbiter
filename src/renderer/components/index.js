@@ -5,6 +5,7 @@ export { default as Avatar } from './Avatar';
 export { default as Button } from './buttons/Base';
 export { default as ButtonGroup } from './buttons/ButtonGroup';
 export { default as Card } from './Card';
+export { default as Editor } from './Editor';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as Forms } from './forms';
 export { default as Hero } from './Hero';
@@ -16,10 +17,10 @@ export { default as Modal } from './Modal';
 export { default as NavList } from './NavList';
 export { default as Page } from './Page';
 export { default as Select } from './selects/Select';
+export { default as TitleEditor } from './TitleEditor';
 export { default as TwoColumn } from './TwoColumn';
 
 // 3rd party integration
 
 export { default as AutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer/AutoSizer';
 export { default as List } from 'react-virtualized/dist/commonjs/List/List';
-export { default as TextAreaAutoSize } from 'react-textarea-autosize';

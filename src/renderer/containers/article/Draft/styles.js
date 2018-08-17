@@ -32,14 +32,9 @@ export default (theme) => ({
     paddingLeft: theme.spacing,
     paddingRight: theme.spacing,
   },
-  titleEditor: {
-    border: 'none',
-    outline: 'none',
-    resize: 'none',
-    fontSize: '1.5rem',
-  },
   editor: {
     display: 'flex',
+    flexGrow: 1,
     paddingLeft: theme.spacing,
     paddingTop: theme.spacing * 2,
   },

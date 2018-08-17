@@ -2,67 +2,89 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { injectIntl } from 'react-intl';
+import { editorStateFromRaw } from 'megadraft';
+import {
+  setDraftEditorState,
+  setDraftTitle,
+} from '../../../../shared/redux/modules/article/draft/actions';
+import { Editor, ErrorBoundary, Hero, TitleEditor } from '../../../components';
 import styles from './styles';
-import { Hero, TextAreaAutoSize } from '../../../components';
-
-const TitleEditor = ({ className, disabled, onChange, placeholder, title }) => (
-  <TextAreaAutoSize
-    rows={1}
-    placeholder={placeholder}
-    className={className}
-    onChange={onChange}
-    value={title}
-    disabled={disabled}
-  />
-);
-
-const Editor = ({ className }) => <div className={className}>Put Megadraft Editor Content</div>;
 
 const AddtionalContent = () => <div>Additional Content</div>;
 
 const References = () => <div>References</div>;
 
 class Draft extends React.Component {
+  handleAfterUpload = (upload) => {
+    console.log('upload hash', upload);
+  };
+
+  handleDraftChange = (e) => {
+    this.props.setDraftTitle(e.target.value);
+  };
+
+  handleEditorChange = (editorState) => {
+    this.props.setDraftEditorState(editorState);
+  };
+
   render() {
     const { classes, draft, intl } = this.props;
-    const { title, imageHash } = draft;
+    const { editorState, title, imageHash } = draft;
+    console.log(editorState);
     return (
-      <div className={classes.container}>
-        <header className={classes.header}>
-          <Hero imageHash={imageHash} />
-        </header>
-        <section className={classes.draft}>
-          <div className={classes.main}>
-            <div className={classes.title}>
-              <TitleEditor
-                className={classes.titleEditor}
-                onChange={(value) => console.log('changed', value)}
-                placeholder={intl.formatMessage({
-                  id: 'editor_titlePlaceholder',
-                  defaultMessage: 'Title here...',
-                })}
-                title={title}
-              />
+      <ErrorBoundary
+        errorMsg={intl.formatMessage({
+          id: 'editor_error',
+          defaultMessage:
+            "Oh no, something went wrong! It's okay though, please refresh and your content should return.",
+        })}>
+        <div className={classes.container}>
+          <header className={classes.header}>
+            <Hero imageHash={imageHash} />
+          </header>
+          <section className={classes.draft}>
+            <div className={classes.main}>
+              <div className={classes.title}>
+                <TitleEditor
+                  onChange={this.handleDraftChange}
+                  placeholder={intl.formatMessage({
+                    id: 'editor_titlePlaceholder',
+                    defaultMessage: 'Title here...',
+                  })}
+                  value={title}
+                />
+              </div>
+              <div className={classes.editor}>
+                <Editor
+                  afterUpload={this.handleAfterUpload}
+                  editorState={editorState}
+                  onChange={this.handleEditorChange}
+                />
+              </div>
             </div>
-            <Editor className={classes.editor} />
-          </div>
-          <aside className={classes.aside}>
-            <AddtionalContent />
-          </aside>
-        </section>
-        <footer className={classes.footer}>
-          <References />
-        </footer>
-      </div>
+            <aside className={classes.aside}>
+              <AddtionalContent />
+            </aside>
+          </section>
+          <footer className={classes.footer}>
+            <References />
+          </footer>
+        </div>
+      </ErrorBoundary>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  draft: {
-    title: '',
-    imageHash: '',
-  },
+const mapStateToProps = ({ article: { draft } }) => ({
+  draft,
 });
 
-export default connect(mapStateToProps)(injectIntl(injectStyles(styles)(Draft)));
+const mapDispatchToProps = {
+  setDraftEditorState,
+  setDraftTitle,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectIntl(injectStyles(styles)(Draft)));
