@@ -30,14 +30,14 @@ const onReady = async () => {
   if (isDevelopment) {
     await installExtensions();
   }
-  
+
   // Test seeding of db
   if (testSeed && db) {
     try {
       await seed(db);
     } catch (err) {
       if (err.message.indexOf('already exists') > -1) {
-        log.info("Database already created");
+        log.info('Database already created');
       } else {
         throw err;
       }
@@ -55,7 +55,7 @@ const onReady = async () => {
 
   // Start the daemon
   const processList = await findProcess('name', 'chain-daemon');
-  if (isDevelopment) console.log("Process list: ", processList);
+  if (isDevelopment) console.log('Process list: ', processList);
   const isDaemonRunning = processList.length > 0;
   if (!isDaemonRunning) {
     chainDaemon = new ChainDaemon();
@@ -78,31 +78,39 @@ const onWindowClosed = () => {
 /**
  * Kill hardware acceleration on linux.  Window won't ever load/render so the
  * window won't show.  The cause is currently unknown, but possibly related to
- * one of these issues: 
+ * one of these issues:
  *  - https://github.com/electron/electron/issues/9485
  *  - https://github.com/resin-io/resin-electronjs/issues/69
  */
 if (process.platform === 'linux') {
-  log.info("Disabling hardware acceleration on Linux systems");
+  log.info('Disabling hardware acceleration on Linux systems');
   app.disableHardwareAcceleration();
 }
 
 // Event Handlers
 
 app.on('ready', onReady);
-app.on('window-all-closed', (e) => { 
-  console.log("WINDOW-ALL-CLOSED");
+
+app.on('window-all-closed', (e) => {
+  console.log('WINDOW-ALL-CLOSED');
   onWindowClosed();
 });
-app.on("before-quit", (e) => { console.log("BEFORE-QUIT") });
-app.on("will-quit", (e) => { 
-  console.log("WILL-QUIT"); 
+
+app.on('before-quit', (e) => {
+  console.log('BEFORE-QUIT');
+});
+
+app.on('will-quit', (e) => {
+  console.log('WILL-QUIT');
   chainDaemon.quit();
 });
-app.on("quit", (e) => { console.log("QUIT") });
+
+app.on('quit', (e) => {
+  console.log('QUIT');
+});
 
 process.on('uncaughtException', (error) => {
-  log.error({ errMsg: error.message }, "Unhandled error in Orbiter!");
+  log.error({ errMsg: error.message }, 'Unhandled error in Orbiter!');
   handleError(error);
 });
 

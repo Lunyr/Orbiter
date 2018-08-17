@@ -1,4 +1,4 @@
-import { getLogger, Raven } from '../lib/logger';
+import { Raven } from '../lib/logger';
 import { settings } from './settings';
 
 export const handleError = (err) => {

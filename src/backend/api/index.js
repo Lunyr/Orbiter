@@ -1,18 +1,8 @@
-export { default as testAPI } from './test';
 export { addTx, getAddressByTx } from './transaction';
 export { getWatch, getPendingWatch, addWatch, setWatchState } from './watch';
 export { addEvent } from './event';
-export {
-  addNotification,
-  getNotifications,
-  markRead,
-  getUnread
-} from './notification';
-export {
-  getEditStream,
-  addEditStream,
-  updateEditStream
-} from './editstream';
+export { addNotification, getNotifications, markRead, getUnread } from './notification';
+export { getEditStream, addEditStream, updateEditStream } from './editstream';
 export {
   getProposal,
   getDirtyProposals,
@@ -50,21 +40,13 @@ export {
   getTagProposals,
   addTagProposal,
   associateTag,
-  getTagAssociation
+  getTagAssociation,
 } from './tag';
-export {
-  getDraft,
-  getDraftByProposalId,
-  setDraftToDraft,
-  addDraft,
-  editDraft,
-} from './draft';
-export {
-  getFeed,
-  getFeedArticlesAccepted,
-  getFeedArticlesInReview,
-  getFeedVotes
-} from './feed';
+export { getDraft, getDraftByProposalId, setDraftToDraft, addDraft, editDraft } from './draft';
+export { getFeed, getFeedArticlesAccepted, getFeedArticlesInReview, getFeedVotes } from './feed';
 export { getDiscover } from './discover';
 export { getUserSettings, setUserSetting } from './setting';
 export { searchArticles } from './search';
+
+export { default as TestAPI } from './test';
+export { default as Web3API } from './web3';

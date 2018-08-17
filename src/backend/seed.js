@@ -119,8 +119,14 @@ export default async (db) => {
     await db('transaction_type').insert({ transaction_type_id: 'other', name: 'Other' });
     await db('transaction_type').insert({ transaction_type_id: 'vote', name: 'Vote' });
     await db('transaction_type').insert({ transaction_type_id: 'publish', name: 'Publish' });
-    await db('transaction_type').insert({ transaction_type_id: 'transferEth', name: 'Transfer of Ether' });
-    await db('transaction_type').insert({ transaction_type_id: 'transferLUN', name: 'Transfer of LUN' });
+    await db('transaction_type').insert({
+      transaction_type_id: 'transferEth',
+      name: 'Transfer of Ether',
+    });
+    await db('transaction_type').insert({
+      transaction_type_id: 'transferLUN',
+      name: 'Transfer of LUN',
+    });
     await db('transaction_type').insert({ transaction_type_id: 'bid', name: 'Ad bid' });
 
     await db.schema.createTable('transaction_state', (t) => {
@@ -188,7 +194,9 @@ export default async (db) => {
     await db.schema.createTable('draft', (t) => {
       t.increments('draft_id').primary();
       t.integer('parent_id').references('draft.draft_id');
-      t.integer('draft_state_id').references('draft_state.draft_state_id').defaultTo(0);
+      t.integer('draft_state_id')
+        .references('draft_state.draft_state_id')
+        .defaultTo(0);
       t.integer('edit_stream_id').references('edit_stream.edit_stream_id');
       t.integer('proposal_id').references('proposal.proposal_id');
       t.timestamp('created').defaultTo(db.fn.now());
@@ -212,7 +220,6 @@ export default async (db) => {
       t.string('name');
       t.string('value');
     });
-
   } catch (error) {
     console.error(error);
   }

@@ -7,7 +7,9 @@ export default function replayMainAction(store) {
    */
   global.getReduxState = () => JSON.stringify(store.getState());
 
+  console.log('replay main', ipcMain);
   ipcMain.on('redux-action', (event, payload) => {
+    console.log('got the redux action on main', store, event, payload);
     store.dispatch(payload);
   });
 }

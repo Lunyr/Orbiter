@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Menu } from 'electron';
 import path from 'path';
+import url from 'url';
 
 let forceQuit = false;
 
@@ -8,8 +9,16 @@ export default ({ config, isDevelopment }) => {
   let menu;
   let template;
 
+  const filePathname = path.resolve(path.join(__dirname, '../renderer/index.html'));
+
   // Load application file
-  browserWindow.loadFile(path.resolve(path.join(__dirname, '../renderer/index.html')));
+  browserWindow.loadURL(
+    url.format({
+      slashes: true,
+      protocol: 'file:',
+      pathname: filePathname,
+    })
+  );
 
   // show window once on first load
   browserWindow.webContents.once('did-finish-load', () => {
@@ -17,23 +26,23 @@ export default ({ config, isDevelopment }) => {
   });
 
   browserWindow.webContents.on('crashed', (e, killed) => {
-    console.log("OOOOHHHHH NOOO!!!!", e, killed);
+    console.log('CRASHED', e, killed);
   });
 
   browserWindow.webContents.on('did-fail-load', (e, errCode, errDesc) => {
-    console.log("OOOOHHHHH NOOO", e, errCode, errDesc);
+    console.log('FAILED TO LOAD', e, errCode, errDesc);
   });
 
   browserWindow.webContents.on('unresponsive', () => {
-    console.log("UNRESPONSIVE");
+    console.log('UNRESPONSIVE');
   });
 
   browserWindow.webContents.on('destroyed', () => {
-    console.log("DESTROYED");
+    console.log('DESTROYED');
   });
 
   browserWindow.webContents.on('plugin-crashed', (e, name, vers) => {
-    console.log("PLUGIN CRASHED", e, name, vers);
+    console.log('PLUGIN CRASHED', e, name, vers);
   });
 
   browserWindow.webContents.on('did-finish-load', () => {
