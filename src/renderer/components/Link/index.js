@@ -3,7 +3,7 @@ import injectStyles from 'react-jss';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 
-const Link = ({ activeClassName, classes, isModal, to, ...props }) => (
+const Link = ({ activeClassName, classes, isModal = false, to, ...props }) => (
   <NavLink
     activeClassName={cx(classes.active, activeClassName)}
     className={classes.link}

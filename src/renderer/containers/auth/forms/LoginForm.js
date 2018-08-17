@@ -1,8 +1,12 @@
+import { remote } from 'electron';
 import React from 'react';
+import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { injectIntl } from 'react-intl';
 import { withRouter } from 'react-router-dom';
+import ethjsAccount from 'ethjs-account';
+import { login } from '../../../../shared/redux/modules/auth/actions';
 import { ButtonGroup, Forms, LoadingIndicator } from '../../../components';
 
 const {
@@ -18,8 +22,21 @@ const {
 } = Forms;
 
 class LoginForm extends React.Component {
-  submit = (values) => {
-    console.log('submitted login form here', values);
+  submit = async ({ username, password }) => {
+    try {
+      const { login, reset } = this.props;
+      const web3 = remote.getGlobal('web3');
+      const privateKey = web3.utils.sha3(`${password}.${username}`);
+      const userAddress = ethjsAccount.privateToAccount(privateKey).address;
+      login({
+        address: userAddress,
+      });
+      reset();
+    } catch (error) {
+      throw new SubmissionError({
+        _error: error.message,
+      });
+    }
   };
 
   render() {
@@ -113,8 +130,17 @@ const styles = (theme) => ({
   },
 });
 
+const mapDispatchToProps = {
+  login,
+};
+
 export default withRouter(
-  reduxForm({
-    form: 'forms.login',
-  })(injectIntl(injectStyles(styles)(LoginForm)))
+  connect(
+    null,
+    mapDispatchToProps
+  )(
+    reduxForm({
+      form: 'forms.login',
+    })(injectIntl(injectStyles(styles)(LoginForm)))
+  )
 );

@@ -1,9 +1,13 @@
+import { remote } from 'electron';
 import React from 'react';
+import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { injectIntl } from 'react-intl';
 import { withRouter } from 'react-router-dom';
+import ethjsAccount from 'ethjs-account';
 import { ButtonGroup, Forms, LoadingIndicator } from '../../../components';
+import { registered } from '../../../../shared/redux/modules/auth/actions';
 
 const {
   ActionButton,
@@ -18,8 +22,29 @@ const {
 } = Forms;
 
 class SignUpForm extends React.Component {
-  submit = (values) => {
-    console.log('submitted signup form here', values);
+  submit = async ({ username, password }) => {
+    try {
+      const { history, reset, registered } = this.props;
+      const web3 = remote.getGlobal('web3');
+      const privateKey = web3.utils.sha3(`${password}.${username}`);
+      const hashedPassword = web3.utils.sha3(password);
+      const userAddress = ethjsAccount.privateToAccount(privateKey).address;
+
+      // Register the user
+      registered({
+        address: userAddress,
+        username,
+        password: hashedPassword,
+      });
+
+      reset();
+  
+      history.replace('/');
+    } catch (error) {
+      throw new SubmissionError({
+        _error: error.message,
+      });
+    }
   };
 
   render() {
@@ -76,7 +101,7 @@ class SignUpForm extends React.Component {
               name="confirmPassword"
               className={classes.input}
               component={InputField}
-              type="confirmPassword"
+              type="password"
               required={true}
             />
           </Group>
@@ -132,8 +157,26 @@ const styles = (theme) => ({
   },
 });
 
+const validate = ({ password, confirmPassword }) => {
+  const errors = {};
+  if (password && confirmPassword && confirmPassword !== password) {
+    errors.confirmPassword = 'Confirmed password does not match';
+  }
+  return errors;
+};
+
+const mapDispatchToProps = {
+  registered,
+};
+
 export default withRouter(
-  reduxForm({
-    form: 'forms.sign-up',
-  })(injectIntl(injectStyles(styles)(SignUpForm)))
+  connect(
+    null,
+    mapDispatchToProps
+  )(
+    reduxForm({
+      form: 'forms.sign-up',
+      validate,
+    })(injectIntl(injectStyles(styles)(SignUpForm)))
+  )
 );

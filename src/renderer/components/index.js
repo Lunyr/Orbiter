@@ -1,11 +1,13 @@
 export { default as ActionMenu } from './ActionMenu';
 export { default as AsyncLoader } from './AsyncLoader';
 export { default as AsyncSelect } from './selects/AsyncSelect';
+export { default as Avatar } from './Avatar';
 export { default as Button } from './buttons/Base';
 export { default as ButtonGroup } from './buttons/ButtonGroup';
 export { default as Card } from './Card';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as Forms } from './forms';
+export { default as Hero } from './Hero';
 export { default as IconButton } from './buttons/IconButton';
 export { default as Link } from './Link';
 export { default as LoadingIndicator } from './LoadingIndicator';
@@ -20,3 +22,4 @@ export { default as TwoColumn } from './TwoColumn';
 
 export { default as AutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer/AutoSizer';
 export { default as List } from 'react-virtualized/dist/commonjs/List/List';
+export { default as TextAreaAutoSize } from 'react-textarea-autosize';

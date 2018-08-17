@@ -2,6 +2,7 @@ import packageJson from '../../../../../package.json';
 import actions from './actions';
 
 const initialState = {
+  connecting: true,
   loading: false,
   headerHeight: 70,
   footerHeight: 70,
@@ -16,20 +17,27 @@ const appReducer = (state = initialState, action) => {
     return state;
   }
   switch (type) {
-    case `${actions.FETCH_TEST_DATA}_START`: {
+    case `${actions.CONNECT_WEB3}_START`: {
       return {
         ...state,
-        data: [],
-        loading: true,
+        connecting: true,
       };
     }
-    case `${actions.FETCH_TEST_DATA}_SUCCESS`: {
+
+    case `${actions.CONNECT_WEB3}_SUCCESS`: {
       return {
         ...state,
-        data: payload.data,
-        loading: false,
+        connecting: false,
       };
     }
+
+    case `${actions.CONNECT_WEB3}_ERROR`: {
+      return {
+        ...state,
+        connecting: false,
+      };
+    }
+
     default:
       return state;
   }

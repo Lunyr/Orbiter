@@ -10,6 +10,18 @@ export default (theme) => ({
   }),
   right: {
     display: 'flex',
-    justifyConten: 'flex-end',
+    justifyContent: 'flex-end',
+  },
+  trigger: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    height: 35,
+  },
+  avatar: {
+    marginRight: theme.spacing * 0.75,
+  },
+  write: {
+    marginRight: theme.spacing,
+    borderRadius: 30,
   },
 });

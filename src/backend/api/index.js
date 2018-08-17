@@ -48,5 +48,4 @@ export { getDiscover } from './discover';
 export { getUserSettings, setUserSetting } from './setting';
 export { searchArticles } from './search';
 
-export { default as TestAPI } from './test';
 export { default as Web3API } from './web3';

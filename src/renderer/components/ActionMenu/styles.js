@@ -1,4 +1,4 @@
-const arrow = alignedRight => ({
+const arrow = (alignedRight) => ({
   '&:before': {
     border: 'inset 6px',
     content: '""',
@@ -29,7 +29,7 @@ const arrow = alignedRight => ({
   },
 });
 
-export default theme => ({
+export default (theme) => ({
   container: {
     position: 'relative',
     display: 'inline-block',
@@ -39,7 +39,7 @@ export default theme => ({
   button: {
     display: 'flex',
     alignItems: 'center',
-    height: 25,
+    minHeight: 25,
     cursor: 'pointer',
   },
   menu: ({ width, alignedRight }) => ({
@@ -51,7 +51,7 @@ export default theme => ({
     maxWidth: 300,
     background: theme.colors.white,
     border: '1px solid',
-    borderColor: theme.colors.lighterGray,
+    borderColor: theme.colors.lightestGray,
     paddingLeft: 0,
     listStyle: 'none',
     boxShadow: theme.boxShadows.large,
@@ -67,6 +67,7 @@ export default theme => ({
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
+    paddingLeft: theme.spacing,
     '&:hover': {
       backgroundColor: theme.colors.lightestGray,
     },

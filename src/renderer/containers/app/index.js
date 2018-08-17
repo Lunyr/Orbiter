@@ -1,3 +1,4 @@
+import { remote } from 'electron';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
@@ -5,23 +6,46 @@ import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
 import Loadable from 'react-loadable';
 import { AsyncLoader, Modal, TwoColumn } from '../../components';
+import ConnectingSplash from './ConnectingSplash';
 import Sidebar from './Sidebar/';
 import Header from './Header/';
 import Footer from './Footer';
-import { fetchTestData } from '../../../shared/redux/modules/app/actions';
-import { connectToBlockchain } from '../../../shared/redux/modules/web3/actions';
+import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
+
+const Draft = Loadable({
+  loader: () => import('../article/Draft'),
+  loading: AsyncLoader,
+});
 
 const Login = Loadable({
   loader: () => import('../auth/Login/'),
   loading: AsyncLoader,
 });
 
+const Logout = Loadable({
+  loader: () => import('../auth/Logout/'),
+  loading: AsyncLoader,
+});
+
 class App extends React.Component {
   previousLocation = this.props.location;
 
+  showNewConnectionStatus = (network) => {
+    new Notification('Connection Established', {
+      body: `Connected to ${network} network`,
+    });
+  };
+
+  async componentDidUpdate(prevProps) {
+    const web3 = remote.getGlobal('web3');
+    if (!prevProps.connecting && this.props.connecting && web3) {
+      const network = await web3.eth.net.getNetworkType();
+      this.showNewConnectionStatus(network);
+    }
+  }
+
   componentDidMount() {
     this.props.connectToBlockchain();
-    this.props.fetchTestData();
   }
 
   componentWillUpdate(nextProps) {
@@ -35,7 +59,7 @@ class App extends React.Component {
   render() {
     const {
       classes,
-      data,
+      connecting,
       footerHeight,
       headerHeight,
       history,
@@ -48,58 +72,61 @@ class App extends React.Component {
       this.previousLocation !== location
     );
     return (
-      <TwoColumn sidebarWidth={sidebarWidth}>
-        <Sidebar />
-        <React.Fragment>
-          <Header height={headerHeight} />
-          <div className={classes.container}>
-            <Switch location={isModal ? this.previousLocation : location}>
-              <Route exact path="/articles/unreviewed" component={() => <div>Peer Review</div>} />
-              <Route exact path="/tagging" component={() => <div>Tagging</div>} />
-              <Route exact path="/writing-manual" component={() => <div>Writing Manual</div>} />
-              <Route exact path="/advertising" component={() => <div>Advertising</div>} />
-              <Route exact path="/about" component={() => <div>About</div>} />
-              <Route exact path="/faq" component={() => <div>FAQ</div>} />
-              <Route exact path="/announcements" component={() => <div>Announcements</div>} />
-              <Route component={() => <div>Feed Here</div>} />
-            </Switch>
-            {isModal && (
-              <React.Fragment>
-                <Route
-                  path="/login"
-                  render={() => (
-                    <Modal isOpen={true} onRequestClose={history.goBack} fullSize>
-                      <Login />
-                    </Modal>
-                  )}
-                />
-              </React.Fragment>
-            )}
-          </div>
-          <Footer height={footerHeight} />
-        </React.Fragment>
-      </TwoColumn>
+      <ConnectingSplash connecting={connecting}>
+        <TwoColumn sidebarWidth={sidebarWidth}>
+          <Sidebar />
+          <React.Fragment>
+            <Header height={headerHeight} />
+            <div className={classes.container}>
+              <Switch location={isModal ? this.previousLocation : location}>
+                <Route exact path="/logout" component={Logout} />
+                <Route path="/draft" component={Draft} />
+                <Route exact path="/articles/unreviewed" component={() => <div>Peer Review</div>} />
+                <Route exact path="/tagging" component={() => <div>Tagging</div>} />
+                <Route exact path="/writing-manual" component={() => <div>Writing Manual</div>} />
+                <Route exact path="/advertising" component={() => <div>Advertising</div>} />
+                <Route exact path="/about" component={() => <div>About</div>} />
+                <Route exact path="/faq" component={() => <div>FAQ</div>} />
+                <Route exact path="/announcements" component={() => <div>Announcements</div>} />
+                <Route component={() => <div>Feed Here</div>} />
+              </Switch>
+              {isModal && (
+                <React.Fragment>
+                  <Route
+                    path="/login"
+                    render={() => (
+                      <Modal isOpen={true} onRequestClose={history.goBack} fullSize>
+                        <Login />
+                      </Modal>
+                    )}
+                  />
+                </React.Fragment>
+              )}
+            </div>
+            <Footer height={footerHeight} />
+          </React.Fragment>
+        </TwoColumn>
+      </ConnectingSplash>
     );
   }
 }
 
-const mapStateToProps = ({ app: { footerHeight, headerHeight, sidebarWidth, data } }) => ({
-  data,
+const mapStateToProps = ({ app: { connecting, footerHeight, headerHeight, sidebarWidth } }) => ({
+  connecting,
   footerHeight,
   headerHeight,
   sidebarWidth,
 });
 
 const mapDispatchToProps = {
-  fetchTestData,
   connectToBlockchain,
 };
 
 const styles = (theme) => ({
   container: {
+    display: 'flex',
     flexGrow: 1,
     backgroundColor: theme.colors.lightGray,
-    padding: theme.spacing,
   },
 });
 

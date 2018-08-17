@@ -1,6 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
-import { ButtonGroup, Link, Select } from '../../../components';
+import get from 'lodash/get';
+import { ActionMenu, Avatar, Button, ButtonGroup, Link, Select } from '../../../components';
 import Search from '../Search/';
 import styles from './styles';
 
@@ -17,18 +19,44 @@ const IntlSelect = injectStyles((theme) => ({
   />
 ));
 
-const Header = ({ classes }) => (
+const Header = ({ auth, classes }) => (
   <header className={classes.container}>
     <Search />
     <div className={classes.right}>
       <ButtonGroup>
         <IntlSelect />
-        <Link to="/login" isModal={true}>
-          Login
-        </Link>
+        {auth.isLoggedIn && (
+          <Link to="/draft">
+            <Button className={classes.write} theme="primary" value="Write" />
+          </Link>
+        )}
+        {!auth.isLoggedIn ? (
+          <Link to="/login" isModal={true}>
+            Login
+          </Link>
+        ) : (
+          <ActionMenu
+            id="user-dropdown-menu"
+            className={classes.menu}
+            itemHeight={45}
+            width={150}
+            alignedRight>
+            <span className={classes.trigger}>
+              <Avatar
+                className={classes.avatar}
+                seed={get(auth, ['account', 'username'])}
+                size={35}
+              />
+              {get(auth, ['account', 'username'])}
+            </span>
+            <Link to="/logout">Logout</Link>
+          </ActionMenu>
+        )}
       </ButtonGroup>
     </div>
   </header>
 );
 
-export default injectStyles(styles)(Header);
+const mapStateToProps = ({ auth }) => ({ auth });
+
+export default connect(mapStateToProps)(injectStyles(styles)(Header));

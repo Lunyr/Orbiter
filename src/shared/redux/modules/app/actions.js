@@ -1,15 +1,13 @@
-import { TestAPI } from '../../../../backend/api';
 import createTriggerAlias from '../../helpers/createTriggerAlias';
+import { Web3API } from '../../../../backend/api';
 
 const actions = {
-  FETCH_TEST_DATA: 'app/FETCH_TEST_DATA',
+  CONNECT_WEB3: 'app/CONNECT_WEB3',
 };
 
-console.log('test api up in here', TestAPI);
-
-export const fetchTestData = createTriggerAlias(actions.FETCH_TEST_DATA, () => ({
-  type: actions.FETCH_TEST_DATA,
-  payload: TestAPI.readAll(),
+export const connectToBlockchain = createTriggerAlias(actions.CONNECT_WEB3, () => ({
+  type: actions.CONNECT_WEB3,
+  payload: Web3API.connect(),
 }));
 
 export default actions;

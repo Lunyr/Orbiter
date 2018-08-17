@@ -10,20 +10,19 @@ export const getUserSettings = async (address) => {
       hashed_address: web3.utils.sha3(address),
     });
 
-    log.debug({ result }, "getUserSettings result");
+    if (result && result.length === 0) {
+      throw new Error('User settings do not exist for this address.');
+    } else {
+      const data = result.reduce((acc, { name, value }) => {
+        acc[name] = value;
+        return acc;
+      }, {});
 
-    const data = result.reduce((acc, setting) => {
-      acc.push({
-        name: setting.name,
-        value: setting.value,
-      });
-      return acc;
-    }, []);
-
-    return {
-      success: true,
-      data,
-    };
+      return {
+        success: true,
+        data,
+      };
+    }
   } catch (error) {
     return {
       success: false,
@@ -37,16 +36,17 @@ export const setUserSetting = async (address, name, value) => {
     let data;
     const check = await db('setting').where({
       hashed_address: web3.utils.sha3(address),
-      name
+      name,
     });
 
     if (check.length > 0) {
       const updateResult = await db('setting')
         .where({
           hashed_address: web3.utils.sha3(address),
-          name
-        }).update({
-          value
+          name,
+        })
+        .update({
+          value,
         });
       if (updateResult < 1) {
         throw new Error("Attempt to update setting that doesn't exist");
@@ -54,14 +54,13 @@ export const setUserSetting = async (address, name, value) => {
         data = updateResult;
       }
     } else {
-      const insertResult = await db('setting')
-        .insert({
-          hashed_address: web3.utils.sha3(address),
-          name,
-          value
-        });
+      const insertResult = await db('setting').insert({
+        hashed_address: web3.utils.sha3(address),
+        name,
+        value,
+      });
       if (insertResult.length < 1 || insertResult[0] < 1) {
-        throw new Error("Attempt to insert setting seems to have failed");
+        throw new Error('Attempt to insert setting seems to have failed');
       } else {
         data = insertResult[0];
       }

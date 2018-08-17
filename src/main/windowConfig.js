@@ -1,5 +1,5 @@
 export default {
   show: false,
-  width: 1024,
+  width: 1180,
   height: 728,
 };

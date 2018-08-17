@@ -70,6 +70,7 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'space-around',
     flexDirection: 'column',
+    flexShrink: 0,
     height,
     backgroundColor: theme.colors.lightGray,
     paddingLeft: theme.spacing,

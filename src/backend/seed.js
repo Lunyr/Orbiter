@@ -1,19 +1,5 @@
 export default async (db) => {
   try {
-    // Drop table if exists
-    await db.schema.dropTableIfExists('test');
-
-    // Create a table
-    await db.schema.createTable('test', (t) => {
-      t.bigincrements('id');
-      t.string('title');
-    });
-
-    // Insert some datas
-    await db('test').insert({ title: 'foo' });
-    await db('test').insert({ title: 'bar' });
-    await db('test').insert({ title: 'baz' });
-
     // Events
     await db.schema.createTable('event', (t) => {
       t.increments('event_id').primary();
@@ -210,7 +196,7 @@ export default async (db) => {
       t.text('description');
       t.text('megadraft');
     });
-
+    
     // User Settings
     await db.schema.createTable('setting', (t) => {
       t.increments('setting_id').primary();

@@ -1,0 +1,60 @@
+export default (theme) => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    backgroundColor: theme.colors.white,
+    height: 'auto',
+    width: '100%',
+    overflow: 'auto',
+  },
+  header: {
+    height: '27vh',
+    backgroundColor: theme.colors.gray,
+  },
+  draft: {
+    display: 'inline-flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+    flexShrink: 0,
+    minHeight: '30vh',
+  },
+  title: {
+    display: 'flex',
+    alignItems: 'center',
+    minHeight: 65,
+    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+    paddingLeft: theme.spacing,
+    paddingRight: theme.spacing,
+  },
+  titleEditor: {
+    border: 'none',
+    outline: 'none',
+    resize: 'none',
+    fontSize: '1.5rem',
+  },
+  editor: {
+    display: 'flex',
+    paddingLeft: theme.spacing,
+    paddingTop: theme.spacing * 2,
+  },
+  aside: {
+    paddingLeft: theme.spacing,
+    paddingTop: theme.spacing * 2,
+    width: '25vw',
+    borderLeft: '1px solid rgba(0, 0, 0, 0.1)',
+  },
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: theme.spacing,
+    minHeight: 70,
+    borderTop: '1px solid rgba(0, 0, 0, 0.1)',
+    backgroundColor: theme.colors.lightestGray,
+  },
+});
