@@ -7,6 +7,7 @@ import injectStyles from 'react-jss';
 import Loadable from 'react-loadable';
 import { AsyncLoader, Modal, TwoColumn } from '../../components';
 import ConnectingSplash from './ConnectingSplash';
+import Feed from '../feed';
 import Sidebar from './Sidebar/';
 import Header from './Header/';
 import Footer from './Footer';
@@ -88,7 +89,7 @@ class App extends React.Component {
                 <Route exact path="/about" component={() => <div>About</div>} />
                 <Route exact path="/faq" component={() => <div>FAQ</div>} />
                 <Route exact path="/announcements" component={() => <div>Announcements</div>} />
-                <Route component={() => <div>Feed Here</div>} />
+                <Route component={Feed} />
               </Switch>
               {isModal && (
                 <React.Fragment>

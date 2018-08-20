@@ -3,16 +3,16 @@ import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { injectIntl } from 'react-intl';
 import { editorStateFromRaw } from 'megadraft';
+import identity from 'lodash/identity';
 import {
   setDraftEditorState,
   setDraftTitle,
 } from '../../../../shared/redux/modules/article/draft/actions';
 import { Editor, ErrorBoundary, Hero, TitleEditor } from '../../../components';
+import References from '../references/References';
 import styles from './styles';
 
 const AddtionalContent = () => <div>Additional Content</div>;
-
-const References = () => <div>References</div>;
 
 class Draft extends React.Component {
   handleAfterUpload = (upload) => {
@@ -27,10 +27,29 @@ class Draft extends React.Component {
     this.props.setDraftEditorState(editorState);
   };
 
+  getArticleWordCount = () => {
+    try {
+      const { draft } = this.props;
+      const content = draft.editorState.getCurrentContent();
+      const plaintext = content.getPlainText();
+      if (!plaintext) {
+        return 0;
+      }
+      return plaintext
+        .trim()
+        .split(' ')
+        .filter(identity).length;
+    } catch (error) {
+      console.error('There was an error handling word count for the article.', error);
+      return 0;
+    }
+  };
+
   render() {
     const { classes, draft, intl } = this.props;
     const { editorState, title, imageHash } = draft;
-    console.log(editorState);
+    const wordCount = this.getArticleWordCount();
+    const references = [];
     return (
       <ErrorBoundary
         errorMsg={intl.formatMessage({
@@ -53,6 +72,7 @@ class Draft extends React.Component {
                   })}
                   value={title}
                 />
+                <div className={classes.wordCount}>Words: {wordCount}</div>
               </div>
               <div className={classes.editor}>
                 <Editor
@@ -67,7 +87,7 @@ class Draft extends React.Component {
             </aside>
           </section>
           <footer className={classes.footer}>
-            <References />
+            <References formatType="MLA" references={references} />
           </footer>
         </div>
       </ErrorBoundary>

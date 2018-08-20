@@ -5,6 +5,7 @@ export { default as Avatar } from './Avatar';
 export { default as Button } from './buttons/Base';
 export { default as ButtonGroup } from './buttons/ButtonGroup';
 export { default as Card } from './Card';
+export { default as Citation } from './citations';
 export { default as Editor } from './Editor';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as Forms } from './forms';

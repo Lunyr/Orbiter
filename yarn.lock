@@ -5332,7 +5332,7 @@ mock-fs@^4.1.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.5.0.tgz#75245b966f7e3defe197b03454af9c5b355594b7"
 
-moment@^2.10.6:
+moment@^2.10.6, moment@^2.22.2:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
@@ -6450,6 +6450,12 @@ react-icons@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-3.0.4.tgz#e1f09a51f837dd0218a4a7d30060e1be79a59a8f"
 
+react-infinite-scroller@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroller/-/react-infinite-scroller-1.2.0.tgz#ea89906c5bc918dce486880b59e88847518aa538"
+  dependencies:
+    prop-types "^15.5.8"
+
 react-input-autosize@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-2.2.1.tgz#ec428fa15b1592994fb5f9aa15bb1eb6baf420f8"
@@ -6493,6 +6499,12 @@ react-modal@^3.1.10, react-modal@^3.5.1:
     prop-types "^15.5.10"
     react-lifecycles-compat "^3.0.0"
     warning "^3.0.0"
+
+react-placeholder@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-placeholder/-/react-placeholder-3.0.1.tgz#fa6e915f41ce8da66eb10a4aa6d87d31e50aeaaa"
+  dependencies:
+    prop-types "^15.6.0"
 
 react-popover@^0.5.4:
   version "0.5.7"
