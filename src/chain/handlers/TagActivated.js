@@ -1,8 +1,8 @@
 /**
  * This is the event handler for Tagger.TagActivated
  */
-import logger from '../../lib/logger';
-import utils from '../utils';
+import { getLogger } from '../../lib/logger';
+import { handlerWrapper } from '../utils';
 import { TxType } from '../../shared/constants';
 import { 
   addNotification,
@@ -10,36 +10,23 @@ import {
   activateTag,
 } from '../../backend/api';
 
-const log = logger.getLogger('TagActivated');
+const EVENT_NAME = 'TagActivated';
+const log = getLogger(EVENT_NAME);
 
-export default async (job) => {
-  log.debug("TagActivated handler reached");
+export default async (job, txHash, evData) => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+    job.progress(10);
 
-  job.progress(1);
+    const tagResult = await getTag(evData.tagName);
 
-  // Sanity check
-  if (job.data.event.name !== 'TagActivated')
-    throw new Error('Invalid event for this handler');
+    if (!tagResult.success || tagResult.data.length < 1) {
+      throw new Error("Unknown tag!  Events out of order?");
+    }
 
-  const evData = utils.getEventData(job.data.event);
-  const txHash = job.data.txHash;
+    job.progress(50);
 
-  job.progress(10);
+    await activateTag(evData.tagName);
 
-  const tagResult = await getTag(evData.tagName);
-
-  if (!tagResult.success || tagResult.data.length < 1) {
-    throw new Error("Unknown tag!  Events out of order?");
-  }
-
-  job.progress(50);
-
-  await activateTag(evData.tagName);
-
-  job.progress(80);
-
-  await utils.completeTransaction(txHash, TxType.TAG);
-
-  job.progress(100);
-
+    job.progress(80);
+  });
 };
