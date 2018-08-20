@@ -112,7 +112,7 @@ class Feed extends React.Component {
       limit: 30,
       loadingMore: false,
     };
-    this.minReadTimeout = 500;
+    this.minReadTimeout = 2000;
     this.loadMore = throttle(this.loadMore, 5000);
   }
 
@@ -180,6 +180,9 @@ class Feed extends React.Component {
     */
     // Fetch featured articles for sidebar
     // this.props.getFeaturedArticles();
+    setTimeout(() => {
+      this.setState({ isReady: true });
+    }, this.minReadTimeout);
   }
 
   componentWillReceiveProps({ isFetching }) {
