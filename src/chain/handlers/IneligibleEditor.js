@@ -11,7 +11,7 @@ const EVENT_NAME = 'IneligibleEditor';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     await addNotification(evData.editor, EVENT_NAME, {
       proposalId: evData.proposalId,
       event: EVENT_NAME,

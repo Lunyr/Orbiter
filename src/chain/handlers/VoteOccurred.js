@@ -23,7 +23,7 @@ const EVENT_NAME = 'VoteOccurred';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     const tx = await getTransaction(txHash);
     let blockStamp;
     if (!tx) {
@@ -75,7 +75,7 @@ export default async (job, txHash, evData) => {
     });
 
     // Populate what we can from the blockchain
-    let vote = {
+    const vote = {
       id: evData.voteId,
       proposalId: evData.proposalId,
       fromAddress: evData.voter,

@@ -15,7 +15,7 @@ const EVENT_NAME = 'TagProposed';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     job.progress(10);
 
     let tagCheck = await getTag(evData.tagName);
@@ -25,7 +25,7 @@ export default async (job, txHash, evData) => {
     if (!tagCheck.success || tagCheck.data.length < 1) {
       tagCheck = await addTag(evData.tagName);
       if (!tagCheck.sucess) {
-        throw new Error(tagCheck.error);
+        throw new Error(tagCheck.error || "Unknown error");
       }
     }
 

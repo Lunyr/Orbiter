@@ -13,7 +13,7 @@ const EVENT_NAME = 'ProposalExpired';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
 
     /**
      * LISTEN UP, BITCHES!

@@ -13,7 +13,7 @@ const EVENT_NAME = 'SuccessfulBid';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     job.progress(10);
 
     log.debug({ txHash }, "Looking up user address ");

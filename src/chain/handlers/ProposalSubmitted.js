@@ -24,7 +24,7 @@ const EVENT_NAME = 'ProposalSubmitted';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     const tx = await getTransaction(txHash);
     let blockStamp;
     if (!tx) {

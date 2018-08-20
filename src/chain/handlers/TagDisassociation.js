@@ -14,7 +14,7 @@ const EVENT_NAME = 'TagDisassociated';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     job.progress(10);
 
     const editStreamId = evData.editStreamId || evData._editStreamId;

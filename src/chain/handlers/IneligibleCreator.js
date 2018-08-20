@@ -12,7 +12,7 @@ const EVENT_NAME = 'IneligibleCreator';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     await addNotification(evData.creator, EVENT_NAME, {
       proposalId: null,
       event: EVENT_NAME,

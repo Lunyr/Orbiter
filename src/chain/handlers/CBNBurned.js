@@ -11,7 +11,7 @@ const EVENT_NAME = 'CBNBurned';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
-  return await handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
     await addNotification(evData.user, EVENT_NAME, {
       user: evData.user,
       cbnBurned: evData.cbnBurned,
