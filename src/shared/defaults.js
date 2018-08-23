@@ -1,3 +1,4 @@
+import path from 'path';
 
 const isDevelopment = () => {
   return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
@@ -29,6 +30,18 @@ const ipfs = {
   port: 5001,
 };
 
+const getConfigDir = () => {
+  let configPath;
+  if (typeof process.env.APPDATA !== 'undefined') {
+    configPath = process.env.APPDATA;
+  } else if (process.platform == 'darwin') {
+    configPath = path.join(process.env.HOME, 'Library', 'Preferences');
+  } else {
+    configPath = path.join(process.env.HOME, '.config');
+  }
+  return path.join(configPath, 'lunyr-orbiter');
+};
+
 export default {
   isDevelopment: isDevelopment(),
   privacy,
@@ -46,5 +59,6 @@ export default {
   },
   sweeper: {
     maxTransactionAge: 10 * 60 * 1000 // 10 minutes
-  }
+  },
+  configDir: getConfigDir()
 }
