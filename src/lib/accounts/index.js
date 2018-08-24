@@ -123,7 +123,7 @@ export const unlock = async (args) => {
  * @returns {string} filename of the newly saved secret store file
  */
 export const savePlain = async (password, rawKey) => {
-  rawKey = rawKey.slice(0, 2) === '0x' ? rawKey.slice(2) : rawKey;
+  rawKey = removeHexPrefix(rawKey);
 
   const keyBytes = keythereum.constants.keyBytes;
   const ivBytes = keythereum.constants.ivBytes;
