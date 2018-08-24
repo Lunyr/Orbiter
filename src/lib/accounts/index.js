@@ -30,7 +30,7 @@ const addHexPrefix = (str) => {
   if (typeof str !== 'string') throw new Error("Provided string not a string");
   if (str.slice(0,2) === "0x") return str;
   return `0x${str}`;
-}
+};
 
 /**
  * removeHexPrefix will ensure the "0x" prefix does not exist on a hex string
@@ -41,7 +41,7 @@ const removeHexPrefix = (str) => {
   if (typeof str !== 'string') throw new Error("Provided string not a string");
   if (str.slice(0,2) === "0x") return str.slice(2);
   return str;
-}
+};
 
 /**
  * getList return an array of objects with the properties `address` and 
@@ -171,7 +171,7 @@ export const save = async (password, dk) => {
  */
 export const importFromFile = async (password, fileName) => {
   return await unlock({ password, fileName });
-}
+};
 
 /**
  * importFromAPI will verify a user's credentials for lunyr.com and re-gen their
