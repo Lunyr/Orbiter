@@ -42,6 +42,15 @@ const getConfigDir = () => {
   return path.join(configPath, 'lunyr-orbiter');
 };
 
+const getAPIRoot = () => {
+  if (typeof process.env.API_ROOT !== 'undefined') {
+    return process.env.API_ROOT
+  } else if (isDevelopment) {
+    return 'https://testapi.lunyr.com/'
+  }
+  return 'https://api.lunyr.com/';
+}
+
 export default {
   isDevelopment: isDevelopment(),
   privacy,
@@ -60,5 +69,6 @@ export default {
   sweeper: {
     maxTransactionAge: 10 * 60 * 1000 // 10 minutes
   },
-  configDir: getConfigDir()
+  configDir: getConfigDir(),
+  lunyrAPIRoot: getAPIRoot(),
 }
