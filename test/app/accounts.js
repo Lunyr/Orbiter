@@ -35,7 +35,7 @@ describe('Account management', () => {
   });
 
   it('should save a raw key', async () => {
-    const rawKey = crypto.randomBytes(32);
+    const rawKey = crypto.randomBytes(32).toString('hex');
     const fileName = await accountManager.savePlain(PASSWORD, rawKey);
 
     // Make sure it's a file that exists
