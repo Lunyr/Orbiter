@@ -206,3 +206,37 @@ export const getBlockByNumber = async (blockNo) => {
 
   return json.result;
 };
+
+/**
+ * assertEvent checks the handler name from a job to be sure the correct 
+ * handler is being run for that job/event.  It's more like a last line of
+ * defense for fat finger errors.  It throws an error if the evnet name doesn't
+ * match the provided handler name.
+ * @param {object} job is the job object from queuelite(or Bull)
+ */
+export const assertEvent = (handlerName, job) => {
+  if (job.data.event.name !== handlerName)
+    throw new Error('Invalid event for this handler');
+};
+
+/**
+ * handlerWrapper wraps general handler functionality and takes care of 
+ * operations that happen for every handler.
+ * @param {string} eventName is the name of the event that's being processed
+ * @param {string} txHash is the transaction hash of the event being processed
+ * @param {object} job is the job object being processed
+ * @param {object} logger is the instantiated bunyan logger instance
+ * @param {function} cb is the meat functionality of the handler
+ * @returns {mixed} return value is determined by the handler
+ */
+export const handlerWrapper = async (eventName, txHash, job, logger, cb) => {
+  logger.debug(`${eventName} handler reached`);
+  assertEvent(eventName, job);
+  job.progress(1);
+
+  const retVal = await cb();
+
+  await completeTransaction(txHash);
+  job.progress(100);
+  return retVal;
+};

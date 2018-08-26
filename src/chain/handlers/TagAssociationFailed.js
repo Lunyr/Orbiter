@@ -1,5 +1,5 @@
 /**
- * This is the event handler for PeerReview.SuccessfulWithdrawal
+ * This is the event handler for Tagger.TagAssociationFailed
  */
 import { getLogger } from '../../lib/logger';
 import { handlerWrapper } from '../utils';
@@ -7,7 +7,7 @@ import {
   addNotification
 } from '../../backend/api';
 
-const EVENT_NAME = 'SuccessfulWithdrawal';
+const EVENT_NAME = 'TagAssociationFailed';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
@@ -15,9 +15,11 @@ export default async (job, txHash, evData) => {
     job.progress(10);
     
     await addNotification(evData.withdrawer, EVENT_NAME, {
-      withdrawer: evData.withdrawer,
-      amount: evData.amount,
+      sender: evData.sender,
+      tagName: evData.tagName,
+      editStreamId: evData.editStreamId,
     });
-  job.progress(90);
+
+    job.progress(50);
   });
 };

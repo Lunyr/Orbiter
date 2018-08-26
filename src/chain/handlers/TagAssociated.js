@@ -1,8 +1,8 @@
 /**
  * This is the event handler for Tagger.TagAssociated
  */
-import logger from '../../lib/logger';
-import utils from '../utils';
+import { getLogger } from '../../lib/logger';
+import { handlerWrapper } from '../utils';
 import { TxType } from '../../shared/constants';
 import { 
   addNotification,
@@ -10,41 +10,28 @@ import {
   associateTag,
 } from '../../backend/api';
 
-const log = logger.getLogger('TagAssociated');
+const EVENT_NAME = 'TagAssociated';
+const log = getLogger(EVENT_NAME);
 
-export default async (job) => {
-  log.debug({ job: job }, "TagAssociated handler reached");
+export default async (job, txHash, evData) => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+    job.progress(10);
 
-  job.progress(1);
+    const tagResult = await getTag(evData.tagName);
 
-  // Sanity check
-  if (job.data.event.name !== 'TagAssociated')
-    throw new Error('Invalid event for this handler');
+    if (!tagResult.success || tagResult.data.length < 1) {
+      throw new Error("Unknown tag!  Events out of order?");
+    }
 
-  const evData = utils.getEventData(job.data.event);
-  const txHash = job.data.txHash;
+    job.progress(50);
 
-  job.progress(10);
+    // Briefly this event had an argument with the underscore
+    const assocResult = await associateTag(tagResult.data[0].id, evData.editStreamId || evData._editStreamId);
 
-  const tagResult = await getTag(evData.tagName);
+    if (!assocResult.success || assocResult.data.length < 1) {
+      throw new Error(assocResult.error);
+    }
 
-  if (!tagResult.success || tagResult.data.length < 1) {
-    throw new Error("Unknown tag!  Events out of order?");
-  }
-
-  job.progress(50);
-
-  // Briefly this event had an argument with the underscore
-  const assocResult = await associateTag(tagResult.data[0].id, evData.editStreamId || evData._editStreamId);
-
-  if (!assocResult.success || assocResult.data.length < 1) {
-    throw new Error(assocResult.error);
-  }
-
-  job.progress(80);
-
-  await utils.completeTransaction(txHash, TxType.TAG);
-
-  job.progress(100);
-
+    job.progress(80);
+  });
 };

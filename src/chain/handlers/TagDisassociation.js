@@ -1,8 +1,8 @@
 /**
  * This is the event handler for Tagger.TagDisassociated
  */
-import logger from '../../lib/logger';
-import utils from '../utils';
+import { getLogger } from '../../lib/logger';
+import { handlerWrapper } from '../utils';
 import { TxType } from '../../shared/constants';
 import { 
   addNotification,
@@ -10,44 +10,31 @@ import {
   deleteTagAssociation,
 } from '../../backend/api';
 
-const log = logger.getLogger('TagDisassociated');
+const EVENT_NAME = 'TagDisassociated';
+const log = getLogger(EVENT_NAME);
 
-export default async (job) => {
-  log.debug("TagDisassociated handler reached");
+export default async (job, txHash, evData) => {
+  return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
+    job.progress(10);
 
-  job.progress(1);
+    const editStreamId = evData.editStreamId || evData._editStreamId;
 
-  // Sanity check
-  if (job.data.event.name !== 'TagDisassociated')
-    throw new Error('Invalid event for this handler');
+    const tagAssocResult = await getTagAssociation(evData.tagName, editStreamId);
 
-  const evData = utils.getEventData(job.data.event);
-  const txHash = job.data.txHash;
+    if (!tagAssocResult.success) {
+      throw new Error(tagAssocResult.error);
+    } else if (tagAssocResult.data.length < 1) {
+      throw new Error("Unknown tag association!  Events out of order?");
+    }
 
-  job.progress(10);
+    job.progress(50);
 
-  const editStreamId = evData.editStreamId || evData._editStreamId;
+    const deleteResult = await deleteTagAssociation(tagAssocResult.data[0].id, editStreamId);
 
-  const tagAssocResult = await getTagAssociation(evData.tagName, editStreamId);
+    if (!deleteResult.success || deleteResult.data.length < 1) {
+      throw new Error(deleteResult.error);
+    }
 
-  if (!tagAssocResult.success) {
-    throw new Error(tagAssocResult.error);
-  } else if (tagAssocResult.data.length < 1) {
-    throw new Error("Unknown tag association!  Events out of order?");
-  }
-
-  job.progress(50);
-
-  const deleteResult = await deleteTagAssociation(tagAssocResult.data[0].id, editStreamId);
-
-  if (!deleteResult.success || deleteResult.data.length < 1) {
-    throw new Error(deleteResult.error);
-  }
-
-  job.progress(80);
-
-  await utils.completeTransaction(txHash, TxType.TAG);
-
-  job.progress(100);
-
+    job.progress(80);
+  });
 };
