@@ -205,8 +205,7 @@ export const importFromAPI = async (email, password) => {
   const privkey = web3.utils.sha3(password + '.' + respBody.account.username);
 
   // Save the file
-  // TODO: Figure out if we want to auto-save here or have the UI/User do the call
-  //await savePlain(password, privkey);
+  await savePlain(password, privkey);
 
   return privkey;
 };
