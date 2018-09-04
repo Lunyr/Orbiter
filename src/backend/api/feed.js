@@ -10,11 +10,15 @@ export const getFeedVotes = async (limit, page) => {
     limit = limit ? limit : 25;
     page = page ? page : 0;
     const offset = page * limit;
-    const result = await db('vote')
-      .orderBy('created', 'DESC')
-      .limit(limit)
-      .offset(offset)
-      .select();
+    const result = await db.raw(
+      `SELECT v.*, es.title, p.hero_hash, p.description
+        FROM vote v
+        LEFT JOIN proposal p USING (proposal_id)
+        LEFT JOIN edit_stream es USING (edit_stream_id)
+        ORDER BY v.created DESC
+        LIMIT ? OFFSET ?`,
+        [limit, offset]
+      );
 
     log.debug({ result }, "getFeedVotes result");
 
