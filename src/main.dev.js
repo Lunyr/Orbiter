@@ -89,6 +89,8 @@ const readyHandler = async () => {
 
   // show window once on first load
   mainWindow.webContents.on('did-finish-load', () => {
+    console.log('attempting to did finish load meoww');
+
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { remote } from 'electron';
 import ReactDOM from 'react-dom';
+import { hot } from 'react-hot-loader';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import { ThemeProvider } from 'react-jss';
 import { connect, Provider } from 'react-redux';
@@ -27,7 +28,7 @@ const LocalizedRoot = connect(({ locale }) => locale)(({ locale, messages }) => 
 // Initialize the redux store from the global state
 const { store, persistor } = configureStore(remote.getGlobal('state'), 'orbiter-renderer');
 
-const Root = () => (
+const Root = hot(module)(() => (
   <Provider store={store}>
     <PersistGate persistor={persistor}>
       <ThemeProvider theme={theme}>
@@ -35,7 +36,7 @@ const Root = () => (
       </ThemeProvider>
     </PersistGate>
   </Provider>
-);
+));
 
 // Init application into DOM
 ReactDOM.render(<Root />, document.getElementById('root'));

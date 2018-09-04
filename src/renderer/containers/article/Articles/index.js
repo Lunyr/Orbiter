@@ -42,15 +42,20 @@ const CardGrid = injectStyles((theme) => ({
     justifyContent: 'space-around',
   },
   grid__item: {
-    backgroundColor: theme.colors.white,
-    boxShadow: theme.boxShadows.small,
-    margin: theme.spacing,
-    maxWidth: '30%',
-    height: 350,
-    overflow: 'hidden',
-    '@media only screen and (max-width: 1024px)': {
+    maxWidth: 300,
+    height: 375,
+    padding: 10,
+    '@media only screen and (max-width: 900px)': {
       maxWidth: '50%',
     },
+  },
+  grid__inner: {
+    display: 'flex',
+    flexGrow: 1,
+    backgroundColor: theme.colors.white,
+    boxShadow: theme.boxShadows.small,
+    overflow: 'hidden',
+    height: '100%',
   },
   item: {
     display: 'flex',
@@ -60,7 +65,9 @@ const CardGrid = injectStyles((theme) => ({
     <div className={classes.grid}>
       {React.Children.map(children, (child) => (
         <div className={classes.grid__item}>
-          <div className={classes.item}>{child}</div>
+          <div className={classes.grid__inner}>
+            <div className={classes.item}>{child}</div>
+          </div>
         </div>
       ))}
     </div>
@@ -73,7 +80,7 @@ class Articles extends React.Component {
   }
 
   render() {
-    const { isFetchingArticles, articles, error } = this.props;
+    const { classes, isFetchingArticles, articles, numberOfArticles, error } = this.props;
     console.log(articles);
     return (
       <ReactPlaceholder
@@ -81,9 +88,16 @@ class Articles extends React.Component {
         ready={!isFetchingArticles || articles.length !== 0}
         showLoadingAnimation={true}>
         {articles.length > 0 ? (
-          <CardGrid>
-            {articles.map((article) => <div key={article.id}>{JSON.stringify(article)}</div>)}
-          </CardGrid>
+          <div className={classes.container}>
+            <header className={classes.header}>
+              <h1 className={classes.title}>
+                Articles <span className={classes.numberOfArticles}>({numberOfArticles})</span>
+              </h1>
+            </header>
+            <CardGrid>
+              {articles.map((article) => <div key={article.id}>{JSON.stringify(article)}</div>)}
+            </CardGrid>
+          </div>
         ) : (
           <EmptyPlaceholder />
         )}
@@ -96,6 +110,7 @@ const mapStateToProps = ({ explorer: { data: articles, loading: isFetchingArticl
   articles,
   error: null,
   isFetchingArticles,
+  numberOfArticles: articles.length,
 });
 
 const mapDispatchToProps = {
