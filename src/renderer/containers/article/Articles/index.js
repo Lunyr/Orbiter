@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage } from 'react-intl';
 import ReactPlaceholder from 'react-placeholder';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import { fetchArticles } from '../../../../shared/redux/modules/explorer/actions';
 import styles from './styles';
 
@@ -35,20 +33,37 @@ const EmptyPlaceholder = injectStyles((theme) => ({
 const CardGrid = injectStyles((theme) => ({
   container: {
     flexGrow: 1,
+    overflow: 'auto',
+  },
+  grid: {
+    display: 'flex',
+    flexGrow: 1,
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+  },
+  grid__item: {
+    backgroundColor: theme.colors.white,
+    boxShadow: theme.boxShadows.small,
+    margin: theme.spacing,
+    maxWidth: '30%',
+    height: 350,
+    overflow: 'hidden',
+    '@media only screen and (max-width: 1024px)': {
+      maxWidth: '50%',
+    },
   },
   item: {
-    padding: theme.spacing * 2,
-    color: theme.colors.white,
+    display: 'flex',
   },
 }))(({ classes, children }) => (
   <div className={classes.container}>
-    <Grid container spacing={24}>
+    <div className={classes.grid}>
       {React.Children.map(children, (child) => (
-        <Grid item xs={4}>
-          <Paper className={classes.item}>{child}</Paper>
-        </Grid>
+        <div className={classes.grid__item}>
+          <div className={classes.item}>{child}</div>
+        </div>
       ))}
-    </Grid>
+    </div>
   </div>
 ));
 
@@ -67,7 +82,7 @@ class Articles extends React.Component {
         showLoadingAnimation={true}>
         {articles.length > 0 ? (
           <CardGrid>
-            {articles.map((article) => <div key={article.title}>{JSON.stringify(article)}</div>)}
+            {articles.map((article) => <div key={article.id}>{JSON.stringify(article)}</div>)}
           </CardGrid>
         ) : (
           <EmptyPlaceholder />

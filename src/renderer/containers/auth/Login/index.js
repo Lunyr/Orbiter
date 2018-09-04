@@ -62,11 +62,7 @@ class Login extends React.Component {
     return (
       <div className={classes.container}>
         <Logo className={classes.logo} hasTitle={true} />
-        {showingLogin ? (
-          <LoginView classes={classes} onToggleView={this.toggleShowing} />
-        ) : (
-          <SignUpView classes={classes} onToggleView={this.toggleShowing} />
-        )}
+        <div>asdasdas</div>
       </div>
     );
   }

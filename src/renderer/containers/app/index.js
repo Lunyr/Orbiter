@@ -130,6 +130,7 @@ class App extends React.Component {
                 <Route exact path="/faq" component={() => <div>FAQ</div>} />
                 <Route exact path="/announcements" component={() => <div>Announcements</div>} />
                 <Route exact path="/transactions" component={() => <div>transactions</div>} />
+                <Route exact path="/wallet" component={() => <div>user info and wallet goes here</div>} />
                 <Route component={Feed} />
               </Switch>
               {isModal && (
