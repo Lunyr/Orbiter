@@ -2,13 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { injectIntl } from 'react-intl';
-import { editorStateFromRaw } from 'megadraft';
-import identity from 'lodash/identity';
 import {
-  setDraftEditorState,
+  persistDraftEditorState,
   setDraftTitle,
 } from '../../../../shared/redux/modules/article/draft/actions';
-import { Editor, ErrorBoundary, Hero, TitleEditor } from '../../../components';
+import { MegadraftEditor, ErrorBoundary, Hero, TitleEditor } from '../../../components';
 import References from '../references/References';
 import styles from './styles';
 
@@ -23,32 +21,13 @@ class Draft extends React.Component {
     this.props.setDraftTitle(e.target.value);
   };
 
-  handleEditorChange = (editorState) => {
-    this.props.setDraftEditorState(editorState);
-  };
-
-  getArticleWordCount = () => {
-    try {
-      const { draft } = this.props;
-      const content = draft.editorState.getCurrentContent();
-      const plaintext = content.getPlainText();
-      if (!plaintext) {
-        return 0;
-      }
-      return plaintext
-        .trim()
-        .split(' ')
-        .filter(identity).length;
-    } catch (error) {
-      console.error('There was an error handling word count for the article.', error);
-      return 0;
-    }
+  handleEditorSave = (editorState) => {
+    this.props.persistDraftEditorState(editorState);
   };
 
   render() {
     const { classes, draft, intl } = this.props;
     const { editorState, title, imageHash } = draft;
-    const wordCount = this.getArticleWordCount();
     const references = [];
     return (
       <ErrorBoundary
@@ -58,10 +37,10 @@ class Draft extends React.Component {
             "Oh no, something went wrong! It's okay though, please refresh and your content should return.",
         })}>
         <div className={classes.container}>
-          <header className={classes.header}>
-            <Hero imageHash={imageHash} />
-          </header>
           <section className={classes.draft}>
+            <header className={classes.header}>
+              <Hero imageHash={imageHash} />
+            </header>
             <div className={classes.main}>
               <div className={classes.title}>
                 <TitleEditor
@@ -72,23 +51,23 @@ class Draft extends React.Component {
                   })}
                   value={title}
                 />
-                <div className={classes.wordCount}>Words: {wordCount}</div>
               </div>
               <div className={classes.editor}>
-                <Editor
+                <MegadraftEditor
+                  addWordCount={true}
                   afterUpload={this.handleAfterUpload}
                   editorState={editorState}
-                  onChange={this.handleEditorChange}
+                  onSave={this.handleEditorSave}
                 />
               </div>
+              <footer className={classes.footer}>
+                <References formatType="MLA" references={references} />
+              </footer>
             </div>
-            <aside className={classes.aside}>
-              <AddtionalContent />
-            </aside>
           </section>
-          <footer className={classes.footer}>
-            <References formatType="MLA" references={references} />
-          </footer>
+          <aside className={classes.aside}>
+            <AddtionalContent />
+          </aside>
         </div>
       </ErrorBoundary>
     );
@@ -96,11 +75,14 @@ class Draft extends React.Component {
 }
 
 const mapStateToProps = ({ article: { draft } }) => ({
-  draft,
+  draft: {
+    ...draft,
+    editorState: JSON.parse(draft.editorState),
+  },
 });
 
 const mapDispatchToProps = {
-  setDraftEditorState,
+  persistDraftEditorState,
   setDraftTitle,
 };
 

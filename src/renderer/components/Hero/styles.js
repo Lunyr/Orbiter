@@ -10,6 +10,6 @@ export default (theme) => ({
     maxHeight: 'inherit',
   },
   placeholder: {
-    backgroundImage: 'url(./assets/images/placeholder.jpg)',
+    backgroundImage: 'url(/assets/images/placeholder.jpg)',
   },
 });

@@ -52,7 +52,7 @@ class ConnectingSplash extends React.Component {
       <div className={classes.container}>
         {error ? (
           <div className={cx(classes.inner, 'bounce-in-fwd')}>
-            <div className={classes.image} />
+            <img src={require('../../assets/images/spaceship.png')} />
             <h1 className={classes.title}>{error}</h1>
           </div>
         ) : (
@@ -93,7 +93,6 @@ const styles = (theme) => ({
   image: {
     width: 328,
     height: 381,
-    backgroundImage: 'url(./assets/images/spaceship.png)',
   },
 });
 

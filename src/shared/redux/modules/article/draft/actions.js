@@ -1,16 +1,14 @@
-import { editorStateToJSON } from 'megadraft';
-
 const actions = {
-  SET_EDITOR_STATE: 'draft/SET_EDITOR_STATE',
+  PERSIST_EDITOR_STATE: 'draft/PERSIST_EDITOR_STATE',
   SET_TITLE: 'draft/SET_TITLE',
 };
 
-export const setDraftEditorState = (editorState) => ({
+export const persistDraftEditorState = (editorState) => ({
   meta: {
     scope: 'local',
   },
-  type: actions.SET_EDITOR_STATE,
-  payload: { editorState: editorStateToJSON(editorState) },
+  type: actions.PERSIST_EDITOR_STATE,
+  payload: { editorState },
 });
 
 export const setDraftTitle = (title) => ({

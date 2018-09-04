@@ -9,7 +9,7 @@ export default (theme) => ({
     paddingLeft: theme.spacing,
     paddingRight: theme.spacing,
     boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.1)',
-    zIndex: 1,
+    zIndex: 100,
   }),
   right: {
     display: 'flex',

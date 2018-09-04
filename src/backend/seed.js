@@ -196,7 +196,7 @@ export default async (db) => {
       t.text('description');
       t.text('megadraft');
     });
-    
+
     // User Settings
     await db.schema.createTable('setting', (t) => {
       t.increments('setting_id').primary();

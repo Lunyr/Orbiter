@@ -7,14 +7,48 @@ import injectStyles from 'react-jss';
 import Loadable from 'react-loadable';
 import { AsyncLoader, Modal, TwoColumn } from '../../components';
 import ConnectingSplash from './ConnectingSplash';
-import Feed from '../feed';
 import Sidebar from './Sidebar/';
 import Header from './Header/';
 import Footer from './Footer';
 import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
 
+const Articles = Loadable({
+  loader: () => import('../article/Articles'),
+  loading: AsyncLoader,
+});
+
 const Draft = Loadable({
   loader: () => import('../article/Draft'),
+  loading: AsyncLoader,
+});
+
+const Editor = Loadable({
+  loader: () => import('../article/Editor'),
+  loading: AsyncLoader,
+});
+
+const Feed = Loadable({
+  loader: () => import('../feed/Feed'),
+  loading: AsyncLoader,
+});
+
+const Proposal = Loadable({
+  loader: () => import('../article/Proposal'),
+  loading: AsyncLoader,
+});
+
+const Reader = Loadable({
+  loader: () => import('../article/Reader'),
+  loading: AsyncLoader,
+});
+
+const Rejected = Loadable({
+  loader: () => import('../article/Rejected'),
+  loading: AsyncLoader,
+});
+
+const Review = Loadable({
+  loader: () => import('../article/Review'),
   loading: AsyncLoader,
 });
 
@@ -82,6 +116,12 @@ class App extends React.Component {
               <Switch location={isModal ? this.previousLocation : location}>
                 <Route exact path="/logout" component={Logout} />
                 <Route path="/draft" component={Draft} />
+                <Route exact path="/edit/:id" component={Editor} />
+                <Route exact path="/article/:title" component={Reader} />
+                <Route exact path="/proposed/:id" component={Proposal} />
+                <Route exact path="/rejected/:id" component={Rejected} />
+                <Route exact path="/review/:proposalId/:id" component={Review} />
+                <Route exact path="/articles" component={Articles} />
                 <Route exact path="/articles/unreviewed" component={() => <div>Peer Review</div>} />
                 <Route exact path="/tagging" component={() => <div>Tagging</div>} />
                 <Route exact path="/writing-manual" component={() => <div>Writing Manual</div>} />
@@ -89,6 +129,7 @@ class App extends React.Component {
                 <Route exact path="/about" component={() => <div>About</div>} />
                 <Route exact path="/faq" component={() => <div>FAQ</div>} />
                 <Route exact path="/announcements" component={() => <div>Announcements</div>} />
+                <Route exact path="/transactions" component={() => <div>transactions</div>} />
                 <Route component={Feed} />
               </Switch>
               {isModal && (

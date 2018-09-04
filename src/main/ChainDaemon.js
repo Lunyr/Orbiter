@@ -1,27 +1,28 @@
 import path from 'path';
 import { spawn, execSync } from 'child_process';
-import { getLogger, Raven } from '../lib/logger';
+import { getLogger } from '../lib/logger';
 import { handleError } from '../shared/handlers';
 
 const log = getLogger('ChainDaemon');
 
 export default class ChainDaemon {
   static path = path.resolve(__dirname, '../chain/chain-daemon.js');
-  subprocess;
-  handlers;
 
-  constructor() {
-    this.handlers = [];
-  }
+  subprocess = undefined;
+
+  handlers = [];
 
   launch() {
     log.info({ dirname: __dirname, path: ChainDaemon.path }, 'Launching daemon');
 
-    this.subprocess = spawn('node', [ChainDaemon.path], { stdio: ['pipe','inherit','inherit'] });
+    this.subprocess = spawn('babel-node', [ChainDaemon.path], {
+      stdio: ['pipe', 'inherit', 'inherit'],
+    });
 
     this.subprocess.on('exit', () => this.fire('exit'));
-    this.subprocess.on('error', error => {
-      log.error({ errorMessage: error.message }, "Unhandled error in Chain Daemon");
+
+    this.subprocess.on('error', (error) => {
+      log.error({ errorMessage: error.message }, 'Unhandled error in Chain Daemon');
       handleError(error);
     });
 
@@ -29,7 +30,7 @@ export default class ChainDaemon {
   }
 
   quit() {
-    log.info("Shutting down ChainDaemon...");
+    log.info('Shutting down ChainDaemon...');
     if (process.platform === 'win32') {
       try {
         execSync(`taskkill /pid ${this.subprocess.pid} /t /f`);
@@ -40,10 +41,10 @@ export default class ChainDaemon {
       if (typeof this.subprocess !== 'undefined') {
         this.subprocess.kill();
       } else {
-        log.warn("Unable to kill ChainDamon.  Process unknown.");
+        log.warn('Unable to kill ChainDamon.  Process unknown.');
       }
     }
-    log.info("ChainDaemon shut down.");
+    log.info('ChainDaemon shut down.');
   }
 
   // Follows the publish/subscribe pattern
@@ -55,7 +56,7 @@ export default class ChainDaemon {
 
   // Publish method
   fire(event, args) {
-    this.handlers.forEach(topic => {
+    this.handlers.forEach((topic) => {
       if (topic.event === event) topic.handler(args);
     });
   }

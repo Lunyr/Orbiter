@@ -1,10 +1,8 @@
 /**
  * This is the job script.  It pulls jobs from the queue
  */
-import { settings } from '../shared/settings';
 import { getLogger } from '../lib/logger';
-import eventsQueue from './queue';
-import { getEventData, getTransaction, getTransactionReceipt } from './utils'
+import { getEventData, getTransaction, getTransactionReceipt } from './utils';
 import { addEvent, addTx } from '../backend/api';
 import { TxState, TxTypeTranslation } from '../shared/constants';
 import { handleError } from '../shared/handlers';
@@ -12,11 +10,13 @@ import { handleError } from '../shared/handlers';
 const log = getLogger('handler');
 
 /**
- * @dev loadHandler will require() handler modules only when they haven't 
+ * @dev loadHandler will require() handler modules only when they haven't
  *  already been loaded
  * @param {string} name is the name of the handler
  */
-let LOADED_HANDLERS = {};
+
+const LOADED_HANDLERS = {};
+
 const loadHandler = (name) => {
   try {
     if (typeof LOADED_HANDLERS[name] === 'undefined') {
@@ -24,10 +24,10 @@ const loadHandler = (name) => {
     }
     return LOADED_HANDLERS[name];
   } catch (err) {
-    log.error({ error: err.message }, "Error loading handler!");
+    log.error({ error: err.message }, 'Error loading handler!');
     handleError(err);
   }
-}
+};
 
 // The handlers we will use
 const HANDLERS = [
@@ -61,7 +61,7 @@ const HANDLERS = [
 
 /**
  * @dev eventRouter is provided with a job from the queue and tries to send
- *  it to the appropriate handler.  It will load and use any handler listed in 
+ *  it to the appropriate handler.  It will load and use any handler listed in
  *  HANDLERS.
  * @param {object} job is the object returned from Bull
  * @param {function} done is the callback given by queue.process
@@ -72,7 +72,7 @@ const eventRouter = async (job) => {
     const eventName = job.data.event.name;
     log.debug({ eventName: eventName }, 'Event at router');
     if (HANDLERS.indexOf(eventName) > -1) {
-      log.debug("Event known");
+      log.debug('Event known');
 
       // Assemble event object
       const evData = getEventData(job.data.event);
@@ -102,7 +102,7 @@ const eventRouter = async (job) => {
         if (!receiptFromChain) {
           throw new Error(`Unable to get the receipt for ${txHash}`);
         }
-        let txToStore = { 
+        let txToStore = {
           hash: txHash,
           nonce: txFromChain.nonce,
           from_address: txFromChain.from,
@@ -120,7 +120,7 @@ const eventRouter = async (job) => {
           txToStore.transaction_type_id = TxTypeTranslation[job.data.event.name];
         }
         /**
-         * Generally speaking, we should never be inserting twice, but there are 
+         * Generally speaking, we should never be inserting twice, but there are
          * edge cases where a failed job is restarted due to a handler bug and this
          * can occur.
          */
@@ -136,7 +136,7 @@ const eventRouter = async (job) => {
           }
         }
       } else {
-        log.error({ txHash }, "Unable to find transaction for event in DB or on chain.");
+        log.error({ txHash }, 'Unable to find transaction for event in DB or on chain.');
       }
 
       // Load the handler
@@ -149,14 +149,13 @@ const eventRouter = async (job) => {
       // Have the handler process the job
       const handlerResult = await handler(job, txHash, evData);
       return handlerResult;
-
     } else {
-      log.warn({ event: job.data.event.name }, "Event without handler!");
+      log.warn({ event: job.data.event.name }, 'Event without handler!');
       throw new Error('No handler for this job');
     }
   } catch (err) {
     // Make sure we know about this error
-    log.error({ error: err.message }, "Unhandled error in a handler!");
+    log.error({ error: err.message }, 'Unhandled error in a handler!');
     handleError(err);
     // Make sure the queue knows this errored
     throw err;
@@ -167,12 +166,6 @@ const eventRouter = async (job) => {
  * @dev init kicks off the whole job consumer
  * @return {Promise} is a promise that will never resolve, nor reject
  */
-export default () => {
-  return new Promise(async (resolve,reject) => {
-    try {
-      await eventsQueue.process(eventRouter);
-    } catch (err) {
-      throw err;
-    }
-  });
+export default (queue) => {
+  return queue.process(eventRouter);
 };

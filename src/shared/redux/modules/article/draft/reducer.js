@@ -1,6 +1,7 @@
 import actions from './actions';
 
 const initialState = {
+  draftId: null,
   editorState: null,
   title: null,
 };
@@ -11,7 +12,7 @@ const draftReducer = (state = initialState, action) => {
     return state;
   }
   switch (type) {
-    case actions.SET_EDITOR_STATE:
+    case actions.PERSIST_EDITOR_STATE:
     case actions.SET_TITLE: {
       return {
         ...state,
