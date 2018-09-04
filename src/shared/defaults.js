@@ -1,3 +1,5 @@
+import path from 'path';
+
 const isDevelopment = () => {
   return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
 };
@@ -177,6 +179,27 @@ const ipfs = {
   port: 5001,
 };
 
+const getConfigDir = () => {
+  let configPath;
+  if (typeof process.env.APPDATA !== 'undefined') {
+    configPath = process.env.APPDATA;
+  } else if (process.platform == 'darwin') {
+    configPath = path.join(process.env.HOME, 'Library', 'Preferences');
+  } else {
+    configPath = path.join(process.env.HOME, '.config');
+  }
+  return path.join(configPath, 'lunyr-orbiter');
+};
+
+const getAPIRoot = () => {
+  if (typeof process.env.API_ROOT !== 'undefined') {
+    return process.env.API_ROOT
+  } else if (isDevelopment) {
+    return 'https://testapi.lunyr.com/'
+  }
+  return 'https://api.lunyr.com/';
+}
+
 export default {
   isDevelopment: isDevelopment(),
   privacy,
@@ -194,6 +217,8 @@ export default {
     attempts: 5,
   },
   sweeper: {
-    maxTransactionAge: 10 * 60 * 1000, // 10 minutes
+    maxTransactionAge: 10 * 60 * 1000 // 10 minutes
   },
-};
+  configDir: getConfigDir(),
+  lunyrAPIRoot: getAPIRoot(),
+}
