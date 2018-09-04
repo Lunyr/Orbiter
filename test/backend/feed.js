@@ -21,6 +21,9 @@ describe('Feed API', () => {
     assert.equal(result.data.length, 20, "Should have returned 20 votes");
     result.data.forEach(v => {
       assert.equal(v.type, 'vote', "Wrong type");
+      assert.exists(v.createdAt, "Missing createdAt");
+      assert.exists(v.proposal, "Missing proposal");
+      assert.exists(v.proposal.title, "Missing title");
     });
   });
 
