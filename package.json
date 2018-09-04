@@ -12,7 +12,6 @@
   "dependencies": {
     "@material-ui/core": "^3.0.2",
     "abi-decoder": "^1.1.0",
-    "babel-cli": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "classnames": "^2.2.6",
     "color": "^3.0.0",
@@ -62,7 +61,6 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",
-    "babel-jest": "^23.4.2",
     "babel-loader": "^7.1.5",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-dev-expression": "^0.2.1",
@@ -77,6 +75,7 @@
     "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
     "chalk": "^2.4.1",
     "concurrently": "^3.6.1",
     "cross-env": "^5.2.0",
@@ -100,7 +99,6 @@
     "eslint-plugin-compat": "^2.5.1",
     "eslint-plugin-flowtype": "^2.50.0",
     "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-jest": "^21.18.0",
     "eslint-plugin-jsx-a11y": "6.1.1",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-react": "^7.10.0",
@@ -112,7 +110,6 @@
     "flow-typed": "^2.5.1",
     "husky": "^0.14.3",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^23.4.2",
     "lint-staged": "^7.2.0",
     "mini-css-extract-plugin": "^0.4.1",
     "minimist": "^1.2.0",
@@ -166,7 +163,7 @@
     "test-all": "yarn lint && yarn build && yarn test && yarn test-e2e",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
     "test-watch": "yarn test --watch",
-    "compile": "babel src/ --copy-files --out-dir build"
+    "compile": "babel src/ --copy-files --out-dir build --ignore build,node_modules"
   },
   "browserslist": "electron 1.6",
   "lint-staged": {
