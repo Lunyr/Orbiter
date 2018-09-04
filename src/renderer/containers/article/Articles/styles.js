@@ -8,7 +8,7 @@ export default (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 45,
+    height: 65,
     flexShrink: 0,
   },
   title: {

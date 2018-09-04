@@ -4,63 +4,22 @@ import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
-import Loadable from 'react-loadable';
-import { AsyncLoader, Modal, TwoColumn } from '../../components';
+import { Modal, TwoColumn } from '../../components';
 import ConnectingSplash from './ConnectingSplash';
 import Sidebar from './Sidebar/';
 import Header from './Header/';
 import Footer from './Footer';
+import Articles from '../article/Articles';
+import Draft from '../article/Draft';
+import Editor from '../article/Editor';
+import Feed from '../feed/Feed';
+import Proposal from '../article/Proposal';
+import Reader from '../article/Reader';
+import Rejected from '../article/Rejected';
+import Review from '../article/Review';
+import Login from '../auth/Login/';
+import Logout from '../auth/Logout/';
 import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
-
-const Articles = Loadable({
-  loader: () => import('../article/Articles'),
-  loading: AsyncLoader,
-});
-
-const Draft = Loadable({
-  loader: () => import('../article/Draft'),
-  loading: AsyncLoader,
-});
-
-const Editor = Loadable({
-  loader: () => import('../article/Editor'),
-  loading: AsyncLoader,
-});
-
-const Feed = Loadable({
-  loader: () => import('../feed/Feed'),
-  loading: AsyncLoader,
-});
-
-const Proposal = Loadable({
-  loader: () => import('../article/Proposal'),
-  loading: AsyncLoader,
-});
-
-const Reader = Loadable({
-  loader: () => import('../article/Reader'),
-  loading: AsyncLoader,
-});
-
-const Rejected = Loadable({
-  loader: () => import('../article/Rejected'),
-  loading: AsyncLoader,
-});
-
-const Review = Loadable({
-  loader: () => import('../article/Review'),
-  loading: AsyncLoader,
-});
-
-const Login = Loadable({
-  loader: () => import('../auth/Login/'),
-  loading: AsyncLoader,
-});
-
-const Logout = Loadable({
-  loader: () => import('../auth/Logout/'),
-  loading: AsyncLoader,
-});
 
 class App extends React.Component {
   previousLocation = this.props.location;
@@ -130,7 +89,11 @@ class App extends React.Component {
                 <Route exact path="/faq" component={() => <div>FAQ</div>} />
                 <Route exact path="/announcements" component={() => <div>Announcements</div>} />
                 <Route exact path="/transactions" component={() => <div>transactions</div>} />
-                <Route exact path="/wallet" component={() => <div>user info and wallet goes here</div>} />
+                <Route
+                  exact
+                  path="/wallet"
+                  component={() => <div>user info and wallet goes here</div>}
+                />
                 <Route component={Feed} />
               </Switch>
               {isModal && (
