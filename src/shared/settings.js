@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Web3 from 'web3';
 import settings from './defaults';
+import { db } from '../backend/db';
 
 /**
  * User Settings
@@ -28,7 +29,7 @@ import settings from './defaults';
  * @param {string} address it the user's address the settings are saved as
  * @returns {object} the settings object
  */
-export const loadUserSettings = async (db, address) => {
+export const loadUserSettings = async (address) => {
   const settingResults = await await db('setting').where({
     hashed_address: Web3.utils.sha3(address),
   });

@@ -87,6 +87,7 @@
     "electron-builder": "^20.26.0",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-mocha": "^6.0.4",
     "electron-rebuild": "^1.8.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
@@ -161,10 +162,11 @@
     "start": "cross-env NODE_ENV=production electron ./src/root.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./src/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
-    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
+    "test": "yarn compile && ./node_modules/.bin/electron-mocha --renderer -R spec --require babel-core/register --require test/mocha.env.js",
     "test-all": "yarn lint && yarn build && yarn test && yarn test-e2e",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
-    "test-watch": "yarn test --watch"
+    "test-watch": "yarn test --watch",
+    "compile": "babel src/ --copy-files --out-dir build"
   },
   "browserslist": "electron 1.6",
   "lint-staged": {

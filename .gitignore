@@ -5,3 +5,5 @@ build
 *.log
 .idea
 *.sqlite
+*.js.map
+src/main.prod.js.map
