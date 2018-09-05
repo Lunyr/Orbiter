@@ -1002,3 +1002,40 @@
 .cursor {
   cursor: move;
 }
+
+.collapsibleWrapper .Collapsible__trigger {
+  color: #63646d;
+  font-family: 'Roboto';
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+}
+.collapsibleWrapper .Collapsible__trigger.is-closed:before {
+  font-family: 'FontAwesome';
+  content: '\f0d7';
+  margin-right: 30px;
+  color: #2d2d3a;
+}
+
+.collapsibleWrapper .Collapsible__trigger.is-open:before {
+  font-family: 'FontAwesome';
+  content: '\f0d8';
+  margin-right: 30px;
+  color: #ff8174;
+}
+
+.collapsibleWrapper .Collapsible__contentInner {
+  margin-left: 45px;
+}
+
+#About-Page {
+  fill: #fff;
+}
+
+.hover #About-Page {
+  fill: #fff;
+}
+
+.medium-blog figure img {
+  width: 100%;
+}
