@@ -316,15 +316,6 @@ class SearchBar extends React.Component {
               type="search"
               value={term}
             />
-            {/*
-            <ClearAction
-              classes={classes}
-              height={height}
-              isShowing={hasTerm}
-              isSearching={isSearching}
-              onClear={this.handleClear}
-            />
-            */}
           </div>
         </form>
         <SearchResults

@@ -8,11 +8,10 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 import { fetchFeed, fetchMoreFeed, setFilter } from '../../../../shared/redux/modules/feed/actions';
-import { ErrorBoundary, LoadingIndicator, Select } from '../../../components/';
+import { ErrorBoundary, LoadingIndicator, Placeholders, Select } from '../../../components/';
 import ArticleEntry from '../ArticleEntry';
 import ReviewEntry from '../ReviewEntry';
 import VotedEntry from '../VotedEntry';
-import { FeedListPlaceholder } from './placeholders';
 import styles from './styles';
 
 const matchType = (filter) => ({ type }) => type === filter;
@@ -219,7 +218,7 @@ class Feed extends React.Component {
             </header>
             <ReactPlaceholder
               ready={this.state.isReady && !isFetching}
-              customPlaceholder={<FeedListPlaceholder />}
+              customPlaceholder={<Placeholders.FeedListPlaceholder />}
               showLoadingAnimation={true}>
               <InfiniteScroll
                 pageStart={0}

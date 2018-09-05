@@ -3,6 +3,7 @@ export default (theme) => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
+    overflow: 'auto',
   },
   header: {
     display: 'flex',

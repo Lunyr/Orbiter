@@ -2,7 +2,7 @@ import React from 'react';
 import injectStyles from 'react-jss';
 import cx from 'classnames';
 import { TextBlock, RectShape, RoundShape } from 'react-placeholder/lib/placeholders';
-import theme from '../../../theme/index';
+import theme from '../../theme/index';
 
 const styles = (theme) => ({
   feedListPlaceholder: {
