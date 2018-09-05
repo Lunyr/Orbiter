@@ -32,7 +32,7 @@ export default (theme) => ({
   },
   clearIcon: {
     color: '#DBDCE1',
-    ':hover': {
+    '&:hover': {
       color: '#929397',
     },
   },
@@ -145,8 +145,8 @@ export default (theme) => ({
     paddingLeft: theme.spacing,
     paddingRight: theme.spacing,
     width: `calc(100% - ${theme.spacing * 2}px)`,
-    ':hover': {
-      background: '#eee',
+    '&:hover': {
+      background: theme.colors.lightGray,
     },
   },
   result__detached: {

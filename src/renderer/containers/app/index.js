@@ -76,7 +76,7 @@ class App extends React.Component {
                 <Route exact path="/logout" component={Logout} />
                 <Route path="/draft" component={Draft} />
                 <Route exact path="/edit/:id" component={Editor} />
-                <Route exact path="/article/:title" component={Reader} />
+                <Route exact path="/article/:id" component={Reader} />
                 <Route exact path="/proposed/:id" component={Proposal} />
                 <Route exact path="/rejected/:id" component={Rejected} />
                 <Route exact path="/review/:proposalId/:id" component={Review} />

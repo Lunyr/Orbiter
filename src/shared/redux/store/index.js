@@ -44,7 +44,7 @@ const configureStore = (initialState, storeKey, isRendererStore = true) => {
       key: storeKey,
       storage,
       stateReconciler: autoMergeLevel2,
-      blacklist: ['app', 'article', 'forms'],
+      blacklist: ['forms'],
     };
     const persistedReducer = persistReducer(persistanceConfiguration, rootReducer);
     const store = isProduction

@@ -6,6 +6,7 @@ import auth from './auth/reducer';
 import explorer from './explorer/reducer';
 import feed from './feed/reducer';
 import locale from './locale/reducer';
+import search from './search/reducer';
 
 /*
 * Unify module reducers for a single state tree
@@ -19,4 +20,5 @@ export const reducers = combineReducers({
   feed,
   form,
   locale,
+  search,
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage } from 'react-intl';
+import { withRouter } from 'react-router-dom';
 import ReactPlaceholder from 'react-placeholder';
 import { fetchArticles } from '../../../../shared/redux/modules/explorer/actions';
 import { timeAgoDisplay } from '../../../../shared/utils';
@@ -133,26 +134,32 @@ const ArticleCard = injectStyles((theme) => ({
     marginBottom: 0,
     overflow: 'hidden',
   },
-}))(({ article: { createdAt, description, heroImageHash, title, updatedAt }, classes }) => (
-  <div className={classes.card}>
-    <img
-      className={classes.image}
-      src={heroImageHash ? `https://ipfs.io/ipfs/${heroImageHash}` : require('./placeholder.jpg')}
-      alt="Uh oh, can't be found!"
-    />
-    <div className={classes.info}>
-      <div className={classes.info__header}>
-        <h3 className={classes.title}>{title}</h3>
-        <span className={classes.timestamp}>
-          {timeAgoDisplay(updatedAt ? updatedAt : createdAt)}
-        </span>
+}))(
+  ({ article: { createdAt, description, heroImageHash, title, updatedAt }, classes, onClick }) => (
+    <div className={classes.card} onClick={onClick}>
+      <img
+        className={classes.image}
+        src={heroImageHash ? `https://ipfs.io/ipfs/${heroImageHash}` : require('./placeholder.jpg')}
+        alt="Uh oh, can't be found!"
+      />
+      <div className={classes.info}>
+        <div className={classes.info__header}>
+          <h3 className={classes.title}>{title}</h3>
+          <span className={classes.timestamp}>
+            {timeAgoDisplay(updatedAt ? updatedAt : createdAt)}
+          </span>
+        </div>
+        <p className={classes.help}>{description}</p>
       </div>
-      <p className={classes.help}>{description}</p>
     </div>
-  </div>
-));
+  )
+);
 
 class Articles extends React.Component {
+  navigateToArticle = ({ id }) => {
+    this.props.history.replace(`/article/${id}`);
+  };
+
   componentDidMount() {
     this.props.fetchArticles(0, 0);
   }
@@ -173,7 +180,13 @@ class Articles extends React.Component {
               </h1>
             </header>
             <ArticleGrid>
-              {articles.map((article) => <ArticleCard key={article.id} article={article} />)}
+              {articles.map((article) => (
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  onClick={this.navigateToArticle.bind(this, article)}
+                />
+              ))}
             </ArticleGrid>
           </div>
         ) : (
@@ -195,7 +208,9 @@ const mapDispatchToProps = {
   fetchArticles,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectStyles(styles)(Articles));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(injectStyles(styles)(Articles))
+);
