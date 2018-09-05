@@ -6,6 +6,7 @@ import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
 import { Modal, TwoColumn } from '../../components';
 import ConnectingSplash from './ConnectingSplash';
+import About from './About';
 import Sidebar from './Sidebar/';
 import Header from './Header/';
 import Footer from './Footer';
@@ -85,7 +86,7 @@ class App extends React.Component {
                 <Route exact path="/tagging" component={() => <div>Tagging</div>} />
                 <Route exact path="/writing-manual" component={() => <div>Writing Manual</div>} />
                 <Route exact path="/advertising" component={() => <div>Advertising</div>} />
-                <Route exact path="/about" component={() => <div>About</div>} />
+                <Route exact path="/about" component={About} />
                 <Route exact path="/faq" component={() => <div>FAQ</div>} />
                 <Route exact path="/announcements" component={() => <div>Announcements</div>} />
                 <Route exact path="/transactions" component={() => <div>transactions</div>} />

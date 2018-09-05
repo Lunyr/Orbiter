@@ -17,7 +17,7 @@ class Articles extends React.Component {
   navigateToArticle = ({ id }) => {
     this.props.history.replace(`/article/${id}`);
   };
-
+  
   componentDidMount() {
     this.props.fetchArticles(0, 0);
   }
