@@ -50,16 +50,14 @@ const readyHandler = async () => {
   }
 
   // Seed database
-  if (testSeed && db) {
-    try {
-      const seed = require('./backend/seed').default;
-      await seed(db);
-    } catch (err) {
-      if (err.message.indexOf('already exists') > -1) {
-        log.info('Database already created');
-      } else {
-        throw err;
-      }
+  try {
+    const seed = require('./backend/seed').default;
+    await seed(db);
+  } catch (err) {
+    if (err.message.indexOf('already exists') > -1) {
+      log.info('Database already created');
+    } else {
+      throw err;
     }
   }
 
@@ -67,7 +65,7 @@ const readyHandler = async () => {
   const processList = await findProcess('name', 'chain-daemon');
   const isDaemonRunning = processList.length > 0;
 
-  if (!isDaemonRunning) {
+  if (!isDaemonRunning && typeof process.env.DISABLE_DAEMON === 'undefined') {
     chainDaemon = new ChainDaemon();
 
     chainDaemon.on('exit', () => {
