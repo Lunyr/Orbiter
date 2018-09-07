@@ -5,7 +5,7 @@ import { hot } from 'react-hot-loader';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import { ThemeProvider } from 'react-jss';
 import { connect, Provider } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import { configureStore } from './shared/redux/store/index';
 import theme from './renderer/theme/index';

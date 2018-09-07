@@ -10,6 +10,7 @@ const jsonRPC = {
   lunyr_testnet: 'https://testrpc.lunyr.com/',
   current: null,
 };
+
 jsonRPC.current = isDevelopment() ? jsonRPC.lunyr_testnet : jsonRPC.mainnet;
 
 const router = {

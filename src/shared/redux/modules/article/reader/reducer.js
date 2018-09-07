@@ -1,8 +1,9 @@
 import actions from './actions';
 
 const initialState = {
-  editorState: null,
-  title: null,
+  data: null,
+  isFetching: false,
+  error: null,
 };
 
 const readerReducer = (state = initialState, action) => {
@@ -11,6 +12,28 @@ const readerReducer = (state = initialState, action) => {
     return state;
   }
   switch (type) {
+    case `${actions.FETCH}_START`:
+      return {
+        ...state,
+        isFetching: true,
+      };
+
+    case `${actions.FETCH}_SUCCESS`:
+      return {
+        ...state,
+        data: payload.data,
+        error: '',
+        isFetching: false,
+      };
+
+    case `${actions.FETCH}_ERROR`:
+      return {
+        ...state,
+        error: payload,
+        data: [],
+        isFetching: false,
+      };
+
     default:
       return state;
   }

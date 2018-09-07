@@ -14,10 +14,10 @@ import { fetchArticles } from '../../../../shared/redux/modules/explorer/actions
 import styles from './styles';
 
 class Articles extends React.Component {
-  navigateToArticle = ({ id }) => {
-    this.props.history.replace(`/article/${id}`);
+  navigateToArticle = ({ title }) => {
+    this.props.history.replace(`/article/${title}`);
   };
-  
+
   componentDidMount() {
     this.props.fetchArticles(0, 0);
   }
@@ -29,7 +29,7 @@ class Articles extends React.Component {
         <ReactPlaceholder
           customPlaceholder={<Placeholders.GridViewPlaceholder />}
           ready={!isFetchingArticles || articles.length !== 0}
-          showLoadingAnimation={true}>
+          showLoadingAnimation>
           {articles.length > 0 ? (
             <div className={classes.container}>
               <header className={classes.header}>

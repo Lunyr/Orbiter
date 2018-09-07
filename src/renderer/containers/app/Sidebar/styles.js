@@ -5,6 +5,9 @@ export default (theme) => ({
     height: '100%',
     width: '100%',
     backgroundColor: theme.colors.darkerGray,
+    position: 'sticky',
+    top: -1,
+    zIndex: 1,
   },
   header: {
     display: 'flex',

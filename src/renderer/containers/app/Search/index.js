@@ -19,7 +19,7 @@ const renderArticleLink = ({ classes, onClick, results, detached }, { index, sty
   return (
     <Link
       key={id}
-      to={`/article/${id}`}
+      to={`/article/${title}`}
       className={cx(classes.link, classes.articleLink)}
       onClick={onClick}
       style={style}>

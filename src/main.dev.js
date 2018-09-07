@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, Menu, globalShortcut } from 'electron';
 import findProcess from 'find-process';
 import installExtensions from './main/installExtensions';
 import windowConfig from './main/windowConfig';
@@ -80,8 +80,6 @@ const readyHandler = async () => {
   // Setup node based redux store that will act as our source of truth
   store = createStore();
 
-  console.log('aminWindow', mainWindow);
-
   // Create main window
   mainWindow = new BrowserWindow(windowConfig);
 
@@ -123,6 +121,10 @@ const readyHandler = async () => {
 
   mainWindow.webContents.on('did-fail-load', (e, errCode, errDesc) => {
     console.log('FAILED TO LOAD', e, errCode, errDesc);
+    // Attempt to reload the url again
+    if (mainWindow) {
+      mainWindow.loadURL(`file://${__dirname}/index.html`);
+    }
   });
 
   mainWindow.webContents.on('unresponsive', () => {
