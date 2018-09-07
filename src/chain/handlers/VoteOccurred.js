@@ -95,7 +95,7 @@ export default async (job, txHash, evData) => {
 
     // Use blockchain timestamp if we have it
     if (blockStamp)
-      vote.created = blockStamp;
+      vote.createdAt = blockStamp.toISOString();
 
     job.progress(45);
 

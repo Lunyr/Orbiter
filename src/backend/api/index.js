@@ -47,5 +47,5 @@ export { getFeed, getFeedArticlesAccepted, getFeedArticlesInReview, getFeedVotes
 export { getDiscover } from './discover';
 export { getUserSettings, setUserSetting } from './setting';
 export { searchArticles } from './search';
-
+export { authenticate } from './auth';
 export { default as Web3API } from './web3';

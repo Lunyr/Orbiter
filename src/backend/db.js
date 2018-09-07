@@ -24,6 +24,7 @@ const db = knex({
   client: 'sqlite3',
   connection: {
     filename: DB_FILE,
+    dateStrings: true,
   },
   useNullAsDefault: true,
 });

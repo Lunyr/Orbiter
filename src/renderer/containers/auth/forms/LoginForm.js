@@ -7,7 +7,7 @@ import { injectIntl } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import ethjsAccount from 'ethjs-account';
 import { login } from '../../../../shared/redux/modules/auth/actions';
-import { ButtonGroup, Forms, LoadingIndicator } from '../../../components';
+import { ButtonGroup, Forms, LoadingIndicator, Avatar } from '../../../components';
 
 const {
   ActionButton,
@@ -22,14 +22,12 @@ const {
 } = Forms;
 
 class LoginForm extends React.Component {
-  submit = async ({ username, password }) => {
+  submit = async ({ account, password }) => {
     try {
       const { login, reset } = this.props;
-      const web3 = remote.getGlobal('web3');
-      const privateKey = web3.utils.sha3(`${password}.${username}`);
-      const userAddress = ethjsAccount.privateToAccount(privateKey).address;
       login({
-        address: userAddress,
+        address: account,
+        password: password,
       });
       reset();
     } catch (error) {
@@ -40,27 +38,42 @@ class LoginForm extends React.Component {
   };
 
   render() {
-    const { classes, error, handleSubmit, history, intl, submitting } = this.props;
+    const { classes, accountsError, loginError, handleSubmit, history, intl, submitting, accounts, loading } = this.props;
+    const accountRadios = accounts ? accounts.map((a) => 
+      <div key={a.address}>
+        <Field
+          name="account"
+          className={classes.input}
+          component={InputField}
+          type="radio"
+          id={a.address}
+          value={a.address}
+          required={true}
+        />
+        <Label
+          className={classes.label}
+          htmlFor={a.address}
+          required={true}
+          value={<span><Avatar seed={a.address} /><span>{a.address}</span></span>}
+        />
+      </div>
+    ) : (
+      <div>loading...</div>
+    );
     return (
       <Form className={classes.form} onSubmit={handleSubmit(this.submit)}>
-        <ErrorBlock error={error} />
-        <LoadingIndicator fadeIn="quarter" showing={submitting} full />
+        <ErrorBlock error={accountsError} />
+        <ErrorBlock error={loginError} />
+        <LoadingIndicator fadeIn="quarter" showing={loading || submitting} full />
         <Fieldset disabled={submitting}>
           <Group className={classes.group}>
             <Label
               className={classes.label}
-              htmlFor="username"
+              htmlFor="account"
               required={true}
-              value={intl.formatMessage({ id: 'username', defaultMessage: 'Username' })}
+              value={intl.formatMessage({ id: 'choose-account', defaultMessage: 'Select an account' })}
             />
-            <Field
-              autoComplete="username"
-              name="username"
-              className={classes.input}
-              component={InputField}
-              type="username"
-              required={true}
-            />
+            {accountRadios}
           </Group>
           <Group className={classes.group}>
             <Label
@@ -100,8 +113,11 @@ class LoginForm extends React.Component {
 
 LoginForm.defaultProps = {
   classes: {},
-  error: '',
+  accountsError: '',
+  loginError: '',
   submitting: false,
+  loading: false,
+  accounts: [],
 };
 
 const styles = (theme) => ({
@@ -130,17 +146,23 @@ const styles = (theme) => ({
   },
 });
 
+const mapStateToProps = ({ auth: { accounts, loginError, accountsError } }) => ({
+  accounts,
+  loginError,
+  accountsError,
+});
+
 const mapDispatchToProps = {
   login,
 };
 
+LoginForm = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginForm);
+
 export default withRouter(
-  connect(
-    null,
-    mapDispatchToProps
-  )(
-    reduxForm({
-      form: 'forms.login',
-    })(injectIntl(injectStyles(styles)(LoginForm)))
-  )
+  reduxForm({
+    form: 'forms.login',
+  })(injectIntl(injectStyles(styles)(LoginForm)))
 );

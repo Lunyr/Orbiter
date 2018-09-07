@@ -75,7 +75,7 @@ export default async (job, txHash, evData) => {
       megadraft: null,
     }
     if (blockStamp) {
-      proposal.created = blockStamp;
+      proposal.createdAt = blockStamp.toISOString();
     }
 
     let content;
