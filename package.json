@@ -166,7 +166,7 @@
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.js'",
     "precommit": "lint-staged",
     "prestart": "yarn build",
-    "start": "cross-env NODE_ENV=production electron ./src/root.js",
+    "start": "cross-env NODE_ENV=production npm run compile && electron ./build/root.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./src/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
     "test": "yarn compile && ./node_modules/.bin/electron-mocha --renderer -R spec --require babel-core/register --require test/mocha.env.js",

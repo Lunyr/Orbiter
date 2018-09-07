@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import { getFeed } from '../../../../backend/api';
+import createTriggerAlias from '../../helpers/createTriggerAlias';
 
 const actions = {
   FETCH: 'blog/FETCH',
