@@ -28,6 +28,7 @@ const appReducer = (state = initialState, action) => {
       return {
         ...state,
         connecting: false,
+        ...payload.data,
       };
     }
 

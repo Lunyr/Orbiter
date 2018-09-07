@@ -15,12 +15,17 @@ const connect = async () => {
     const web3 = new Web3();
     web3.setProvider(new Web3.providers.HttpProvider(providerUrl));
     const connected = await web3.eth.net.isListening();
-    log.info({ connected, providerUrl }, 'Blockchain connection status');
+    const network = await web3.eth.net.getNetworkType();
+
+    log.info({ connected, providerUrl, network }, 'Blockchain connection status');
     // Set into global context - This cant just be passed as data because
     // it wont serialize the functions appropriately
     global.web3 = web3;
     return {
       success: true,
+      data: {
+        network,
+      },
     };
   } catch (error) {
     return {
