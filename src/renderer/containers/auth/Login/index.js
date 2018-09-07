@@ -131,6 +131,7 @@ class Login extends React.Component {
         showAPIImport={this.showAPIImport}
       />
     );
+    
     if (showingLogin && accounts && accounts.length > 0) {
       view = <LoginView classes={classes} onToggleView={this.toggleShowing} />;
     } else if (showingAPIImport) {
@@ -158,5 +159,5 @@ const mapDispatchToProps = {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(injectStyles(styles)(Login));

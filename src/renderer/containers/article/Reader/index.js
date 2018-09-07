@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
-import { injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import { fetchArticleByTitle } from '../../../../shared/redux/modules/article/reader/actions';
 import {
   Contributors,
   ErrorBoundary,
   Hero,
+  Label,
   LoadingIndicator,
   MegadraftEditor,
 } from '../../../components';
@@ -49,6 +50,11 @@ class Reader extends React.Component {
             "Oh no, something went wrong! It's okay though, please refresh and your content should return.",
         })}>
         <div className={classes.container}>
+          <Label
+            className={classes.reviewLabel}
+            valueClassName={classes.reviewLabel__value}
+            value="Accepted Article"
+          />
           <section className={classes.article}>
             <header className={classes.header}>
               <Hero imageHash={heroImageHash} />
@@ -58,7 +64,12 @@ class Reader extends React.Component {
                 <h1 className={classes.title}>{title}</h1>
               </div>
               <div className={classes.contributors}>
-                <Contributors contributors={contributors} />
+                <Contributors
+                  contributors={contributors}
+                  tagLine={
+                    <FormattedMessage id="contributors_title" defaultMessage="Contributors" />
+                  }
+                />
               </div>
               <div className={classes.editor}>
                 <MegadraftEditor editorState={editorState} readOnly={true} />

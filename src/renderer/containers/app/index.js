@@ -82,7 +82,7 @@ class App extends React.Component {
                 <Route exact path="/article/:title" component={Reader} />
                 <Route exact path="/proposed/:id" component={Proposal} />
                 <Route exact path="/rejected/:id" component={Rejected} />
-                <Route exact path="/review/:proposalId/:id" component={Review} />
+                <Route exact path="/review/:proposalId/:title" component={Review} />
                 <Route exact path="/articles" component={Articles} />
                 <Route exact path="/articles/unreviewed" component={() => <div>Peer Review</div>} />
                 <Route exact path="/tagging" component={() => <div>Tagging</div>} />

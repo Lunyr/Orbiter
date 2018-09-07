@@ -25,7 +25,7 @@ export default (theme) => ({
     fontWeight: 300,
   },
   help__container: {
-    maxWidth: 250,
+    maxWidth: 320,
     textAlign: 'center',
   },
   help: {

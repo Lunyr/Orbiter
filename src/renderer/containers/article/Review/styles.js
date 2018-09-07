@@ -18,6 +18,17 @@ export default (theme) => ({
     height: 'auto',
     maxHeight: 'calc((100vw) / 3)',
   },
+  reviewLabel: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 10,
+    boxShadow: theme.boxShadows.large,
+  },
+  reviewLabel__value: {
+    fontSize: '0.9rem',
+    fontWeight: 400,
+  },
   main: {
     display: 'flex',
     flexDirection: 'column',
@@ -33,8 +44,6 @@ export default (theme) => ({
     display: 'flex',
     flexShrink: 0,
     flexDirection: 'column',
-    paddingLeft: theme.spacing,
-    paddingTop: theme.spacing * 2,
     width: '25%',
     height: '100%',
   },
@@ -61,16 +70,5 @@ export default (theme) => ({
     paddingLeft: theme.spacing,
     minHeight: 60,
     borderTop: '1px solid rgba(0, 0, 0, 0.1)',
-  },
-  reviewLabel: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    zIndex: 10,
-    boxShadow: theme.boxShadows.large,
-  },
-  reviewLabel__value: {
-    fontSize: '0.9rem',
-    fontWeight: 400,
   },
 });

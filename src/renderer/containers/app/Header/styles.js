@@ -27,4 +27,14 @@ export default (theme) => ({
     marginRight: theme.spacing,
     borderRadius: 30,
   },
+  address: {
+    display: 'flex',
+    alignItems: 'center',
+    height: 50,
+  },
+  address__value: {
+    wordBreak: 'break-all',
+    color: theme.colors.gray,
+    paddingRight: theme.spacing,
+  },
 });

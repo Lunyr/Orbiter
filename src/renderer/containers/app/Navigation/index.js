@@ -77,8 +77,8 @@ const mapStateToProps = (state, { intl }) => {
       exact: true,
       to: '/',
       display: intl.formatMessage({
-        id: 'link_home',
-        defaultMessage: 'Home',
+        id: 'link_feed',
+        defaultMessage: 'Feed',
       }),
     },
     {
@@ -86,7 +86,7 @@ const mapStateToProps = (state, { intl }) => {
       to: '/articles',
       display: intl.formatMessage({
         id: 'link_allArticles',
-        defaultMessage: 'All',
+        defaultMessage: 'All Articles',
       }),
     },
   ];
@@ -94,6 +94,7 @@ const mapStateToProps = (state, { intl }) => {
   return {
     articleLinks: baseLinks.concat(categories.map(toCategoryLink.bind(this, intl))),
     pageLinks: [
+      /*
       {
         to: '/articles/unreviewed',
         display: intl.formatMessage({
@@ -102,6 +103,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <ThumbsUpIcon />,
       },
+      */
       {
         to: '/tagging',
         display: intl.formatMessage({
@@ -119,6 +121,7 @@ const mapStateToProps = (state, { intl }) => {
         icon: <PencilIcon />,
         target: '_blank',
       },
+      /*
       {
         to: '/advertising',
         display: intl.formatMessage({
@@ -127,6 +130,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <FlagIcon />,
       },
+      */
       {
         to: '/about',
         display: intl.formatMessage({
@@ -143,6 +147,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <CommentIcon />,
       },
+      /*
       {
         to: '/announcements',
         display: intl.formatMessage({
@@ -151,6 +156,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <BullhornIcon />,
       },
+      */
     ],
   };
 };

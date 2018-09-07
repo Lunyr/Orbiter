@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
 import injectStyles from 'react-jss';
 import Tooltip from 'react-tooltip';
 import Avatar from '../Avatar';
@@ -16,17 +15,9 @@ const ContributorAvatar = ({ classes, contributor }) => {
   );
 };
 
-const Contributors = ({ classes, contributors }) => (
+const Contributors = ({ classes, contributors, tagLine }) => (
   <div className={classes.contributors}>
-    <h3 className={classes.tagLine}>
-      <FormattedMessage
-        id="contributors_title"
-        defaultMessage="Contributors ({count})"
-        values={{
-          count: contributors.length,
-        }}
-      />
-    </h3>
+    <h3 className={classes.tagLine}>{tagLine}</h3>
     <div className={classes.avatars}>
       {contributors &&
         contributors.length > 0 &&

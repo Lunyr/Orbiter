@@ -1,11 +1,10 @@
-import { remote } from 'electron';
 import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { Field, reduxForm, SubmissionError } from 'redux-form';
 import { injectIntl } from 'react-intl';
 import { withRouter } from 'react-router-dom';
-import ethjsAccount from 'ethjs-account';
+import cx from 'classnames';
 import { login } from '../../../../shared/redux/modules/auth/actions';
 import { ButtonGroup, Forms, LoadingIndicator, Avatar } from '../../../components';
 
@@ -38,25 +37,41 @@ class LoginForm extends React.Component {
   };
 
   render() {
-    const { classes, accountsError, loginError, handleSubmit, history, intl, submitting, accounts, loading } = this.props;
-    const accountRadios = accounts ? accounts.map((a) => 
-      <div key={a.address}>
-        <Field
-          name="account"
-          className={classes.input}
-          component={InputField}
-          type="radio"
-          id={a.address}
-          value={a.address}
-          required={true}
-        />
-        <Label
-          className={classes.label}
-          htmlFor={a.address}
-          required={true}
-          value={<span><Avatar seed={a.address} /><span>{a.address}</span></span>}
-        />
-      </div>
+    const {
+      classes,
+      accountsError,
+      loginError,
+      handleSubmit,
+      history,
+      intl,
+      submitting,
+      accounts,
+      loading,
+    } = this.props;
+    const accountRadios = accounts ? (
+      accounts.map((a) => (
+        <div key={a.address} className={classes.radio__container}>
+          <Field
+            name="account"
+            className={classes.radio}
+            component={InputField}
+            type="radio"
+            id={a.address}
+            value={a.address}
+            required={true}
+          />
+          <Label
+            className={cx(classes.label, classes.accountLabel__label)}
+            htmlFor={a.address}
+            value={
+              <span className={classes.accountLabel}>
+                <Avatar className={classes.accountLabel__avatar} seed={a.address} />
+                <span className={classes.accountLabel__address}>{a.address}</span>
+              </span>
+            }
+          />
+        </div>
+      ))
     ) : (
       <div>loading...</div>
     );
@@ -71,7 +86,10 @@ class LoginForm extends React.Component {
               className={classes.label}
               htmlFor="account"
               required={true}
-              value={intl.formatMessage({ id: 'choose-account', defaultMessage: 'Select an account' })}
+              value={intl.formatMessage({
+                id: 'choose-account',
+                defaultMessage: 'Select an account',
+              })}
             />
             {accountRadios}
           </Group>
@@ -135,6 +153,14 @@ const styles = (theme) => ({
     boxShadow: 'none',
     height: 48,
   },
+  radio__container: {
+    display: 'inline-flex',
+    height: 75,
+    alignItems: 'center',
+  },
+  radio: {
+    display: 'flex',
+  },
   group: {
     marginBottom: theme.spacing,
   },
@@ -143,6 +169,21 @@ const styles = (theme) => ({
   },
   cancel: {
     color: theme.colors.white,
+  },
+  accountLabel: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    ...theme.overflow,
+  },
+  accountLabel__label: {
+    marginLeft: theme.spacing,
+  },
+  accountLabel__avatar: {
+    marginLeft: theme.spacing * 0.5,
+    marginRight: theme.spacing,
+  },
+  accountLabel__address: {
+    ...theme.overflow,
   },
 });
 

@@ -7,13 +7,10 @@ export default (theme) => ({
     height: 60,
     width: '100%',
     borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-    '@media only screen and (max-width: 480px)': {
-      display: 'none',
-    },
   },
   userImage: {
-    height: '75px',
-    width: '75px',
+    height: 75,
+    width: 75,
     borderRadius: '50%',
     objectFit: 'cover',
   },
@@ -22,12 +19,13 @@ export default (theme) => ({
   },
   tagLine: {
     ...theme.typography.h3,
-    fontWeight: 500,
-    fontSize: 24,
+    fontWeight: 400,
+    fontSize: '1.45rem',
+    margin: 0,
   },
   contributor: {
-    fontSize: '16px',
-    marginRight: '15px',
+    fontSize: '1rem',
+    marginRight: theme.spacing,
     textAlign: 'center',
   },
   avatars: {

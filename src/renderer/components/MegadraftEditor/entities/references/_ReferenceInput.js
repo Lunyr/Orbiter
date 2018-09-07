@@ -321,7 +321,7 @@ class ReferenceInput extends React.Component {
     const endOffset = selection.getEndOffset();
     const block_key = selection.getAnchorKey();
     let { auth } = this.props;
-    var reference = {
+    let reference = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
       title: this.state.title,
@@ -346,7 +346,7 @@ class ReferenceInput extends React.Component {
       reference['creation_date'] = Date.now();
     }
 
-    var entityKey = this.getCurrentEntityKey();
+    let entityKey = this.getCurrentEntityKey();
     this.addReferenceToMap(reference);
     if (entityKey) {
       this.setReference([reference], entityKey);
@@ -362,8 +362,8 @@ class ReferenceInput extends React.Component {
    * @return int count -- the number of references in front of the selector
    */
   numReferencesInFront = (currNode, childNodes) => {
-    var referenceNodes = [];
-    for (var i = 0; i < childNodes.length; i++) {
+    let referenceNodes = [];
+    for (let i = 0; i < childNodes.length; i++) {
       // If we're at the current node, don't move any further
       if (childNodes[i] === currNode) {
         break;
@@ -373,7 +373,7 @@ class ReferenceInput extends React.Component {
       }
     }
 
-    var count = 0;
+    let count = 0;
     for (i = 0; i < referenceNodes.length; i++) {
       count += referenceNodes[i].getElementsByClassName(SUP_CLASSNAME).length;
     }
@@ -388,15 +388,15 @@ class ReferenceInput extends React.Component {
    * @return int numCharsTotal -- the number of characters offset in front of the selectedNode
    */
   fullCharacterOffset = (currNode, childNodes) => {
-    var numCharsTotal = 0;
-    for (var i = 0; i < childNodes.length; i++) {
+    let numCharsTotal = 0;
+    for (let i = 0; i < childNodes.length; i++) {
       // If we're at the current node, don't move any further
       if (childNodes[i] === currNode) {
         break;
       }
       numCharsTotal += childNodes[i].textContent.length;
       if (childNodes[i].className === REFERENCE_CONTAINER_CLASSNAME) {
-        var numSup = childNodes[i].getElementsByClassName(SUP_CLASSNAME).length;
+        let numSup = childNodes[i].getElementsByClassName(SUP_CLASSNAME).length;
         numCharsTotal -= SUP_LENGTH * numSup;
       }
     }
@@ -413,21 +413,21 @@ class ReferenceInput extends React.Component {
       const anchorKey = selection.getAnchorKey();
 
       // Gets the last word selected out of the selection group
-      var select = window.getSelection();
+      let select = window.getSelection();
       select.collapseToEnd();
       select.modify('extend', 'left', 'word');
 
       // Gets the parent paragraph class
-      var parent = select.anchorNode;
-      var currentClassName = parent.className;
+      let parent = select.anchorNode;
+      let currentClassName = parent.className;
       while (currentClassName !== PARAGRAPH_CLASSNAME) {
         parent = parent.parentNode;
         currentClassName = parent.className;
       }
 
       // Gets the current node right below the parent
-      var currNode = select.anchorNode;
-      var onCurrentNode = false;
+      let currNode = select.anchorNode;
+      let onCurrentNode = false;
       if (currNode.dataset && currNode.dataset.offsetKey.includes(anchorKey)) {
         onCurrentNode = true;
       }
@@ -493,7 +493,7 @@ class ReferenceInput extends React.Component {
     let { auth } = this.props;
 
     const referenceArray = this.getReferences();
-    var reference = { ...referenceArray[index] };
+    let reference = { ...referenceArray[index] };
     reference['firstName'] = this.state.firstName;
     reference['lastName'] = this.state.lastName;
     reference['title'] = this.state.title;
@@ -510,7 +510,7 @@ class ReferenceInput extends React.Component {
     reference['author'] = auth.account.username;
     reference['updated_date'] = Date.now();
 
-    var editedArray = [...referenceArray];
+    let editedArray = [...referenceArray];
     editedArray[index] = reference;
     this.props.setEntity({ referenceArray: editedArray });
   };

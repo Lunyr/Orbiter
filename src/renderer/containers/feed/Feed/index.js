@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import ReactPlaceholder from 'react-placeholder';
 import InfiniteScroll from 'react-infinite-scroller';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { withRouter } from 'react-router-dom';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 import { fetchFeed, fetchMoreFeed, setFilter } from '../../../../shared/redux/modules/feed/actions';
@@ -16,14 +17,7 @@ import styles from './styles';
 
 const matchType = (filter) => ({ type }) => type === filter;
 
-const FeedList = ({
-  classes,
-  feed,
-  filter,
-  onArticleClick,
-  onUserProfileClick,
-  onProposalClick,
-}) => (
+const FeedList = ({ classes, feed, filter, onArticleClick, onProposalClick }) => (
   <ErrorBoundary
     errorMsg={
       <FormattedMessage
@@ -48,32 +42,11 @@ const FeedList = ({
           const key = `${type}_${id}_${index}`;
           switch (type) {
             case 'article':
-              return (
-                <ArticleEntry
-                  key={key}
-                  {...rest}
-                  onArticleClick={onArticleClick}
-                  onUserProfileClick={onUserProfileClick}
-                />
-              );
+              return <ArticleEntry key={key} {...rest} onArticleClick={onArticleClick} />;
             case 'review':
-              return (
-                <ReviewEntry
-                  key={key}
-                  {...rest}
-                  onProposalClick={onProposalClick}
-                  onUserProfileClick={onUserProfileClick}
-                />
-              );
+              return <ReviewEntry key={key} {...rest} onProposalClick={onProposalClick} />;
             case 'vote':
-              return (
-                <VotedEntry
-                  key={key}
-                  {...rest}
-                  onProposalClick={onProposalClick}
-                  onUserProfileClick={onUserProfileClick}
-                />
-              );
+              return <VotedEntry key={key} {...rest} onProposalClick={onProposalClick} />;
             default:
               console.warn('Unknown Type For Feed Seen:', type);
               return null;
@@ -147,12 +120,19 @@ class Feed extends React.Component {
   };
 
   loadMore = (page) => {
-    console.log('load more', page);
     const { limit } = this.state;
     const { feed } = this.props;
     if (feed && feed.length > 0) {
       this.props.fetchMoreFeed({ limit, offset: limit * page });
     }
+  };
+
+  onArticleClick = ({ title }) => {
+    this.props.history.push(`/article/${title}`);
+  };
+
+  onProposalClick = ({ proposalId, title }) => {
+    this.props.history.push(`/review/${proposalId}/${title}`);
   };
 
   componentDidMount() {
@@ -189,9 +169,6 @@ class Feed extends React.Component {
       isFetching,
       isFetchingMore,
       setFilter,
-      onArticleClick,
-      onUserProfileClick,
-      onProposalClick,
     } = this.props;
     const filteredFeed = this.filteredFeeds();
     const localizedFilterTypes = filterTypes.map(({ value, label }) => ({
@@ -237,9 +214,8 @@ class Feed extends React.Component {
                   classes={classes}
                   feed={filteredFeed}
                   filter={get(filter, 'value')}
-                  onArticleClick={onArticleClick}
-                  onUserProfileClick={onUserProfileClick}
-                  onProposalClick={onProposalClick}
+                  onArticleClick={this.onArticleClick}
+                  onProposalClick={this.onProposalClick}
                 />
               </InfiniteScroll>
             </ReactPlaceholder>
@@ -310,7 +286,9 @@ const mapDispatchToProps = {
   setFilter,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectIntl(injectStyles(styles)(Feed)));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(injectIntl(injectStyles(styles)(Feed)))
+);

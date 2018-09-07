@@ -9,10 +9,6 @@ import EntryHeader from '../EntryHeader/';
 import styles from './styles';
 
 class ArticleEntry extends Component {
-  onArticleClick = () => {
-    return this.props.onArticleClick && this.props.onArticleClick({ article: this.props });
-  };
-
   render() {
     const {
       classes,
@@ -23,9 +19,12 @@ class ArticleEntry extends Component {
       updatedAt,
       fromAddress,
       parentId,
+      onArticleClick,
     } = this.props;
     return (
-      <div className={cx(classes.article, classes.card)} onClick={this.onArticleClick}>
+      <div
+        className={cx(classes.article, classes.card)}
+        onClick={onArticleClick.bind(this, { title })}>
         <header className={classes.header}>
           <EntryHeader
             actionText={
@@ -43,7 +42,6 @@ class ArticleEntry extends Component {
             updatedAt={updatedAt ? updatedAt : createdAt}
             title={title}
             address={fromAddress}
-            onUserProfileClick={this.props.onUserProfileClick}
           />
         </header>
         {heroImageHash && (

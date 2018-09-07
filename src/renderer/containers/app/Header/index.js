@@ -39,16 +39,15 @@ const Header = ({ auth, classes }) => (
             id="user-dropdown-menu"
             className={classes.menu}
             itemHeight={45}
-            width={150}
+            width={250}
             alignedRight>
             <span className={classes.trigger}>
-              <Avatar
-                className={classes.avatar}
-                seed={get(auth, ['account', 'username'])}
-                size={35}
-              />
-              {get(auth, ['account', 'username'])}
+              <Avatar className={classes.avatar} seed={get(auth, 'account')} size={35} />
+              {`${get(auth, 'account').substring(0, 12)}...`}
             </span>
+            <div className={classes.address} tabIndex="-1">
+              <span className={classes.address__value}>{get(auth, 'account')}</span>
+            </div>
             <Link to="/logout">Logout</Link>
           </ActionMenu>
         )}
