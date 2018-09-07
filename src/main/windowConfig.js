@@ -1,7 +1,7 @@
 export default {
   show: false,
-  width: 1180,
+  width: 1280,
   height: 728,
-  minWidth: 767,
+  minWidth: 1080,
   minHeight: 600,
 };

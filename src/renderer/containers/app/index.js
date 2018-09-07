@@ -4,14 +4,11 @@ import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
+import {
+  connectToBlockchain,
+  initializeContracts,
+} from '../../../shared/redux/modules/app/actions';
 import { Modal, TwoColumn } from '../../components';
-import ConnectingSplash from './ConnectingSplash';
-import About from './About';
-import Announcements from './Announcements';
-import FAQ from './FAQ/';
-import Sidebar from './Sidebar/';
-import Header from './Header/';
-import Footer from './Footer';
 import Articles from '../article/Articles';
 import Draft from '../article/Draft';
 import Editor from '../article/Editor';
@@ -22,7 +19,13 @@ import Rejected from '../article/Rejected';
 import Review from '../article/Review';
 import Login from '../auth/Login/';
 import Logout from '../auth/Logout/';
-import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
+import ConnectingSplash from './ConnectingSplash';
+import About from './About';
+import Announcements from './Announcements';
+import FAQ from './FAQ/';
+import Sidebar from './Sidebar/';
+import Header from './Header/';
+import Footer from './Footer';
 
 class App extends React.Component {
   previousLocation = this.props.location;
@@ -35,9 +38,12 @@ class App extends React.Component {
 
   async componentDidUpdate(prevProps) {
     const web3 = remote.getGlobal('web3');
-    if (!prevProps.connecting && this.props.connecting && web3) {
+    if (web3) {
       const network = await web3.eth.net.getNetworkType();
-      this.showNewConnectionStatus(network);
+      if (!prevProps.connecting && this.props.connecting) {
+        this.showNewConnectionStatus(network);
+      }
+      this.props.initializeContracts(network);
     }
   }
 
@@ -129,6 +135,7 @@ const mapStateToProps = ({ app: { connecting, footerHeight, headerHeight, sideba
 
 const mapDispatchToProps = {
   connectToBlockchain,
+  initializeContracts,
 };
 
 const styles = (theme) => ({

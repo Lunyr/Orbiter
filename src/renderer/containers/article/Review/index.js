@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { editorStateFromRaw } from 'megadraft';
+import cx from 'classnames';
+import { languageToReadable } from '../../../../shared/redux/modules/locale/actions';
 import { fetchArticleProposal } from '../../../../shared/redux/modules/article/review/actions';
 import decorator from '../../../components/MegadraftEditor/decorator';
 import {
@@ -57,7 +59,7 @@ class Review extends React.Component {
   }
 
   render() {
-    const { article, isFetching, classes, intl } = this.props;
+    const { article, isFetching, classes, intl, isAuthor } = this.props;
     const { editorState, loadingDiff } = this.state;
     if (isFetching || loadingDiff) {
       return (
@@ -69,8 +71,9 @@ class Review extends React.Component {
         />
       );
     }
-    const { contributors, title, heroImageHash } = article;
+    const { contributors, title, heroImageHash, lang, oldArticle } = article;
     const references = [];
+    console.log(article);
     return (
       <ErrorBoundary
         errorMsg={intl.formatMessage({
@@ -93,11 +96,26 @@ class Review extends React.Component {
               <div className={classes.title__container}>
                 <h1 className={classes.title}>{title}</h1>
               </div>
+              <div
+                className={cx(
+                  classes.langChange,
+                  oldArticle && oldArticle.lang ? classes.langChanged : classes.langAdded
+                )}>
+                {oldArticle && oldArticle.lang
+                  ? `Language: ${languageToReadable[oldArticle.lang]} --> ${
+                      languageToReadable[lang]
+                    }`
+                  : `+Language: ${languageToReadable[lang] || 'English'}`}
+              </div>
               <div className={classes.contributors}>
                 <Contributors
                   contributors={contributors}
                   tagLine={
-                    <FormattedMessage id="review_contributors_title" defaultMessage="Author" />
+                    contributors && contributors.length > 1 ? (
+                      <FormattedMessage id="contributors_title" defaultMessage="Contributors" />
+                    ) : (
+                      <FormattedMessage id="review_contributors_title" defaultMessage="Author" />
+                    )
                   }
                 />
               </div>
@@ -110,7 +128,7 @@ class Review extends React.Component {
             </div>
           </section>
           <aside className={classes.aside}>
-            <ReviewSideSequence article={article} isAuthor={false} />
+            <ReviewSideSequence article={article} isAuthor={isAuthor} />
           </aside>
         </div>
       </ErrorBoundary>
@@ -120,6 +138,7 @@ class Review extends React.Component {
 
 const mapStateToProps = (
   {
+    auth: { account },
     article: {
       review: { error, data, isFetching },
     },
@@ -133,6 +152,7 @@ const mapStateToProps = (
   article: data || {},
   error,
   isFetching,
+  isAuthor: data.fromAddress === account,
   proposalParam,
   titleParam,
 });

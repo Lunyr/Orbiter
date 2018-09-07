@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
-import Sticky from 'react-stickynode';
+import { FormattedMessage } from 'react-intl';
 import cx from 'classnames';
-import { LoadingIndicator } from '../../../components';
+import { LoadingIndicator, Link } from '../../../components';
+import { fetchVotingEligibility } from '../../../../shared/redux/modules/article/review/actions';
 import ReviewSequence from './ReviewSequence/';
+import { MdWarning as WarningIcon } from 'react-icons/md';
 
 const parseIntWithRadix = (value) => parseInt(value, 10);
 
@@ -51,56 +53,46 @@ class ReviewSideSequence extends React.Component {
   };
 
   determineReviewState = async (props) => {
-    const { auth, article, articleActions, contracts } = props;
-    const isInReview = article.state === 1;
-    // This article in question is no longer in review status, don't allow for any actions
-    if (!isInReview) {
+    const { isLoggedIn } = props;
+    // If not logged in but article needs reviews show user login link
+    if (!isLoggedIn) {
       return {
         isCheckingReviewable: false,
         isEligibleToVote: false,
         reason: {
-          type: 'not-in-review',
+          type: 'not-logged-in',
         },
       };
-    } else {
-      // If not logged in but article needs reviews show user login link
-      if (!auth.isLoggedIn) {
+    }
+    /*
+    // User is logged in, we need to check if they are eligible to do reviews
+    const { PeerReview } = contracts;
+    if (PeerReview) {
+      const { proposalId } = article;
+      const ethereumAddress = auth.account.profile.ethereumAddress;
+      // Check if user already voted on it, if so indicate as such otherwise check contract constraints
+      const { voted } = await articleActions.getUserVotedOn(ethereumAddress, proposalId);
+      if (voted) {
         return {
           isCheckingReviewable: false,
           isEligibleToVote: false,
           reason: {
-            type: 'not-logged-in',
+            type: 'already-voted',
           },
         };
-      }
-      // User is logged in, we need to check if they are eligible to do reviews
-      const { PeerReview } = contracts;
-      if (PeerReview) {
-        const { proposalId } = article;
-        const ethereumAddress = auth.account.profile.ethereumAddress;
-        // Check if user already voted on it, if so indicate as such otherwise check contract constraints
-        const { voted } = await articleActions.getUserVotedOn(ethereumAddress, proposalId);
-        if (voted) {
-          return {
-            isCheckingReviewable: false,
-            isEligibleToVote: false,
-            reason: {
-              type: 'already-voted',
-            },
-          };
-        } else {
-          const isEligibleToVote = await PeerReview.isEligibleToVote(proposalId, ethereumAddress);
-          const reason = !isEligibleToVote
-            ? await this.reasonForIneligbleVote(contracts, proposalId, ethereumAddress)
-            : {};
-          return {
-            isCheckingReviewable: false,
-            isEligibleToVote,
-            reason,
-          };
-        }
+      } else {
+        const isEligibleToVote = await PeerReview.isEligibleToVote(proposalId, ethereumAddress);
+        const reason = !isEligibleToVote
+          ? await this.reasonForIneligbleVote(contracts, proposalId, ethereumAddress)
+          : {};
+        return {
+          isCheckingReviewable: false,
+          isEligibleToVote,
+          reason,
+        };
       }
     }
+    */
   };
 
   setTransactionFailed = (bool, callback) => {
@@ -112,38 +104,6 @@ class ReviewSideSequence extends React.Component {
     );
   };
 
-  renderView() {
-    const { classes } = this.props;
-    const {
-      isEligibleToVote,
-      isCheckingReviewable,
-      pendingTransaction,
-      reason,
-      transactionFailed,
-    } = this.state;
-    if (isCheckingReviewable) {
-      return (
-        <div className={classes.loading__container}>
-          <LoadingIndicator
-            id="review-side-sequence-loading-indicator"
-            fadeIn="quarter"
-            showing={true}
-          />
-        </div>
-      );
-    }
-    return (
-      <ReviewSequence
-        setTransactionFailed={this.setTransactionFailed}
-        transactionFailed={transactionFailed}
-        pendingTransaction={pendingTransaction}
-        eligibleToVote={isEligibleToVote}
-        reason={reason}
-        title={this.props.title}
-      />
-    );
-  }
-
   async componentDidUpdate(prevProps) {
     /*
     const peerReviewContractInitialzed =
@@ -154,25 +114,62 @@ class ReviewSideSequence extends React.Component {
     */
   }
 
-  async componentDidMount() {
-    // this.determineReviewState(this.props).then(state => state && this.setState(state));
+  componentDidMount() {
+    const { account, fetchVotingEligibility, proposalId } = this.props;
+    fetchVotingEligibility(account, proposalId);
   }
 
   render() {
-    const { classes, isAuthor } = this.props;
+    const { classes, eligibility, isAuthor, isLoggedIn } = this.props;
+    console.log(this.props);
     return (
-      <div className={cx(classes.reviewSideSequence, isAuthor && classes.hide)}>
-        <Sticky top={0} bottomBoundary={201}>
-          <div className={classes.reviewSection}>{this.renderView()}</div>
-        </Sticky>
+      <div className={cx({ [classes.reviewSideSequence]: true, [classes.hide]: isAuthor })}>
+        <div className={classes.reviewSection}>
+          {!isLoggedIn ? (
+            <div className={classes.voteStatus}>
+              <WarningIcon className={classes.checkMark} size={60} />
+              <p className={classes.voteStatus__header}>
+                <FormattedMessage id="review_notLoggedIn" defaultMessage="You are not logged in!" />
+              </p>
+              <p className={classes.voteStatus__help}>
+                <FormattedMessage
+                  id="review_notLoggedIn_explain"
+                  defaultMessage="You must be logged in to perform peer reviews."
+                />
+              </p>
+              <p>
+                <Link to="/login" className={classes.link} isModal={true}>
+                  <FormattedMessage id="review_notLoggedIn_link" defaultMessage="Login" />
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <ReviewSequence {...eligibility} />
+          )}
+        </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => state;
+const mapStateToProps = (
+  {
+    auth: { account, isLoggedIn },
+    article: {
+      review: { eligibility },
+    },
+  },
+  { article: { proposalId } }
+) => ({
+  account,
+  eligibility,
+  isLoggedIn,
+  proposalId,
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  fetchVotingEligibility,
+};
 
 const styles = (theme) => ({
   loading__container: {
@@ -190,17 +187,38 @@ const styles = (theme) => ({
   },
   reviewSideSequence: {
     width: '100%',
-    minHeight: '100vh',
-    position: 'sticky',
-    top: 0,
     alignSelf: 'flex-start',
+    height: '100%',
   },
   reviewSection: {
     display: 'flex',
     justifyContent: 'center',
+    height: '100%',
+    width: '100%',
   },
   hide: {
     display: 'none',
+  },
+  voteStatus: {
+    textAlign: 'center',
+    paddingTop: theme.spacing,
+  },
+  voteStatus__header: {
+    ...theme.typography.h2,
+    fontSize: 20,
+    fontWeight: 500,
+    marginTop: theme.spacing,
+  },
+  voteStatus__help: {
+    ...theme.typography.body,
+    lineHeight: '24px',
+  },
+  checkMark: {
+    color: theme.colors.primary,
+  },
+  link: {
+    textDecoration: 'none',
+    color: theme.colors.link,
   },
 });
 

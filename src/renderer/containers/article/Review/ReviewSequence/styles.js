@@ -5,15 +5,9 @@ export default (theme) => ({
     flexDirection: 'column',
     backgroundColor: theme.colors.white,
     width: '100%',
-    borderRadius: theme.borderRadius,
-    boxShadow: theme.boxShadows.large,
-    padding: '30px 30px 20px 30px',
-    boxSizing: 'border-box',
-    minHeight: '100vh',
-    '@media only screen and (max-width: 1024px)': {
-      padding: theme.spacing,
-      paddingTop: 0,
-    },
+    height: '100%',
+    boxShadow: theme.boxShadows.medium,
+    padding: theme.spacing,
   },
   centered: {
     justifyContent: 'center',
@@ -128,6 +122,8 @@ export default (theme) => ({
   voteStatus: {
     textAlign: 'center',
     paddingTop: theme.spacing,
+    paddingLeft: theme.spacing,
+    paddingRight: theme.spacing,
   },
   voteStatus__header: {
     ...theme.typography.h2,

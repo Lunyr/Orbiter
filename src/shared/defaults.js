@@ -194,18 +194,18 @@ const getConfigDir = () => {
 
 const getAPIRoot = () => {
   if (typeof process.env.API_ROOT !== 'undefined') {
-    return process.env.API_ROOT
+    return process.env.API_ROOT;
   } else if (isDevelopment) {
-    return 'https://testapi.lunyr.com/'
+    return 'https://testapi.lunyr.com/';
   }
   return 'https://api.lunyr.com/';
-}
+};
 
 export default {
   isDevelopment: isDevelopment(),
   privacy,
   logging: {
-    logLevel: isDevelopment() ? 20 : 30,
+    logLevel: process.env.LOG_LEVEL || isDevelopment() ? 20 : 30,
   },
   ipfs,
   jsonRPC,
@@ -218,8 +218,8 @@ export default {
     attempts: 5,
   },
   sweeper: {
-    maxTransactionAge: 10 * 60 * 1000 // 10 minutes
+    maxTransactionAge: 10 * 60 * 1000, // 10 minutes
   },
   configDir: getConfigDir(),
   lunyrAPIRoot: getAPIRoot(),
-}
+};

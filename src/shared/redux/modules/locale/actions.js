@@ -8,6 +8,12 @@ const localeKeyToDisplay = {
   'en-US': 'English',
 };
 
+export const languageToReadable = {
+  es: 'Español',
+  en: 'English',
+  zh: '中文',
+};
+
 export const localeLanguages = Object.keys(locales).reduce((acc, localeKey) => {
   acc.push({
     value: localeKey,

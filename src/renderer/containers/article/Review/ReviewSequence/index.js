@@ -5,14 +5,13 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import cx from 'classnames';
 import multihashes from 'multihashes';
-import styles from './styles';
-
 import {
   MdCheckCircle as CheckCircleIcon,
   MdError as ErrorCircleIcon,
   MdRateReview as ReviewIcon,
   MdWarning as WarningIcon,
 } from 'react-icons/md';
+import styles from './styles';
 
 // Components
 /*
@@ -380,48 +379,24 @@ class ReviewSequence extends React.Component {
     );
   }
 
-  renderNotLoggedIn() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.voteStatus}>
-        <WarningIcon className={classes.checkMark} size={60} />
-        <p className={classes.voteStatus__header}>
-          <FormattedMessage id="review_notLoggedIn" defaultMessage="You are not logged in!" />
-        </p>
-        <p className={classes.voteStatus__help}>
-          <FormattedMessage
-            id="review_notLoggedIn_explain"
-            defaultMessage="You must be logged in to perform peer reviews."
-          />
-        </p>
-        <p>
-          <Link to="/login" className={classes.link}>
-            <FormattedMessage id="review_notLoggedIn_link" defaultMessage="Log In" />
-          </Link>
-        </p>
-      </div>
-    );
-  }
-
   renderIneligibleVoteReason(reason) {
-    switch (reason.type) {
-      case 'already-voted':
-        return this.renderVoteCasted();
+    if (reason) {
+      switch (reason.type) {
+        case 'already-voted':
+          return this.renderVoteCasted();
 
-      case 'not-logged-in':
-        return this.renderNotLoggedIn();
+        case 'not-in-review':
+          return this.renderAlreadyFinishedVoting();
 
-      case 'not-in-review':
-        return this.renderAlreadyFinishedVoting();
+        case 'blacklist':
+          return this.renderBlacklist();
 
-      case 'blacklist':
-        return this.renderBlacklist();
+        case 'low-rewards':
+          return this.renderNotEnoughRewards(reason);
 
-      case 'low-rewards':
-        return this.renderNotEnoughRewards(reason);
-
-      default:
-        return null;
+        default:
+          return null;
+      }
     }
   }
 
@@ -430,7 +405,7 @@ class ReviewSequence extends React.Component {
   };
 
   render() {
-    const { classes, contracts, intl, reason } = this.props;
+    const { classes, eligibility = {}, intl } = this.props;
     const { checked, error, txComplete } = this.state;
     const options = [
       'Biased',
@@ -445,9 +420,10 @@ class ReviewSequence extends React.Component {
       id: option,
       label: intl.formatMessage({ id: this.optionIntlId(option), defaultMessage: option }),
     }));
+    const { canReview, reason } = eligibility;
     return (
       <div className={cx(classes.reviewSequence, txComplete && classes.centered)}>
-        {!this.props.eligibleToVote ? (
+        {!canReview ? (
           this.renderIneligibleVoteReason(reason)
         ) : txComplete ? (
           <CompletedTransaction txHash={this.state.txhash} review={true} />

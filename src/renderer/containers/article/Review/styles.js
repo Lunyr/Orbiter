@@ -46,6 +46,9 @@ export default (theme) => ({
     flexDirection: 'column',
     width: '25%',
     height: '100%',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1,
   },
   title__container: {
     display: 'flex',
@@ -70,5 +73,15 @@ export default (theme) => ({
     paddingLeft: theme.spacing,
     minHeight: 60,
     borderTop: '1px solid rgba(0, 0, 0, 0.1)',
+  },
+  langAdded: {
+    backgroundColor: '#d7e9be',
+  },
+  langChanged: {
+    backgroundColor: 'orange',
+  },
+  langChange: {
+    padding: 5,
+    alignSelf: 'flex-start',
   },
 });
