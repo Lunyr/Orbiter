@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { editorStateFromRaw } from 'megadraft';
+import isEmpty from 'lodash/isEmpty';
 import cx from 'classnames';
 import { languageToReadable } from '../../../../shared/redux/modules/locale/actions';
 import {
@@ -120,21 +121,26 @@ class Review extends React.Component {
 
 const performDiff = (article) => {
   if (!article) {
-    return {};
+    // Return no diff
+    return null;
   } else if (!article.oldArticle || !article.oldArticle.megadraft) {
-    return article;
+    // Return original article
+    return JSON.parse(article.megadraft);
   } else {
     const { megadraft, oldArticle } = article;
     const newDraftMegadraft = JSON.parse(megadraft);
     const newDraftEditorState = editorStateFromRaw(newDraftMegadraft, decorator);
     const oldArticleMegadraft = JSON.parse(oldArticle.megadraft);
     const oldArticleEditorState = editorStateFromRaw(oldArticleMegadraft, decorator);
-    return calculateDiff(
+    const diff = calculateDiff(
       oldArticleEditorState,
       newDraftEditorState,
       oldArticleMegadraft,
       newDraftMegadraft
     );
+    // Need to explicitly return null for an empty diff so that
+    // it doesnt blow up the Megadraft editor which freaks out about `{}`
+    return !isEmpty(diff) ? diff : null;
   }
 };
 

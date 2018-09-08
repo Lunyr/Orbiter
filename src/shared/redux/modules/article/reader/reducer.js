@@ -23,7 +23,7 @@ const readerReducer = (state = initialState, action) => {
       return {
         ...state,
         data: payload.data,
-        error: '',
+        error: null,
         isFetching: false,
       };
 
@@ -31,7 +31,7 @@ const readerReducer = (state = initialState, action) => {
       return {
         ...state,
         error: payload,
-        data: [],
+        data: null,
         isFetching: false,
       };
 

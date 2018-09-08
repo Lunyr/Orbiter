@@ -39,20 +39,20 @@ const productionStore = (reducer, initialState, isRendererStore) => {
  * Returns a map containing a redux store and persistor based on `initialState` and `options`
  */
 const configureStore = (initialState, storeKey, isRendererStore = true) => {
+  // Ensure we clear out the state when we logout
+  const rootReducer = (state, action) => {
+    if (action.type === 'auth/LOGOUT') {
+      state = undefined;
+    }
+    return appReducer(state, action);
+  };
+
   if (isRendererStore) {
     const persistanceConfiguration = {
       key: storeKey,
       storage,
       stateReconciler: autoMergeLevel2,
       blacklist: ['forms'],
-    };
-
-    // Ensure we clear out the state when we logout
-    const rootReducer = (state, action) => {
-      if (action.type === 'auth/LOGOUT') {
-        state = undefined;
-      }
-      return appReducer(state, action);
     };
 
     const persistedReducer = persistReducer(persistanceConfiguration, rootReducer);

@@ -24,13 +24,24 @@ class MegadraftEditor extends React.Component {
     super(props);
     this.handleSaveEditor = debounce(this.handleSaveEditor, 1000);
   }
+
   static getDerivedStateFromProps(props, state) {
-    if (typeof state.editorState === 'undefined') {
+    try {
+      const editorState = editorStateFromRaw(props.editorState, decorator);
+      if (
+        typeof state.editorState === 'undefined' ||
+        state.editorState.getCurrentContent() !== editorState.getCurrentContent()
+      ) {
+        return {
+          editorState,
+        };
+      }
+      return state;
+    } catch (error) {
       return {
-        editorState: editorStateFromRaw(props.editorState, decorator),
+        editorState: editorStateFromRaw(null, decorator),
       };
     }
-    return state;
   }
 
   handleSaveEditor = () => {
