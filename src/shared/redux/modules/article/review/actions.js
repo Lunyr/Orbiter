@@ -2,6 +2,7 @@ import {
   getCurrentArticleByTitle,
   getProposal,
   userVotedOnProposal,
+  userEligibleToVote,
 } from '../../../../../backend/api';
 import createTriggerAlias from '../../../helpers/createTriggerAlias';
 import { includeContributors } from '../common';
@@ -30,20 +31,9 @@ export const fetchArticleProposal = createTriggerAlias(actions.FETCH, (proposalI
 
 export const fetchVotingEligibility = createTriggerAlias(
   actions.CHECK_VOTING_ELIGIBILITY,
-  (userAddress, proposalId) => ({
+  (proposalId, userAddress) => ({
     type: actions.CHECK_VOTING_ELIGIBILITY,
-    payload: userVotedOnProposal(proposalId, userAddress).then(({ data: alreadyVoted }) => {
-      return {
-        data: {
-          canReview: !alreadyVoted,
-          reason: alreadyVoted
-            ? {
-                type: 'already-voted',
-              }
-            : {},
-        },
-      };
-    }),
+    payload: userEligibleToVote(proposalId, userAddress),
   })
 );
 

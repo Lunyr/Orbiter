@@ -30,6 +30,7 @@ export {
   getProposalVotes,
   userVotedOnProposal,
   getUsersRecentVotes,
+  userEligibleToVote,
 } from './vote';
 export {
   getTag,

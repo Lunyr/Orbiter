@@ -18,9 +18,11 @@ const connect = async () => {
     const network = await web3.eth.net.getNetworkType();
 
     log.info({ connected, providerUrl, network }, 'Blockchain connection status');
+
     // Set into global context - This cant just be passed as data because
-    // it wont serialize the functions appropriately
+    // it wont serialize the functions appropriately across ipc
     global.web3 = web3;
+
     return {
       success: true,
       data: {
@@ -35,6 +37,11 @@ const connect = async () => {
   }
 };
 
+/**
+ * Initializes a set of contracts against a particular network
+ * @param network
+ * @returns {Promise<*>}
+ */
 const initializeContracts = async (network) => {
   try {
     log.info({ network }, 'Initializing contracts against network');
@@ -70,13 +77,15 @@ const initializeContracts = async (network) => {
     log.info('Tagger address', tagger.options.address);
 
     // Add into global context
-    global.peerReview = peerReview;
-    global.auctioneer = auctioneer;
-    global.lunyrToken = lunyrToken;
-    global.contributors = contributors;
-    global.lunPoolContributors = lunPoolContributors;
-    global.environment = environment;
-    global.tagger = tagger;
+    global.contracts = {
+      peerReview,
+      auctioneer,
+      lunyrToken,
+      contributors,
+      lunPoolContributors,
+      environment,
+      tagger,
+    };
 
     return {
       success: true,

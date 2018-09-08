@@ -4,6 +4,7 @@ import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { editorStateFromRaw } from 'megadraft';
 import cx from 'classnames';
+import isEmpty from 'lodash/isEmpty';
 import { languageToReadable } from '../../../../shared/redux/modules/locale/actions';
 import { fetchArticleProposal } from '../../../../shared/redux/modules/article/review/actions';
 import decorator from '../../../components/MegadraftEditor/decorator';
@@ -26,10 +27,16 @@ class Review extends React.Component {
   };
 
   static getDerivedStateFromProps(props) {
-    const {
-      article: { megadraft, oldArticle },
-    } = props;
+    const { article } = props;
 
+    if (!article || isEmpty(article)) {
+      return {
+        editorState: {},
+        loadingDiff: false,
+      };
+    }
+
+    const { megadraft, oldArticle } = article;
     const newDraftMegadraft = JSON.parse(megadraft);
     const newDraftEditorState = editorStateFromRaw(newDraftMegadraft, decorator);
     const oldArticleMegadraft = JSON.parse(oldArticle.megadraft);
@@ -152,7 +159,7 @@ const mapStateToProps = (
   article: data || {},
   error,
   isFetching,
-  isAuthor: data.fromAddress === account,
+  isAuthor: data && data.fromAddress === account,
   proposalParam,
   titleParam,
 });

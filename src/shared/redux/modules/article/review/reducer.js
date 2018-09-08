@@ -6,7 +6,7 @@ const initialState = {
   error: null,
   eligibility: {
     isChecking: false,
-    canReview: false,
+    isEligibleToVote: false,
     reason: null,
     error: null,
   },
@@ -54,8 +54,8 @@ const reviewReducer = (state = initialState, action) => {
         ...state,
         eligibility: {
           ...state.eligibility,
+          ...payload.data,
           isChecking: false,
-          ...payload,
         },
       };
 
@@ -66,7 +66,7 @@ const reviewReducer = (state = initialState, action) => {
           ...state.eligibility,
           isChecking: false,
           error: payload,
-          canReview: false,
+          isEligibleToVote: false,
         },
       };
 

@@ -14,6 +14,12 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 // Just for remote loading the initial client state
 global.state = {};
 
+// Store references to initialized contracts
+global.contracts = {};
+
+// Store reference of initialized web3 instance
+global.web3 = null;
+
 // Initialize some globals so they dont get garbage collected
 let mainWindow = null;
 let store = null;

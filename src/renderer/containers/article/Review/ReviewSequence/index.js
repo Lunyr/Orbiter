@@ -9,7 +9,6 @@ import {
   MdCheckCircle as CheckCircleIcon,
   MdError as ErrorCircleIcon,
   MdRateReview as ReviewIcon,
-  MdWarning as WarningIcon,
 } from 'react-icons/md';
 import styles from './styles';
 
@@ -261,7 +260,7 @@ class ReviewSequence extends React.Component {
     }
   };
   */
-  /*
+
   handleSelection = (id, e) => {
     const isChecked = e.target.checked;
     this.setState(({ checked }) => {
@@ -280,7 +279,6 @@ class ReviewSequence extends React.Component {
       };
     });
   };
-  */
 
   /**
    * Cancel reject screen and return to review.
@@ -405,7 +403,7 @@ class ReviewSequence extends React.Component {
   };
 
   render() {
-    const { classes, eligibility = {}, intl } = this.props;
+    const { classes, isEligibleToVote, intl, reason } = this.props;
     const { checked, error, txComplete } = this.state;
     const options = [
       'Biased',
@@ -420,16 +418,14 @@ class ReviewSequence extends React.Component {
       id: option,
       label: intl.formatMessage({ id: this.optionIntlId(option), defaultMessage: option }),
     }));
-    const { canReview, reason } = eligibility;
     return (
       <div className={cx(classes.reviewSequence, txComplete && classes.centered)}>
-        {!canReview ? (
+        {!isEligibleToVote ? (
           this.renderIneligibleVoteReason(reason)
         ) : txComplete ? (
           <CompletedTransaction txHash={this.state.txhash} review={true} />
         ) : (
-          <div>
-            <ReviewIcon className={classes.reviewIcon} size={40} />
+          <div className={classes.container}>
             <h2 className={classes.reviewSequence__title}>
               <FormattedMessage id="review_content" defaultMessage="Review Content" />
             </h2>
@@ -439,7 +435,7 @@ class ReviewSequence extends React.Component {
                   <div className={classes.criteriaContainer}>
                     <FormattedMessage
                       id="review_content_help"
-                      defaultMessage="Please judge whether this content meets Lunyr's article guidelines and should be accepted into the community. Check any boxes that describe the content."
+                      defaultMessage="Please judge whether this content meets Lunyr's article guidelines and should be accepted into the community."
                     />
                   </div>
                   <form className={classes.reviewSequence__form}>
@@ -468,7 +464,7 @@ class ReviewSequence extends React.Component {
                   </form>
                   <div className={classes.form__actions}>
                     <button
-                      disabled={!contracts.PeerReview || checked.length}
+                      disabled={checked.length}
                       className={cx(
                         classes.action__accept,
                         checked.length && classes.action__disabled
@@ -481,7 +477,7 @@ class ReviewSequence extends React.Component {
                       <FormattedMessage id="review_accept" defaultMessage="Accept" />
                     </button>
                     <button
-                      disabled={!contracts.PeerReview || !checked.length}
+                      disabled={!checked.length}
                       className={cx(
                         classes.action__reject,
                         classes.prominent,
@@ -557,14 +553,12 @@ class ReviewSequence extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => state;
-
 const mapDispatchToProps = {};
 
 export default injectIntl(
   withRouter(
     connect(
-      mapStateToProps,
+      null,
       mapDispatchToProps
     )(injectStyles(styles)(ReviewSequence))
   )

@@ -12,23 +12,34 @@ export default (theme) => ({
   centered: {
     justifyContent: 'center',
   },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+  },
   reviewIcon: {
-    '@media only screen and (max-width: 1024px)': {
-      display: 'none',
-    },
+    color: theme.colors.primary,
   },
   reviewSequence__title: {
     ...theme.typography.h2,
-    marginTop: '10px',
+    margin: 0,
+    fontSize: '1.35rem',
+    fontWeight: 400,
   },
   reviewSequence__help: {
-    ...theme.typography.body,
+    ...theme.typography.small,
     margin: 0,
     lineHeight: '24px',
     whiteSpace: 'pre-wrap',
+    fontSize: '0.85rem',
+    fontWeight: 300,
   },
   reviewSequence__form: {
-    margin: '20px 0 30px 0',
+    display: 'block',
+    height: '100%',
+    width: '100%',
+    margin: 0,
+    padding: 0,
   },
   form__error: {
     color: theme.colors.red,
@@ -42,6 +53,8 @@ export default (theme) => ({
   form__label: {
     ...theme.typography.body,
     userSelect: 'none',
+    marginLeft: 5,
+    fontWeight: 400,
   },
   checked: {
     color: theme.colors.black,
@@ -50,7 +63,6 @@ export default (theme) => ({
     },
   },
   form__actions: {
-    ...theme.positions.center,
     marginTop: theme.spacing,
     flexDirection: 'row',
   },
@@ -76,26 +88,12 @@ export default (theme) => ({
   action__back: {
     ...theme.buttons.base,
     marginBottom: '15px',
-    '@media only screen and (min-width: 1024px)': {
-      marginRight: theme.spacing,
-      marginBottom: '0px',
-      minWidth: '120px',
-    },
-    '@media only screen and (min-width: 1440px)': {
-      minWidth: '150px',
-    },
   },
   action__no: {
     ...theme.buttons.base,
   },
   action__reject: {
-    ...theme.buttons.cancel,
-    '@media only screen and (min-width: 1024px)': {
-      minWidth: '120px',
-    },
-    '@media only screen and (min-width: 1440px)': {
-      minWidth: '150px',
-    },
+    ...theme.buttons.error,
   },
   action__disabled: {
     ...theme.buttons.disabled,
@@ -106,7 +104,8 @@ export default (theme) => ({
     boxShadow: theme.boxShadows.large,
   },
   criteriaContainer: {
-    marginTop: '10px',
+    marginTop: theme.spacing,
+    marginBottom: theme.spacing,
   },
   criteriaSet: {
     marginTop: '25px',
@@ -157,7 +156,7 @@ export default (theme) => ({
     textDecoration: 'none',
     texTransform: 'uppercase',
     color: theme.colors.black,
-    ':hover': {
+    '&:hover': {
       color: theme.colors.blue,
     },
   },

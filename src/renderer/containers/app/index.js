@@ -34,11 +34,8 @@ class App extends React.Component {
   };
 
   async componentDidUpdate(prevProps) {
-    const web3 = remote.getGlobal('web3');
-    if (web3) {
-      if (!prevProps.connecting && this.props.connecting) {
-        this.showNewConnectionStatus(this.props.network);
-      }
+    if (prevProps.connecting && !this.props.connecting) {
+      this.showNewConnectionStatus(this.props.network);
     }
   }
 

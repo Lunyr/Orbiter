@@ -50,6 +50,7 @@ const Header = ({ auth, classes }) => {
               <div className={classes.address} tabIndex="-1">
                 <span className={classes.address__value}>{address}</span>
               </div>
+              <Link to="/wallet">Wallet</Link>
               <Link to="/logout">Logout</Link>
             </ActionMenu>
           )}

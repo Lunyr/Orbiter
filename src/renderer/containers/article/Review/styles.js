@@ -78,7 +78,7 @@ export default (theme) => ({
     backgroundColor: '#d7e9be',
   },
   langChanged: {
-    backgroundColor: 'orange',
+    backgroundColor: '#f2c3bc',
   },
   langChange: {
     padding: 5,
