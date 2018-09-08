@@ -45,6 +45,7 @@ export default (theme) => ({
     flexShrink: 0,
     flexDirection: 'column',
     width: '25%',
+    maxWidth: 250,
     height: '100%',
     position: 'sticky',
     top: 0,
