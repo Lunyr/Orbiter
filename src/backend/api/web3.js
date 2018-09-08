@@ -89,6 +89,9 @@ const initializeContracts = async (network) => {
 
     return {
       success: true,
+      data: {
+        network,
+      },
     };
   } catch (err) {
     console.log(err);

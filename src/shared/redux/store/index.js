@@ -9,7 +9,7 @@ import replayMainAction from '../helpers/replayMainAction';
 import replayRendererAction from '../helpers/replayRendererAction';
 import storage from 'redux-persist/lib/storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
-import { reducers as rootReducer } from '../modules/index';
+import { reducers as appReducer } from '../modules/index';
 
 export const isProduction = process.env.NODE_ENV === 'production';
 
@@ -46,7 +46,17 @@ const configureStore = (initialState, storeKey, isRendererStore = true) => {
       stateReconciler: autoMergeLevel2,
       blacklist: ['forms'],
     };
+
+    // Ensure we clear out the state when we logout
+    const rootReducer = (state, action) => {
+      if (action.type === 'auth/LOGOUT') {
+        state = undefined;
+      }
+      return appReducer(state, action);
+    };
+
     const persistedReducer = persistReducer(persistanceConfiguration, rootReducer);
+
     const store = isProduction
       ? productionStore(persistedReducer, initialState, isRendererStore)
       : developmentStore(persistedReducer, initialState, isRendererStore);

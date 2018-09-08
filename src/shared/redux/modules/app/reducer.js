@@ -7,6 +7,7 @@ const initialState = {
   headerHeight: 70,
   footerHeight: 70,
   name: 'Orbiter',
+  network: null,
   sidebarWidth: 175,
   version: process.env.BUILD_TAG || packageJson.version,
 };

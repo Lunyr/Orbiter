@@ -1,8 +1,8 @@
 import actions from './actions';
 
 const initialState = {
-  loginEror: '',
-  accountsEror: '',
+  loginError: '',
+  accountsError: '',
   isLoggingIn: false,
   isRegistering: false,
   isLoggedIn: false,

@@ -7,7 +7,7 @@ const actions = {
 
 export const connectToBlockchain = createTriggerAlias(actions.CONNECT_WEB3, () => ({
   type: actions.CONNECT_WEB3,
-  payload: Web3API.connect().then(Web3API.initializeContracts),
+  payload: Web3API.connect().then(({ data: { network } }) => Web3API.initializeContracts(network)),
 }));
 
 export default actions;

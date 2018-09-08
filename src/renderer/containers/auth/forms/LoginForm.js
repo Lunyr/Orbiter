@@ -187,8 +187,10 @@ const styles = (theme) => ({
   },
 });
 
-const mapStateToProps = ({ auth: { accounts, loginError, accountsError } }) => ({
-  accounts,
+const mapStateToProps = ({ auth: { account, accounts, loginError, accountsError } }) => ({
+  account,
+  // Exclude any accounts that are already logged in
+  accounts: accounts.filter(({ address }) => address !== account),
   loginError,
   accountsError,
 });
