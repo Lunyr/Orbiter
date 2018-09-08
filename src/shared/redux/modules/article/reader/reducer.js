@@ -15,6 +15,7 @@ const readerReducer = (state = initialState, action) => {
     case `${actions.FETCH}_START`:
       return {
         ...state,
+        data: null,
         isFetching: true,
       };
 

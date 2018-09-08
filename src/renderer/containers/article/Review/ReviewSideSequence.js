@@ -1,37 +1,18 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage } from 'react-intl';
 import cx from 'classnames';
-import { LoadingIndicator, Link } from '../../../components';
-import { fetchVotingEligibility } from '../../../../shared/redux/modules/article/review/actions';
+import { Link } from '../../../components';
 import ReviewSequence from './ReviewSequence/';
 import { MdWarning as WarningIcon } from 'react-icons/md';
 
 class ReviewSideSequence extends React.Component {
-  async componentDidUpdate(prevProps) {
-    /*
-    const peerReviewContractInitialzed =
-      this.props.contracts.PeerReview && !prevProps.contracts.PeerReview;
-    if (peerReviewContractInitialzed && this.props.auth.isLoggedIn) {
-      this.determineReviewState(this.props).then(state => state && this.setState(state));
-    }
-    */
-  }
-
-  componentDidMount() {
-    const { account, fetchVotingEligibility, proposalId } = this.props;
-    if (account) {
-      fetchVotingEligibility(proposalId, account);
-    }
-  }
-
   render() {
-    const { classes, eligibility, isAuthor, isLoggedIn } = this.props;
+    const { account, classes, eligibility, isAuthor } = this.props;
     return (
       <div className={cx({ [classes.reviewSideSequence]: true, [classes.hide]: isAuthor })}>
         <div className={classes.reviewSection}>
-          {!isLoggedIn ? (
+          {!account ? (
             <div className={classes.voteStatus}>
               <WarningIcon className={classes.checkMark} size={60} />
               <p className={classes.voteStatus__header}>
@@ -57,25 +38,6 @@ class ReviewSideSequence extends React.Component {
     );
   }
 }
-
-const mapStateToProps = (
-  {
-    auth: { account, isLoggedIn },
-    article: {
-      review: { eligibility },
-    },
-  },
-  { article: { proposalId } }
-) => ({
-  account,
-  eligibility,
-  isLoggedIn,
-  proposalId,
-});
-
-const mapDispatchToProps = {
-  fetchVotingEligibility,
-};
 
 const styles = (theme) => ({
   loading__container: {
@@ -128,7 +90,4 @@ const styles = (theme) => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(injectStyles(styles)(ReviewSideSequence));
+export default injectStyles(styles)(ReviewSideSequence);

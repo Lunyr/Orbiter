@@ -14,6 +14,7 @@ export { default as Forms } from './forms';
 export { default as Grid } from './Grid';
 export { default as Hero } from './Hero';
 export { default as IconButton } from './buttons/IconButton';
+export { default as InstantLoadingIndicator } from './InstantLoadingIndicator';
 export { default as Label } from './Label';
 export { default as Link } from './Link';
 export { default as LoadingIndicator } from './LoadingIndicator';

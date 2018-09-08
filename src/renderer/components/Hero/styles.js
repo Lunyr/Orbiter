@@ -9,7 +9,4 @@ export default (theme) => ({
     objectFit: 'cover',
     maxHeight: 'inherit',
   },
-  placeholder: {
-    backgroundImage: 'url(/assets/images/placeholder.jpg)',
-  },
 });

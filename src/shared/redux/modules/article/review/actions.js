@@ -1,7 +1,6 @@
 import {
   getCurrentArticleByTitle,
   getProposal,
-  userVotedOnProposal,
   userEligibleToVote,
 } from '../../../../../backend/api';
 import createTriggerAlias from '../../../helpers/createTriggerAlias';
@@ -24,7 +23,7 @@ const includeOldArticle = async ({ data: article }) => {
 
 export const fetchArticleProposal = createTriggerAlias(actions.FETCH, (proposalId) => ({
   type: actions.FETCH,
-  payload: getProposal(parseInt(proposalId, 10))
+  payload: getProposal(proposalId)
     .then(includeOldArticle)
     .then(includeContributors),
 }));

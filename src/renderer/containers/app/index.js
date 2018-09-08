@@ -1,11 +1,10 @@
-import { remote } from 'electron';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
 import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
-import { Modal, TwoColumn } from '../../components';
+import { TwoColumn } from '../../components';
 import Articles from '../article/Articles';
 import Draft from '../article/Draft';
 import Editor from '../article/Editor';
@@ -52,15 +51,7 @@ class App extends React.Component {
   }
 
   render() {
-    const {
-      classes,
-      connecting,
-      footerHeight,
-      headerHeight,
-      history,
-      location,
-      sidebarWidth,
-    } = this.props;
+    const { classes, connecting, footerHeight, headerHeight, location, sidebarWidth } = this.props;
     const isModal = !!(
       location.state &&
       location.state.modal &&
@@ -74,6 +65,7 @@ class App extends React.Component {
             <Header height={headerHeight} />
             <div className={classes.container}>
               <Switch location={isModal ? this.previousLocation : location}>
+                <Route exact path="/login" component={Login} />
                 <Route exact path="/logout" component={Logout} />
                 <Route path="/draft" component={Draft} />
                 <Route exact path="/edit/:id" component={Editor} />
@@ -97,18 +89,6 @@ class App extends React.Component {
                 />
                 <Route component={Feed} />
               </Switch>
-              {isModal && (
-                <React.Fragment>
-                  <Route
-                    path="/login"
-                    render={() => (
-                      <Modal isOpen={true} onRequestClose={history.goBack} fullSize>
-                        <Login />
-                      </Modal>
-                    )}
-                  />
-                </React.Fragment>
-              )}
             </div>
             <Footer height={footerHeight} />
           </React.Fragment>

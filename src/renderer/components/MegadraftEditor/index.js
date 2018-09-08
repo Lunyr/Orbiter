@@ -30,6 +30,7 @@ class MegadraftEditor extends React.Component {
         editorState: editorStateFromRaw(props.editorState, decorator),
       };
     }
+    return state;
   }
 
   handleSaveEditor = () => {

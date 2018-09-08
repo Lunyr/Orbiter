@@ -17,6 +17,8 @@ export default (theme) => ({
     width: '100%',
     height: 'auto',
     maxHeight: 'calc((100vw) / 3)',
+    flexShrink: 0,
+    overflow: 'hidden',
   },
   main: {
     display: 'flex',

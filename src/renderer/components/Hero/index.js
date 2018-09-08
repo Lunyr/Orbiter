@@ -9,7 +9,7 @@ const Hero = ({ classes, className, imageHash }) => (
     {imageHash ? (
       <img className={classes.hero__image} src={`${ipfsConfig.IPFS_URL}${imageHash}`} alt="Hero" />
     ) : (
-      <div className={cx(classes.hero__image, classes.placeholder)} />
+      <img className={classes.hero__image} src={require('../../assets/images/placeholder.jpg')} />
     )}
   </section>
 );

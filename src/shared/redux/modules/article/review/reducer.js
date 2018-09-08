@@ -21,6 +21,7 @@ const reviewReducer = (state = initialState, action) => {
     case `${actions.FETCH}_START`:
       return {
         ...state,
+        data: null,
         isFetching: true,
       };
 
@@ -28,7 +29,7 @@ const reviewReducer = (state = initialState, action) => {
       return {
         ...state,
         data: payload.data,
-        error: '',
+        error: null,
         isFetching: false,
       };
 
@@ -36,7 +37,7 @@ const reviewReducer = (state = initialState, action) => {
       return {
         ...state,
         error: payload,
-        data: [],
+        data: null,
         isFetching: false,
       };
 

@@ -4,16 +4,18 @@ import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { editorStateFromRaw } from 'megadraft';
 import cx from 'classnames';
-import isEmpty from 'lodash/isEmpty';
 import { languageToReadable } from '../../../../shared/redux/modules/locale/actions';
-import { fetchArticleProposal } from '../../../../shared/redux/modules/article/review/actions';
+import {
+  fetchArticleProposal,
+  fetchVotingEligibility,
+} from '../../../../shared/redux/modules/article/review/actions';
 import decorator from '../../../components/MegadraftEditor/decorator';
 import {
   Contributors,
   ErrorBoundary,
   Hero,
   Label,
-  LoadingIndicator,
+  InstantLoadingIndicator,
   MegadraftEditor,
 } from '../../../components';
 import References from '../references/References';
@@ -22,65 +24,29 @@ import styles from './styles';
 import { calculateDiff } from './diffUtils';
 
 class Review extends React.Component {
-  state = {
-    loadingDiff: true,
+  loadReview = () => {
+    const { account, fetchArticleProposal, fetchVotingEligibility, proposalParam } = this.props;
+    const proposalId = parseInt(proposalParam, 10);
+    fetchArticleProposal(proposalId);
+    if (account) {
+      fetchVotingEligibility(proposalId, account);
+    }
   };
 
-  static getDerivedStateFromProps(props) {
-    const { article } = props;
-
-    if (!article || isEmpty(article)) {
-      return {
-        editorState: {},
-        loadingDiff: false,
-      };
-    }
-
-    const { megadraft, oldArticle } = article;
-    const newDraftMegadraft = JSON.parse(megadraft);
-    const newDraftEditorState = editorStateFromRaw(newDraftMegadraft, decorator);
-    const oldArticleMegadraft = JSON.parse(oldArticle.megadraft);
-    const oldArticleEditorState = editorStateFromRaw(oldArticleMegadraft, decorator);
-
-    const diff = calculateDiff(
-      oldArticleEditorState,
-      newDraftEditorState,
-      oldArticleMegadraft,
-      newDraftMegadraft
-    );
-
-    return {
-      editorState: diff,
-      loadingDiff: false,
-    };
-  }
-
-  componentDidUpdate({ proposalParam }) {
-    if (this.props.proposalParam !== proposalParam) {
-      this.props.fetchArticleProposal(this.props.proposalParam);
-    }
-  }
-
-  componentDidMount() {
-    this.props.fetchArticleProposal(this.props.proposalParam);
-  }
-
   render() {
-    const { article, isFetching, classes, intl, isAuthor } = this.props;
-    const { editorState, loadingDiff } = this.state;
-    if (isFetching || loadingDiff) {
-      return (
-        <LoadingIndicator
-          id="article-loading-indicator"
-          className={classes.loader}
-          fadeIn="quarter"
-          showing={true}
-        />
-      );
-    }
+    const {
+      account,
+      article,
+      classes,
+      diff,
+      eligibility,
+      intl,
+      isFetching,
+      isAuthor,
+      proposalParam,
+    } = this.props;
     const { contributors, title, heroImageHash, lang, oldArticle } = article;
     const references = [];
-    console.log(article);
     return (
       <ErrorBoundary
         errorMsg={intl.formatMessage({
@@ -88,7 +54,11 @@ class Review extends React.Component {
           defaultMessage:
             "Oh no, something went wrong! It's okay though, please refresh and your content should return.",
         })}>
-        <div className={classes.container}>
+        <InstantLoadingIndicator
+          className={classes.container}
+          diff={proposalParam}
+          watch={isFetching}
+          load={this.loadReview}>
           <Label
             className={classes.reviewLabel}
             type="accent"
@@ -127,7 +97,7 @@ class Review extends React.Component {
                 />
               </div>
               <div className={classes.editor}>
-                <MegadraftEditor editorState={editorState} readOnly={true} />
+                <MegadraftEditor editorState={diff} readOnly={true} />
               </div>
               <footer className={classes.footer}>
                 <References formatType="MLA" references={references} />
@@ -135,19 +105,44 @@ class Review extends React.Component {
             </div>
           </section>
           <aside className={classes.aside}>
-            <ReviewSideSequence article={article} isAuthor={isAuthor} />
+            <ReviewSideSequence
+              account={account}
+              article={article}
+              eligibility={eligibility}
+              isAuthor={isAuthor}
+            />
           </aside>
-        </div>
+        </InstantLoadingIndicator>
       </ErrorBoundary>
     );
   }
 }
 
+const performDiff = (article) => {
+  if (!article) {
+    return {};
+  } else if (!article.oldArticle || !article.oldArticle.megadraft) {
+    return article;
+  } else {
+    const { megadraft, oldArticle } = article;
+    const newDraftMegadraft = JSON.parse(megadraft);
+    const newDraftEditorState = editorStateFromRaw(newDraftMegadraft, decorator);
+    const oldArticleMegadraft = JSON.parse(oldArticle.megadraft);
+    const oldArticleEditorState = editorStateFromRaw(oldArticleMegadraft, decorator);
+    return calculateDiff(
+      oldArticleEditorState,
+      newDraftEditorState,
+      oldArticleMegadraft,
+      newDraftMegadraft
+    );
+  }
+};
+
 const mapStateToProps = (
   {
     auth: { account },
     article: {
-      review: { error, data, isFetching },
+      review: { error, data, isFetching, eligibility },
     },
   },
   {
@@ -156,7 +151,10 @@ const mapStateToProps = (
     },
   }
 ) => ({
+  account,
   article: data || {},
+  diff: performDiff(data),
+  eligibility,
   error,
   isFetching,
   isAuthor: data && data.fromAddress === account,
@@ -166,6 +164,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = {
   fetchArticleProposal,
+  fetchVotingEligibility,
 };
 
 export default connect(

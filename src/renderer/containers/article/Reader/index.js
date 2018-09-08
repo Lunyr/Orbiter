@@ -7,40 +7,25 @@ import {
   Contributors,
   ErrorBoundary,
   Hero,
+  InstantLoadingIndicator,
   Label,
-  LoadingIndicator,
   MegadraftEditor,
 } from '../../../components';
 import References from '../references/References';
 import styles from './styles';
 
-const AddtionalContent = () => <div>Additional Content</div>;
+const AddtionalContent = ({ additionalContent }) => (
+  <div>{JSON.stringify(additionalContent, null, 4)}</div>
+);
 
 class Reader extends React.Component {
-  componentDidUpdate({ titleParam }) {
-    if (this.props.titleParam !== titleParam) {
-      this.props.fetchArticleByTitle(this.props.titleParam);
-    }
-  }
-
-  componentDidMount() {
+  load = () => {
     this.props.fetchArticleByTitle(this.props.titleParam);
-  }
+  };
 
   render() {
-    const { article, isFetching, classes, intl } = this.props;
-    console.log('reader props', this.props);
-    if (isFetching) {
-      return (
-        <LoadingIndicator
-          id="article-loading-indicator"
-          className={classes.loader}
-          fadeIn="quarter"
-          showing={true}
-        />
-      );
-    }
-    const { contributors, title, heroImageHash, editorState } = article;
+    const { article, isFetching, classes, intl, titleParam } = this.props;
+    const { additionalContent, contributors, title, heroImageHash, editorState } = article;
     const references = [];
     return (
       <ErrorBoundary
@@ -49,7 +34,11 @@ class Reader extends React.Component {
           defaultMessage:
             "Oh no, something went wrong! It's okay though, please refresh and your content should return.",
         })}>
-        <div className={classes.container}>
+        <InstantLoadingIndicator
+          className={classes.container}
+          diff={titleParam}
+          watch={isFetching}
+          load={this.load}>
           <Label
             className={classes.reviewLabel}
             valueClassName={classes.reviewLabel__value}
@@ -80,13 +69,30 @@ class Reader extends React.Component {
             </div>
           </section>
           <aside className={classes.aside}>
-            <AddtionalContent />
+            <AddtionalContent additionalContent={additionalContent} />
           </aside>
-        </div>
+        </InstantLoadingIndicator>
       </ErrorBoundary>
     );
   }
 }
+
+/**
+ * Returns a formatted article object to be used in the Readt
+ * @param article
+ * @returns {*}
+ */
+const assembleArticle = (article) => {
+  if (!article) {
+    return {};
+  }
+  const { additionalContent, ...rest } = article;
+
+  return {
+    ...rest,
+    additionalContent: JSON.parse(additionalContent),
+  };
+};
 
 const mapStateToProps = (
   {
@@ -100,7 +106,7 @@ const mapStateToProps = (
     },
   }
 ) => ({
-  article: data || {},
+  article: assembleArticle(data),
   error,
   isFetching,
   titleParam,

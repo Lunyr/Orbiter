@@ -1039,3 +1039,188 @@
 .medium-blog figure img {
   width: 100%;
 }
+
+.sk-spinner {
+  color: #333;
+}
+
+.sk-spinner > div {
+  background-color: currentColor;
+}
+
+.sk-three-bounce {
+  height: 18px;
+}
+
+.sk-three-bounce > div {
+  width: 18px;
+  height: 18px;
+  background-color: currentColor;
+  border-radius: 100%;
+  display: inline-block;
+
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out;
+  /* Prevent first frame from flickering when animation starts */
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.sk-three-bounce > div:first-child {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+
+.sk-three-bounce > div:nth-child(2) {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%,
+  80%,
+  100% {
+    -webkit-transform: scale(0);
+  }
+  40% {
+    -webkit-transform: scale(1);
+  }
+}
+
+@keyframes sk-bouncedelay {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    -webkit-transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+  }
+}
+
+@-webkit-keyframes sk-fade-in {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes sk-fade-in {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes sk-fade-in {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes sk-fade-in {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.sk-fade-in {
+  -webkit-animation: sk-fade-in 2s;
+  -moz-animation: sk-fade-in 2s;
+  -o-animation: sk-fade-in 2s;
+  -ms-animation: sk-fade-in 2s;
+  animation: sk-fade-in 2s;
+}
+
+.sk-fade-in-half-second {
+  -webkit-animation: sk-fade-in 1s;
+  -moz-animation: sk-fade-in 1s;
+  -o-animation: sk-fade-in 1s;
+  -ms-animation: sk-fade-in 1s;
+  animation: sk-fade-in 1s;
+}
+
+.sk-fade-in-quarter-second {
+  -webkit-animation: sk-fade-in 0.5s;
+  -moz-animation: sk-fade-in 0.5s;
+  -o-animation: sk-fade-in 0.5s;
+  -ms-animation: sk-fade-in 0.5s;
+  animation: sk-fade-in 0.5s;
+}
+
+.ball-triangle-path > div,
+.ball-scale-ripple-multiple > div,
+.ball-scale-ripple > div {
+  background-color: initial;
+  border-color: currentColor;
+}
+
+.ball-clip-rotate > div {
+  background-color: initial;
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+  border-left-color: currentColor;
+}
+
+.ball-clip-rotate-pulse > div:first-child {
+  background-color: currentColor;
+}
+.ball-clip-rotate-pulse > div:last-child {
+  background-color: initial;
+  border-top-color: currentColor;
+  border-bottom-color: currentColor;
+}
+
+.ball-clip-rotate-multiple > div:first-child {
+  background-color: initial;
+  border-right-color: currentColor;
+  border-left-color: currentColor;
+}
+.ball-clip-rotate-multiple > div:last-child {
+  background-color: initial;
+  border-top-color: currentColor;
+  border-bottom-color: currentColor;
+}
+
+.triangle-skew-spin > div {
+  background-color: initial;
+  border-bottom-color: currentColor;
+}
+
+.pacman > div:nth-child(1),
+.pacman > div:nth-child(2) {
+  background-color: initial;
+  border-top-color: currentColor;
+  border-left-color: currentColor;
+  border-bottom-color: currentColor;
+}
+
+.pacman > div:nth-child(3),
+.pacman > div:nth-child(4),
+.pacman > div:nth-child(5) {
+  background-color: currentColor;
+}

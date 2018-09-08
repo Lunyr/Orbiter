@@ -21,6 +21,7 @@ const IntlSelect = injectStyles((theme) => ({
 
 const Header = ({ auth, classes }) => {
   const address = get(auth, 'account');
+  const accounts = get(auth, 'accounts', []);
   return (
     <header className={classes.container}>
       <Search />
@@ -33,9 +34,7 @@ const Header = ({ auth, classes }) => {
             </Link>
           )}
           {!auth.isLoggedIn ? (
-            <Link to="/login" isModal={true}>
-              Login
-            </Link>
+            <Link to="/login">Login</Link>
           ) : (
             <ActionMenu
               id="user-dropdown-menu"
@@ -51,6 +50,7 @@ const Header = ({ auth, classes }) => {
                 <span className={classes.address__value}>{address}</span>
               </div>
               <Link to="/wallet">Wallet</Link>
+              {accounts.length > 1 && <Link to="/login">Switch Accounts</Link>}
               <Link to="/logout">Logout</Link>
             </ActionMenu>
           )}

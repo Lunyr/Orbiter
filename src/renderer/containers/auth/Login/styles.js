@@ -8,6 +8,10 @@ export default (theme) => ({
     color: theme.colors.white,
     height: '100%',
     width: '100%',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    zIndex: 10000,
   },
   header: {
     display: 'flex',

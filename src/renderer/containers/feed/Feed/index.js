@@ -136,22 +136,21 @@ class Feed extends React.Component {
   };
 
   componentDidMount() {
+    // Limit is partitioned by 3 for each supported feed type
+    // i.e vote, article (reviewed), article (accepted)
+    const { limit } = this.state;
+    this.fetchFeedList({
+      limit,
+      offset: 0,
+    });
+
     setTimeout(() => {
-      // Limit is partitioned by 3 for each supported feed type
-      // i.e vote, article (reviewed), article (accepted)
-      const { limit } = this.state;
-
-      this.fetchFeedList({
-        limit,
-        offset: 0,
-      });
-
       this.setState({ isReady: true });
     }, this.minReadTimeout);
   }
 
-  componentWillReceiveProps({ isFetching }) {
-    if (!isFetching && this.props.isFetching !== isFetching) {
+  componentDidUpdate({ isFetching }) {
+    if (!this.props.isFetching && isFetching !== this.props.isFetching) {
       // We add a forced timeout for transition to ready state
       setTimeout(() => {
         this.setState({ isReady: true });

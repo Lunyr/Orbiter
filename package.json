@@ -13,6 +13,7 @@
     "abi-decoder": "^1.1.0",
     "babel-cli": "^6.26.0",
     "babel-runtime": "^6.26.0",
+    "better-react-spinkit": "^2.0.4",
     "classnames": "^2.2.6",
     "color": "^3.0.0",
     "diff": "^3.5.0",
