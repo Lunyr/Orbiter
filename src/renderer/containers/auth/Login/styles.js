@@ -12,6 +12,7 @@ export default (theme) => ({
     top: 0,
     left: 0,
     zIndex: 10000,
+    overflow: 'auto',
   },
   header: {
     display: 'flex',

@@ -1,5 +1,4 @@
 import React from 'react';
-import { remote } from 'electron';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader';
 import { addLocaleData, IntlProvider } from 'react-intl';

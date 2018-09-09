@@ -20,7 +20,7 @@ export const getVote = async (voteId) => {
 
     return {
       success: true,
-      data,
+      data: data.length > 0 ? data[0] : null,
     };
   } catch (error) {
     return {

@@ -21,7 +21,7 @@ const ArticleCard = ({
           {timeAgoDisplay(updatedAt ? updatedAt : createdAt)}
         </span>
       </div>
-      <p className={classes.help}>{description}</p>
+      <p className={classes.help}>{description || 'No Content Added'}</p>
     </div>
   </div>
 );

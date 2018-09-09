@@ -15,7 +15,7 @@ export default (theme) => ({
     width: '100%',
     ...theme.typography.h1,
     fontSize: 'inherit',
-    marginLeft: theme.spacing,
+    marginLeft: theme.spacing * 0.75,
     color: 'rgba(255, 255, 255, 0.9)',
     fontWeight: 300,
   },

@@ -8,12 +8,14 @@ import { NavList } from '../../../components';
 import {
   //FaBullhorn as BullhornIcon,
   FaComment as CommentIcon,
+  FaEdit as EditIcon,
   //FaFlag as FlagIcon,
   //FaStar as StarIcon,
   //FaThumbsUp as ThumbsUpIcon,
   //FaDesktop as DesktopIcon,
   FaPencilAlt as PencilIcon,
   FaTag as TagIcon,
+  FaWallet as WalletIcon,
 } from 'react-icons/fa';
 import { MdLocationSearching as LocationSearchingIcon } from 'react-icons/md';
 import styles from './styles';
@@ -25,7 +27,7 @@ class Navigation extends React.Component {
   }
 
   render() {
-    const { articleLinks, classes, pageLinks } = this.props;
+    const { articleLinks, classes, myLinks, pageLinks, isLoggedIn } = this.props;
     return (
       <nav className={classes.menu}>
         <div className={classes.content}>
@@ -35,6 +37,13 @@ class Navigation extends React.Component {
             items={articleLinks}
             styles={{ container: styles.articleList }}
           />
+          {isLoggedIn && (
+            <NavList
+              activeLinkClass="nav-list-active"
+              title={<FormattedMessage id="sidebar_my_pages" defaultMessage="My Pages" />}
+              items={myLinks}
+            />
+          )}
           <NavList
             activeLinkClass="nav-list-active"
             title={<FormattedMessage id="sidebar_pages" defaultMessage="Lunyr Pages" />}
@@ -71,7 +80,7 @@ const toCategoryLink = (intl, { name }) => ({
   }),
 });
 
-const mapStateToProps = (state, { intl }) => {
+const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
   const categories = [];
   const baseLinks = [
     {
@@ -94,6 +103,27 @@ const mapStateToProps = (state, { intl }) => {
 
   return {
     articleLinks: baseLinks.concat(categories.map(toCategoryLink.bind(this, intl))),
+    isLoggedIn,
+    myLinks: isLoggedIn
+      ? [
+          {
+            to: '/wallet',
+            display: intl.formatMessage({
+              id: 'link_wllet',
+              defaultMessage: 'Wallet',
+            }),
+            icon: <WalletIcon />,
+          },
+          {
+            to: '/drafts',
+            display: intl.formatMessage({
+              id: 'link_wllet',
+              defaultMessage: 'Drafts',
+            }),
+            icon: <EditIcon />,
+          },
+        ]
+      : [],
     pageLinks: [
       /*
       {
@@ -104,7 +134,6 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <ThumbsUpIcon />,
       },
-      */
       {
         to: '/tagging',
         display: intl.formatMessage({
@@ -113,6 +142,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <TagIcon />,
       },
+      */
       {
         to: 'https://lunyragent.gitbooks.io/lunyr-manual/content/',
         display: intl.formatMessage({

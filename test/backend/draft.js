@@ -37,9 +37,9 @@ describe('Draft Data API', () => {
     const fetchResult = await getDraft(mock.UUID1);
 
     assert(fetchResult.success, fetchResult.error);
-    assert.equal(fetchResult.data.length, 1);
+    assert.isNotNull(fetchResult.data, "Should have received one draft");
 
-    const draft = fetchResult.data[0];
+    const draft = fetchResult.data;
 
     assert.equal(draft.editStreamId, 1);
     assert.equal(draft.proposalId, 1);
@@ -66,9 +66,9 @@ describe('Draft Data API', () => {
 
     const beforeResult = await getDraft(mock.UUID2);
 
-    assert.equal(beforeResult.data.length, 1);
+    assert.isNotNull(beforeResult.data, "Should have received one draft");
 
-    const beforeDraft = beforeResult.data[0];
+    const beforeDraft = beforeResult.data;
 
     assert.equal(beforeDraft.uuid, mock.UUID2);
     assert.equal(beforeDraft.imageOffsetRatio, 2);
@@ -83,9 +83,9 @@ describe('Draft Data API', () => {
 
     const afterResult = await getDraft(mock.UUID2);
 
-    assert.equal(afterResult.data.length, 1);
+    assert.isNotNull(afterResult.data, "Should have received one draft");
 
-    const afterDraft = afterResult.data[0];
+    const afterDraft = afterResult.data;
 
     assert.equal(afterDraft.imageOffsetRatio, 1);
     assert.equal(afterDraft.proposalId, 1);

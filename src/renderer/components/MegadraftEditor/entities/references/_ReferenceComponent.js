@@ -1,3 +1,5 @@
+
+/*
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -76,7 +78,7 @@ class _ReferenceComponent extends Component {
         {referenceArray.map((reference, index) => {
           return (
             <Popover
-              className={css(styles.popover)}
+              className={classes.popover)}
               body={<ReferencePopover reference={referenceArray[index]} />}
               preferPlace="below"
               key={`reference_${referenceArray[index].title}_${index}`}
@@ -85,7 +87,7 @@ class _ReferenceComponent extends Component {
               isOpen={renderReferenceIndex === index}
             >
               <sup
-                className={css(styles.inlineReferenceNumber)}
+                className={classes.inlineReferenceNumber)}
                 ref="referenceTarget"
                 onClick={() => this.toggleReference(index)}
               >
@@ -119,3 +121,4 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(null, mapDispatchToProps)(_ReferenceComponent);
+ */

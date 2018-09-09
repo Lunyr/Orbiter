@@ -5,6 +5,8 @@ const actions = {
   CONNECT_WEB3: 'app/CONNECT_WEB3',
   UPDATE_QUEUE_STATUS: 'app/UPDATE_QUEUE_STATS',
   SET_QUEUE_SYNCING: 'app/SET_QUEUE_SYNCING',
+  OPEN_SIDEBAR: 'app/OPEN_SIDEBAR',
+  CLOSE_SIDEBAR: 'app/CLOSE_SIDEBAR',
 };
 
 export const connectToBlockchain = createTriggerAlias(actions.CONNECT_WEB3, () => ({
@@ -20,6 +22,20 @@ export const updateQueueStatus = (status) => ({
 export const setQueueSyncing = (syncing, pollIntervalMS) => ({
   type: actions.SET_QUEUE_SYNCING,
   payload: { syncing, pollIntervalMS },
+});
+
+export const openSidebar = () => ({
+  meta: {
+    scope: 'local',
+  },
+  type: actions.OPEN_SIDEBAR,
+});
+
+export const closeSidebar = () => ({
+  meta: {
+    scope: 'local',
+  },
+  type: actions.CLOSE_SIDEBAR,
 });
 
 export default actions;

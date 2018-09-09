@@ -1,17 +1,12 @@
 {
   "name": "LunyrOrbiter",
   "version": "0.0.1",
-  "description": "A decentralized desktop application for Lunyr",
-  "main": "init.js",
-  "author": {
-    "name": "",
-    "email": ""
-  },
+  "description": "Ethereum-based Encyclopedia",
+  "author": "Lunyr Inc <support@lunyr.com> (https://lunyr.com)",
   "repository": "https://github.com/Lunyr/Orbiter",
   "license": "MIT",
+  "main": "./src/main.prod.js",
   "dependencies": {
-    "abi-decoder": "^1.1.0",
-    "babel-cli": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "better-react-spinkit": "^2.0.4",
     "bignumber.js": "^7.2.1",
@@ -40,12 +35,15 @@
     "prop-types": "^15.5.10",
     "raven": "^2.6.3",
     "raven-js": "^3.26.3",
+    "rc-slider": "^8.6.2",
     "react": "^16.4.1",
     "react-animations": "^1.0.0",
     "react-aria-menubutton": "^6.0.1",
     "react-blockies": "^1.3.0",
     "react-collapsible": "^2.3.1",
+    "react-cropper": "^1.0.1",
     "react-dom": "^16.4.1",
+    "react-dropzone": "^5.1.0",
     "react-hot-loader": "^4.3.5",
     "react-html-parser": "^2.0.2",
     "react-icons": "^3.0.4",
@@ -61,7 +59,9 @@
     "react-select": "^2.0.0",
     "react-stickynode": "^2.0.1",
     "react-svg": "^6.0.6",
+    "react-table": "^6.8.6",
     "react-textarea-autosize": "^7.0.4",
+    "react-toastify": "^4.3.1",
     "react-tooltip": "^3.6.1",
     "react-virtualized": "^9.20.1",
     "redux": "^4.0.0",
@@ -70,9 +70,13 @@
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
     "sentry": "^0.1.2",
-    "through2": "^2.0.3"
+    "through2": "^2.0.3",
+    "uuid": "^3.3.2",
+    "websocket": "^1.0.26"
   },
   "devDependencies": {
+    "abi-decoder": "^1.1.0",
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^7.1.5",
@@ -85,6 +89,7 @@
     "babel-plugin-transform-es2015-classes": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-0": "^6.24.1",
@@ -117,6 +122,7 @@
     "eslint-plugin-jsx-a11y": "6.1.1",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-react": "^7.10.0",
+    "ethereumjs-tx": "^1.3.7",
     "express": "^4.16.3",
     "fbjs-scripts": "^0.8.3",
     "file-loader": "^1.1.11",
@@ -125,9 +131,13 @@
     "flow-typed": "^2.5.1",
     "husky": "^0.14.3",
     "identity-obj-proxy": "^3.0.0",
+    "ipfs-api": "^24.0.1",
+    "keythereum": "^1.0.4",
     "lint-staged": "^7.2.0",
     "mini-css-extract-plugin": "^0.4.1",
     "minimist": "^1.2.0",
+    "mocha-webpack": "^1.1.0",
+    "node-fetch": "^2.2.0",
     "node-sass": "^4.9.2",
     "npm-logical-tree": "^1.2.1",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
@@ -144,6 +154,7 @@
     "stylelint-config-standard": "^18.2.0",
     "uglifyjs-webpack-plugin": "1.2.7",
     "url-loader": "^1.0.1",
+    "web3": "^1.0.0-beta.35",
     "webpack": "^4.16.3",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.1.0",
@@ -152,14 +163,15 @@
     "yarn": "^1.9.2"
   },
   "scripts": {
-    "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
+    "build": "concurrently \"yarn build-main\" \"yarn build-renderer\" \"yarn build-chain-daemon\"",
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
     "build-main": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --colors",
+    "build-chain-daemon": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.chain-daemon.js --colors",
     "build-renderer": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --colors",
     "dev": "cross-env START_HOT=1 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "dev:bunyan": "LOG_LEVEL=30 yarn dev | bunyan -o short",
     "dev-no-hmr": "cross-env START_HOT=0 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=0 yarn start-renderer-dev",
-    "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir src",
+    "electron-rebuild": "./node_modules/.bin/electron-rebuild --parallel --force --types prod,dev,optional --module-dir .",
     "flow": "flow",
     "flow-typed": "rimraf flow-typed/npm && flow-typed install --overwrite || true",
     "lint": "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
@@ -174,14 +186,14 @@
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.js'",
     "precommit": "lint-staged",
     "prestart": "yarn build",
-    "start": "cross-env NODE_ENV=production electron -r babel-register ./src/root.js",
+    "start": "cross-env NODE_ENV=production electron -r babel-register ./src/index.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./src/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
-    "test": "yarn compile && ./node_modules/.bin/electron-mocha --renderer -R spec --require babel-core/register --require test/mocha.env.js",
+    "compile": "babel src/ --copy-files --out-dir build --ignore build,node_modules",
+    "test": "yarn run compile && ./node_modules/.bin/electron-mocha --renderer -R spec --require babel-register --require test/mocha.env.js",
     "test-all": "yarn lint && yarn build && yarn test && yarn test-e2e",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
-    "test-watch": "yarn test --watch",
-    "compile": "babel src/ --copy-files --out-dir build --ignore build,node_modules"
+    "test-watch": "yarn test --watch"
   },
   "browserslist": "electron 1.6",
   "lint-staged": {
@@ -196,16 +208,37 @@
     ]
   },
   "build": {
+    "extends": null,
     "productName": "Orbiter",
-    "appId": "org.lunyr.Orbiter",
+    "appId": "com.lunyr.orbiter",
+    "publish": {
+      "provider": "s3",
+      "bucket": "lunyr-electron",
+      "endpoint": "https://s3-us-west-2.amazonaws.com/lunyr-electron/"
+    },
+    "asar": false,
     "files": [
+      "src/",
       "dist/",
       "node_modules/",
       "index.html",
       "main.prod.js",
       "main.prod.js.map",
+      "package.json",
+      "chain-daemon.prod.js",
+      "node_modules/**/*",
+      "node_modules/.bin/*",
       "package.json"
     ],
+    "extraFiles": [
+      "src/chain/*.js",
+      "src/chain/handlers/*.js",
+      "src/chain/.babelrc"
+    ],
+    "mac": {
+      "category": "public.app-category.reference",
+      "icon": "dist/icon.png"
+    },
     "dmg": {
       "contents": [
         {
@@ -221,8 +254,15 @@
       ]
     },
     "win": {
+      "icon": "dist/icon.png",
       "target": [
-        "nsis"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
       ]
     },
     "linux": {
@@ -230,11 +270,12 @@
         "deb",
         "AppImage"
       ],
-      "category": "Development"
+      "category": "Network",
+      "icon": "dist/icon.png"
     },
     "directories": {
-      "buildResources": "resources",
-      "output": "release"
+      "buildResources": "assets",
+      "output": "dist"
     }
   },
   "devEngines": {

@@ -142,6 +142,7 @@ const styles = (theme) => ({
   form: {
     height: 450,
     width: 450,
+    marginBottom: theme.spacing * 2,
   },
   label: {
     color: theme.colors.white,

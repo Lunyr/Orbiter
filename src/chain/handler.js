@@ -167,5 +167,5 @@ const eventRouter = async (job) => {
  * @return {Promise} is a promise that will never resolve, nor reject
  */
 export default (queue) => {
-  return queue.process(eventRouter);
+  return queue.processJobs(eventRouter);
 };

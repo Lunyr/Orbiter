@@ -1,24 +1,51 @@
 import { ipcMain } from 'electron';
 import path from 'path';
-import { spawn, execSync } from 'child_process';
+import { fork, execSync, spawn } from 'child_process';
 import eventsQueue from '../lib/queuelite';
 import { getLogger } from '../lib/logger';
 import { handleError } from '../shared/handlers';
+import { default as settings } from '../shared/defaults';
 
 const log = getLogger('ChainDaemon');
 
 export default class ChainDaemon {
-  static path = path.resolve(__dirname, '../chain/chain-daemon.js');
+  //static path = path.resolve(__dirname, '../chain/chain-daemon.js');
+  static path = settings.isDevelopment
+    ? path.resolve(__dirname, '../chain/chain-daemon.js')
+    : path.resolve(process.resourcesPath, 'app/chain-daemon.prod.js');
 
   subprocess = undefined;
 
   handlers = [];
 
   launch() {
-    log.info({ dirname: __dirname, path: ChainDaemon.path }, 'Launching daemon');
+    log.info(
+      {
+        dirname: __dirname,
+        path: ChainDaemon.path,
+        execPath: process.execPath,
+      },
+      'Launching daemon'
+    );
+
+    /*this.subprocess = spawn(path.resolve(
+      process.resourcesPath,
+      'app/node_modules/.bin/electron'
+    ), [ChainDaemon.path], {
+      stdio: ['pipe', 'inherit', 'inherit'],
+    });*/
+
+    /*
+    this.subprocess = fork(ChainDaemon.path, null, {
+      stdio: ['pipe', 'inherit', 'inherit'],
+      env: {
+        ELECTRON_RUN_AS_NODE: undefined,
+      },
+    });
+    */
 
     this.subprocess = spawn('babel-node', [ChainDaemon.path], {
-      stdio: ['pipe', 'inherit', 'inherit'],
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
     });
 
     this.subprocess.on('exit', () => this.fire('exit'));

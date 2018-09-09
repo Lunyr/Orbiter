@@ -7,17 +7,44 @@ const log = getLogger('api-draft');
 
 export const getDraft = async (uuid) => {
   try {
-    const result = await db('draft').where({
-      doc_uuid: uuid,
-    }).select();
+    const result = await db('draft')
+      .where({
+        doc_uuid: uuid,
+        draft_state_id: DraftState.DRAFT,
+      })
+      .select();
 
-    log.debug({ result }, "getDraft result");
+    log.debug({ result }, 'getDraft result');
 
-    const data = result.map(a => toDraft(a));
+    const data = result.map((a) => toDraft(a));
 
     return {
       success: true,
-      data,
+      data: data ? data[0] : {},
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const getDrafts = async () => {
+  try {
+    const result = await db('draft')
+      .where({
+        draft_state_id: DraftState.DRAFT,
+      })
+      .select();
+
+    log.debug({ result }, 'getDrafts result');
+
+    const data = result.map((a) => toDraft(a));
+
+    return {
+      success: true,
+      data: data.length > 0 ? data[0] : null,
     };
   } catch (error) {
     return {
@@ -30,14 +57,16 @@ export const getDraft = async (uuid) => {
 export const getDraftByProposalId = async (proposalId, draftStateId) => {
   draftStateId = draftStateId ? draftStateId : DraftState.DRAFT;
   try {
-    const result = await db('draft').where({
-      proposal_id: proposalId,
-      draft_state_id: draftStateId,
-    }).select();
+    const result = await db('draft')
+      .where({
+        proposal_id: proposalId,
+        draft_state_id: draftStateId,
+      })
+      .select();
 
-    log.debug({ result }, "getDraftByProposalId result");
+    log.debug({ result }, 'getDraftByProposalId result');
 
-    const data = result.map(a => toDraft(a));
+    const data = result.map((a) => toDraft(a));
 
     return {
       success: true,
@@ -53,13 +82,15 @@ export const getDraftByProposalId = async (proposalId, draftStateId) => {
 
 export const setDraftToDraft = async (draftId) => {
   try {
-    const data = await db('draft').where({
-      draft_id: draftId,
-    }).update({
-        draft_state_id: DraftState.DRAFT
-    });
+    const data = await db('draft')
+      .where({
+        draft_id: draftId,
+      })
+      .update({
+        draft_state_id: DraftState.DRAFT,
+      });
 
-    log.debug({ data }, "setDraftToDraft result");
+    log.debug({ data }, 'setDraftToDraft result');
 
     return {
       success: true,
@@ -73,14 +104,19 @@ export const setDraftToDraft = async (draftId) => {
   }
 };
 
-export const addDraft = async (draftObj) => {
+export const createDraft = async (draftObj) => {
   try {
     draftObj = fromDraft(draftObj);
     const data = await db('draft').insert(draftObj);
-    log.debug({ data }, "addDraft result");
+    log.debug({ data }, 'createDraft result');
     return {
       success: true,
-      data,
+      data: data
+        ? toDraft({
+            ...draftObj,
+            id: data[0],
+          })
+        : null,
     };
   } catch (error) {
     return {
@@ -90,13 +126,15 @@ export const addDraft = async (draftObj) => {
   }
 };
 
-export const editDraft = async (uuid, draftObj) => {
+export const saveDraft = async (uuid, draftObj) => {
   try {
     draftObj = fromDraft(draftObj, true);
-    const data = await db('draft').where({
-      doc_uuid: uuid
-    }).update(draftObj);
-    log.debug({ data }, "editDraft result");
+    const data = await db('draft')
+      .where({
+        doc_uuid: uuid,
+      })
+      .update(draftObj);
+    log.info({ data }, 'saveDraft result');
     return {
       success: true,
       data,

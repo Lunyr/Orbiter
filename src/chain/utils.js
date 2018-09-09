@@ -5,7 +5,7 @@ import { getLogger } from '../lib/logger';
 import { settings } from '../shared/settings';
 import { handleError } from '../shared/handlers';
 import { getWatch, setWatchState } from '../backend/api';
-import { TxState, TxType } from '../shared/constants';
+import { TxState } from '../shared/constants';
 
 const log = getLogger('events-utils');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, { protocol: 'https' });
@@ -41,7 +41,7 @@ export const completeTransaction = async (txHash, txType) => {
   let watchResult = await getWatch({ hash: txHash });
 
   // If it exists, update
-  if (watchResult.success) {
+  if (watchResult.success && watchResult.data) {
     // Set state to 1(complete)
     await setWatchState(txHash, TxState.SUCCESS);
   }

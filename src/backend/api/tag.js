@@ -16,7 +16,7 @@ export const getTag = async (tagName) => {
 
     return {
       success: true,
-      data,
+      data: data.length > 0 ? data[0] : null,
     };
   } catch (error) {
     return {

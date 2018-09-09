@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import cx from 'classnames';
 import { fetchArticleByTitle } from '../../../../shared/redux/modules/article/reader/actions';
 import {
   AdditionalContent,
@@ -16,13 +17,14 @@ import References from '../references/References';
 import styles from './styles';
 
 class Reader extends React.Component {
-  load = () => {
-    this.props.fetchArticleByTitle(this.props.titleParam);
+  load = (titleParam) => {
+    this.props.fetchArticleByTitle(titleParam);
   };
 
   render() {
     const { article, isFetching, classes, intl, titleParam } = this.props;
     const { additionalContent, contributors, title, heroImageHash, editorState } = article;
+    const hasAdditionalContent = additionalContent && additionalContent.length > 0;
     const references = [];
     return (
       <ErrorBoundary
@@ -65,7 +67,11 @@ class Reader extends React.Component {
               </footer>
             </div>
           </section>
-          <aside className={classes.aside}>
+          <aside
+            className={cx({
+              [classes.aside]: true,
+              [classes.hidden]: !hasAdditionalContent,
+            })}>
             <AdditionalContent additionalContent={additionalContent} />
           </aside>
         </InstantLoadingIndicator>
@@ -98,13 +104,7 @@ const assembleArticle = (article) => {
   if (!article) {
     return {};
   }
-  const { additionalContent, ...rest } = article;
-  const parsedAdditionalContent = deserializeAdditionalContent(additionalContent);
-  console.log('assembling article meow', parsedAdditionalContent);
-  return {
-    ...rest,
-    additionalContent: parsedAdditionalContent,
-  };
+  return article;
 };
 
 const mapStateToProps = (

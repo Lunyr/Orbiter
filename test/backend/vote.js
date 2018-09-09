@@ -23,10 +23,10 @@ describe('Vote Data API', () => {
   it('should get a vote', async () => {
     const result = await getVote(1);
     assert.isTrue(result.success, result.error);
-    assert.isAbove(result.data.length, 0, "Should have received at least one vote record");
-    assert.equal(result.data[0].proposalId, 2);
-    assert.equal(result.data[0].fromAddress, mock.ADDRESS1);
-    assert.isOk(result.data[0].accepted);
+    assert.isNotNull(result.data, "Should have one result");
+    assert.equal(result.data.proposalId, 2);
+    assert.equal(result.data.fromAddress, mock.ADDRESS1);
+    assert.isOk(result.data.accepted);
   });
 
   it('should add a vote', async () => {
@@ -44,11 +44,11 @@ describe('Vote Data API', () => {
 
     const result = await getVote(DIRTY_VOTE_ID);
     assert.isTrue(result.success, result.error);
-    assert.isAbove(result.data.length, 0, "Should have received at least one vote record");
-    assert.equal(result.data[0].id, DIRTY_VOTE_ID);
-    assert.equal(result.data[0].proposalId, 49);
-    assert.equal(result.data[0].fromAddress, mock.ADDRESS2);
-    assert.isNotOk(result.data[0].accepted);
+    assert.isNotNull(result.data, "Should have one result");
+    assert.equal(result.data.id, DIRTY_VOTE_ID);
+    assert.equal(result.data.proposalId, 49);
+    assert.equal(result.data.fromAddress, mock.ADDRESS2);
+    assert.isNotOk(result.data.accepted);
   });
 
   it('should get dirty votes', async () => {
@@ -61,8 +61,8 @@ describe('Vote Data API', () => {
   it('should update a vote', async () => {
     const beforeResult = await getVote(DIRTY_VOTE_ID);
     assert.isTrue(beforeResult.success, beforeResult.error);
-    assert.isAbove(beforeResult.data.length, 0, "Should have received at least one vote record");
-    assert.isOk(beforeResult.data[0].dirty);
+    assert.isNotNull(beforeResult.data, "Should have one result");
+    assert.isOk(beforeResult.data.dirty);
 
     const result = await updateVote(DIRTY_VOTE_ID, {
       dirty: false,
@@ -72,9 +72,9 @@ describe('Vote Data API', () => {
 
     const afterResult = await getVote(DIRTY_VOTE_ID);
     assert.isTrue(afterResult.success, afterResult.error);
-    assert.isAbove(afterResult.data.length, 0, "Should have received at least one vote record");
-    assert.equal(afterResult.data[0].fromAddress, mock.ADDRESS2);
-    assert.isNotOk(afterResult.data[0].dirty);
+    assert.isNotNull(afterResult.data, "Should have one result");
+    assert.equal(afterResult.data.fromAddress, mock.ADDRESS2);
+    assert.isNotOk(afterResult.data.dirty);
   });
 
   it('should get vote statistics for a proposal', async () => {

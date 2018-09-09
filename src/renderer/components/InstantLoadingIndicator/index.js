@@ -14,28 +14,35 @@ class InstantLoadingIndicator extends React.PureComponent {
 
   componentDidUpdate({ diff, watch }) {
     if (this.props.diff !== diff) {
-      this.setState({ showInstantLoader: true }, this.props.load);
+      this.setState({ showInstantLoader: true }, this.props.load.bind(this, this.props.diff));
     } else if (!this.props.watch && this.props.watch !== watch) {
-      this.setState({ showInstantLoader: false });
+      setTimeout(() => {
+        this.setState({ showInstantLoader: false });
+      }, this.props.minimumTimeoutMS || 0);
     }
   }
 
   componentDidMount() {
-    this.props.load();
+    this.props.load(this.props.diff);
   }
 
   render() {
-    const { children, className } = this.props;
+    const { children, className, diff } = this.props;
     const { showInstantLoader } = this.state;
     return (
-      <div className={className}>
-        <LoadingIndicator
-          id="loading-indicator"
-          fadeIn="quarter"
-          showing={showInstantLoader}
-          full
-        />
-        {typeof children === 'function' ? children(showInstantLoader) : children}
+      <div className={className} key={diff}>
+        {showInstantLoader ? (
+          <LoadingIndicator
+            id="loading-indicator"
+            fadeIn="quarter"
+            showing={showInstantLoader}
+            full
+          />
+        ) : typeof children === 'function' ? (
+          children(showInstantLoader)
+        ) : (
+          children
+        )}
       </div>
     );
   }

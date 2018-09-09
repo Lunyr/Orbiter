@@ -7,6 +7,7 @@ export default (theme) => ({
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100%',
+    width: '100%',
     backgroundColor: theme.colors.white,
     borderRadius: theme.borderRadius,
     zIndex: 1,
@@ -16,7 +17,6 @@ export default (theme) => ({
   },
   image: {
     height: 175,
-    width: '100%',
     objectFit: 'cover',
   },
   info: {

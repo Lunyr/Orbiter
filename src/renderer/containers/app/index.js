@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
-import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
+import { toast } from 'react-toastify';
+import { connectToBlockchain, closeSidebar } from '../../../shared/redux/modules/app/actions';
 import { fetchAccountInformation } from '../../../shared/redux/modules/wallet/actions';
-import { TwoColumn } from '../../components';
+import { TwoColumn, Notifications } from '../../components';
 import Articles from '../article/Articles';
+import Drafts from '../article/Drafts';
 import Draft from '../article/Draft';
-import Editor from '../article/Editor';
 import Feed from '../feed/Feed';
 import Proposal from '../article/Proposal';
 import Reader from '../article/Reader';
@@ -74,7 +75,16 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes, connecting, footerHeight, headerHeight, location, sidebarWidth } = this.props;
+    const {
+      classes,
+      connecting,
+      footerHeight,
+      headerHeight,
+      location,
+      closeSidebar,
+      sidebarWidth,
+      sideBarOpened,
+    } = this.props;
     const isModal = !!(
       location.state &&
       location.state.modal &&
@@ -82,7 +92,7 @@ class App extends React.Component {
     );
     return (
       <ConnectingSplash connecting={connecting}>
-        <TwoColumn sidebarWidth={sidebarWidth}>
+        <TwoColumn sidebarWidth={sidebarWidth} isOpened={sideBarOpened} onToggle={closeSidebar}>
           <Sidebar />
           <React.Fragment>
             <Header height={headerHeight} />
@@ -90,8 +100,8 @@ class App extends React.Component {
               <Switch location={isModal ? this.previousLocation : location}>
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/logout" component={Logout} />
+                <Route exact path="/drafts" component={Drafts} />
                 <Route path="/draft" component={Draft} />
-                <Route exact path="/edit/:id" component={Editor} />
                 <Route exact path="/article/:title" component={Reader} />
                 <Route exact path="/proposed/:id" component={Proposal} />
                 <Route exact path="/rejected/:id" component={Rejected} />
@@ -99,7 +109,6 @@ class App extends React.Component {
                 <Route exact path="/articles" component={Articles} />
                 <Route exact path="/articles/unreviewed" component={() => <div>Peer Review</div>} />
                 <Route exact path="/tagging" component={() => <div>Tagging</div>} />
-                <Route exact path="/writing-manual" component={() => <div>Writing Manual</div>} />
                 <Route exact path="/advertising" component={() => <div>Advertising</div>} />
                 <Route exact path="/about" component={About} />
                 <Route exact path="/faq" component={FAQ} />
@@ -112,6 +121,7 @@ class App extends React.Component {
             <Footer height={footerHeight} />
           </React.Fragment>
         </TwoColumn>
+        <Notifications position={toast.POSITION.BOTTOM_CENTER} />
       </ConnectingSplash>
     );
   }
@@ -126,6 +136,7 @@ const mapStateToProps = ({
     headerHeight,
     initializingContracts,
     network,
+    sideBarOpened,
     sidebarWidth,
   },
 }) => ({
@@ -136,11 +147,13 @@ const mapStateToProps = ({
   headerHeight,
   initializingContracts,
   network,
+  sideBarOpened,
   sidebarWidth,
 });
 
 const mapDispatchToProps = {
   connectToBlockchain,
+  closeSidebar,
   fetchAccountInformation,
 };
 

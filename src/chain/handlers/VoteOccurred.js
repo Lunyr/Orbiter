@@ -33,25 +33,25 @@ export default async (job, txHash, evData) => {
 
     const proposalCheck = await getProposal(evData.proposalId);
 
-    if (!proposalCheck.success || !proposalCheck.data || proposalCheck.data.length < 1) {
+    if (!proposalCheck.success || !proposalCheck.data) {
       throw new Error('Proposal for vote not found');
     }
 
-    const proposal = proposalCheck.data[0];
+    const proposal = proposalCheck.data;
 
     job.progress(15);
 
     // No duplicates
     const voteCheck = await getVote(evData.voteId);
-    if (voteCheck.data.length > 0) {
+    if (voteCheck.data) {
       log.warn(
         { voteId: evData.voteId, proposalId: evData.proposalId },
-        'Vote already exists in DB.'
+        'Vote already exists in DB.',
       );
 
       // Verify that the conflict is valid and not an actual conflict
-      // TODO: Check more values, like contentHash
-      const conflictingVote = voteCheck.data[0];
+      // TODO: Check more values, like surveyHash
+      const conflictingVote = voteCheck.data;
       if (
         conflictingVote.id === evData.voteId &&
         conflictingVote.proposalId === evData.proposalId
@@ -101,7 +101,7 @@ export default async (job, txHash, evData) => {
       log.warn({ voteId: evData.voteId }, 'Received empty ipfs hash for vote');
     } else {
       const ipfsHash = multihashes.toB58String(
-        multihashes.fromHexString('1220' + evData.surveyHash.slice(2))
+        multihashes.fromHexString('1220' + evData.surveyHash.slice(2)),
       );
       const content = await ipfsFetch(ipfsHash).catch((err) => {
         // Ignore the timeout error
@@ -116,7 +116,7 @@ export default async (job, txHash, evData) => {
          * lost to the ether.  So, we're going to do our best to cope here
          */
         if (job.attempts < settings.eventLogConfig.attempts) {
-          throw new Error('Unable to find ipfs file @ ' + evData.contentHash);
+          throw new Error('Unable to find ipfs file @ ' + ipfsHash);
         } else if (job.attempts >= settings.eventLogConfig.attempts) {
           vote.dirty = true;
         }

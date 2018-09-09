@@ -23,7 +23,7 @@ export default async (job, txHash, evData) => {
 
     if (userAddr.success && userAddr.data !== null) {
       await addNotification(userAddr.data, EVENT_NAME, {
-        bidder: user.address,
+        bidder: userAddr.data,
         scope: evData.scope,
         timePeriod: evData.timePeriod,
         lunAmount: evData.lunAmount,

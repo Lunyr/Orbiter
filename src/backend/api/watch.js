@@ -29,7 +29,7 @@ export const getWatch = async (txHash) => {
 
     return {
       success: true,
-      data,
+      data: data.length > 0 ? data[0] : null,
     };
   } catch (error) {
     return {

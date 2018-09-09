@@ -2,6 +2,7 @@ export default (theme) => ({
   container: {
     flexGrow: 1,
     overflow: 'auto',
+    paddingBottom: theme.spacing,
   },
   grid: {
     display: 'flex',
@@ -29,8 +30,11 @@ export default (theme) => ({
     boxShadow: theme.boxShadows.small,
     overflow: 'hidden',
     height: '100%',
+    width: '100%',
   },
   item: {
     display: 'flex',
+    height: '100%',
+    width: '100%',
   },
 });

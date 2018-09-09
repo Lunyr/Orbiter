@@ -30,9 +30,9 @@ describe('Watch Data API', () => {
 
     const getResult = await getWatch(mock.HASH1);
     assert.isTrue(getResult.success, getResult.error);
-    assert.equal(getResult.data.length, 1, "Should have received a watch record");
-    assert.equal(getResult.data[0].state, TxState.PENDING);
-    assert.equal(getResult.data[0].fromAddress, mock.ADDRESS1);
+    assert.isNotNull(getResult.data, "Should have one result");
+    assert.equal(getResult.data.state, TxState.PENDING);
+    assert.equal(getResult.data.fromAddress, mock.ADDRESS1);
   });
 
   it('should get pending watches', async () => {
@@ -45,8 +45,8 @@ describe('Watch Data API', () => {
   it('should set a pending watch as complete', async () => {
     const beforeResult = await getWatch(mock.HASH1);
     assert.isTrue(beforeResult.success, beforeResult.error);
-    assert.isAbove(beforeResult.data.length, 0, "Should have received at least one watch record");
-    assert.equal(beforeResult.data[0].state, TxState.PENDING);
+    assert.isNotNull(beforeResult.data, "Should have one result");
+    assert.equal(beforeResult.data.state, TxState.PENDING);
 
     const result = await setWatchState(mock.HASH1, TxState.SUCCESS);
     assert.isTrue(result.success, result.error);
@@ -54,7 +54,7 @@ describe('Watch Data API', () => {
 
     const afterResult = await getWatch(mock.HASH1);
     assert.isTrue(afterResult.success, afterResult.error);
-    assert.isAbove(afterResult.data.length, 0, "Should have received at least one watch record");
-    assert.equal(afterResult.data[0].state, TxState.SUCCESS);
+    assert.isNotNull(afterResult.data, "Should have one result");
+    assert.equal(afterResult.data.state, TxState.SUCCESS);
   });
 });

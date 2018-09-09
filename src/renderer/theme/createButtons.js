@@ -5,7 +5,7 @@ const baseButton = {
   border: '1px solid #cccccc',
   cursor: 'pointer',
   outline: 'none',
-  borderRadius: 2,
+  borderRadius: 30,
   transition: 'background-color 0.25s linear',
 };
 

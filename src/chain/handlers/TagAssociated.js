@@ -19,14 +19,14 @@ export default async (job, txHash, evData) => {
 
     const tagResult = await getTag(evData.tagName);
 
-    if (!tagResult.success || tagResult.data.length < 1) {
+    if (!tagResult.success || !tagResult.data) {
       throw new Error("Unknown tag!  Events out of order?");
     }
 
     job.progress(50);
 
     // Briefly this event had an argument with the underscore
-    const assocResult = await associateTag(tagResult.data[0].id, evData.editStreamId || evData._editStreamId);
+    const assocResult = await associateTag(tagResult.data.id, evData.editStreamId || evData._editStreamId);
 
     if (!assocResult.success || assocResult.data.length < 1) {
       throw new Error(assocResult.error);

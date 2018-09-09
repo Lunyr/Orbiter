@@ -23,7 +23,7 @@ export default async (job, txHash, evData) => {
 
     if (!tagAssocResult.success) {
       throw new Error(tagAssocResult.error);
-    } else if (tagAssocResult.data.length < 1) {
+    } else if (!tagAssocResult.data) {
       throw new Error("Unknown tag association!  Events out of order?");
     }
 

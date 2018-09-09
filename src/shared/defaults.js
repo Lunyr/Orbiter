@@ -5,7 +5,7 @@ const isDevelopment = () => {
 };
 
 const jsonRPC = {
-  mainnet: 'https://mainnet.infura.io/kHjl2LF2ra5jYPjrWdqB',
+  mainnet: 'https://jsonrpc.lunyr.com/',
   ropsten: 'https://ropsten.infura.io/kHjl2LF2ra5jYPjrWdqB',
   lunyr_testnet: 'https://testrpc.lunyr.com/',
   current: null,
@@ -195,7 +195,7 @@ const getConfigDir = () => {
 const getAPIRoot = () => {
   if (typeof process.env.API_ROOT !== 'undefined') {
     return process.env.API_ROOT;
-  } else if (isDevelopment) {
+  } else if (isDevelopment()) {
     return 'https://testapi.lunyr.com/';
   }
   return 'https://api.lunyr.com/';
@@ -215,8 +215,7 @@ export default {
   jsonRPC,
   router,
   sentry: {
-    endpoint:
-      'https://fd8f67edaa0447b58574066bad752943:45704cf0de7f4fb7af9cd4ba67ba52e0@sentry.io/262240',
+    endpoint: 'https://f5d930b0c90a412ebc6b19ca30aa4ea2@sentry.io/1280675',
   },
   eventLogConfig: {
     attempts: 5,

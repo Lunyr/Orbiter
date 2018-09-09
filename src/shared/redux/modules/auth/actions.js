@@ -36,7 +36,9 @@ export const register = createTriggerAlias(actions.REGISTER, ({ password }) => {
     type: actions.REGISTER,
     payload: saveKey(password, dk).then((fileName) => {
       console.log('Saved new account key to ', fileName);
-      return dkToAddress(dk);
+      return {
+        address: dkToAddress(dk),
+      };
     }),
   };
 });
@@ -66,7 +68,7 @@ export const importAPIAccount = createTriggerAlias(
       const address = privToAddress(privKey);
       return address;
     }),
-  }),
+  })
 );
 
 export const logout = () => ({

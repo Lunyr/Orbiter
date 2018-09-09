@@ -10,19 +10,18 @@ export const getUserSettings = async (address) => {
       hashed_address: web3.utils.sha3(address),
     });
 
-    if (result && result.length === 0) {
-      throw new Error('User settings do not exist for this address.');
-    } else {
-      const data = result.reduce((acc, { name, value }) => {
-        acc[name] = value;
-        return acc;
-      }, {});
+    const data = result.reduce((acc, { name, value }) => {
+      acc.push({
+        name,
+        value,
+      });
+      return acc;
+    }, []);
 
-      return {
-        success: true,
-        data,
-      };
-    }
+    return {
+      success: true,
+      data,
+    };
   } catch (error) {
     return {
       success: false,

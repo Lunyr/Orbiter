@@ -8,10 +8,24 @@ export default (theme) => ({
     width: '100%',
     overflow: 'auto',
   },
+  details: {
+    position: 'sticky',
+    top: 0,
+    backgroundColor: theme.colors.white,
+    padding: theme.spacing,
+    boxShadow: theme.boxShadows.medium,
+    zIndex: 10,
+    width: 'auto',
+    height: 40,
+  },
+  details__inner: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   header: {
     display: 'flex',
     flexShrink: 0,
-    height: '28vh',
+    height: '37vh',
     backgroundColor: theme.colors.gray,
   },
   draft: {
@@ -20,6 +34,7 @@ export default (theme) => ({
     flexGrow: 1,
     minHeight: '50vh',
     height: '100%',
+    maxWidth: 'calc(100% - 270px)',
   },
   main: {
     display: 'flex',
@@ -43,9 +58,9 @@ export default (theme) => ({
   editor: {
     display: 'block',
     paddingLeft: 60,
-    paddingTop: theme.spacing * 2,
     borderRight: '1px solid rgba(0, 0, 0, 0.1)',
     minHeight: '70vh',
+    paddingTop: theme.spacing * 2,
   },
   aside: {
     display: 'flex',
@@ -53,6 +68,7 @@ export default (theme) => ({
     flexDirection: 'column',
     paddingLeft: theme.spacing,
     paddingTop: theme.spacing * 2,
+    paddingRight: theme.spacing,
     width: '25%',
     height: '100%',
   },
@@ -64,5 +80,13 @@ export default (theme) => ({
     borderTop: '1px solid rgba(0, 0, 0, 0.1)',
     backgroundColor: theme.colors.lightestGray,
     borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+  },
+  block: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing * 0.5,
+    backgroundColor: theme.colors.white,
+    marginBottom: theme.spacing,
+    boxShadow: theme.boxShadows.small,
   },
 });

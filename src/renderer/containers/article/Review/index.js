@@ -2,15 +2,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { toast } from 'react-toastify';
 import { editorStateFromRaw } from 'megadraft';
 import isEmpty from 'lodash/isEmpty';
+import get from 'lodash/get';
 import cx from 'classnames';
+import multihashes from 'multihashes';
+import ipfsAPI from 'ipfs-api';
 import { languageToReadable } from '../../../../shared/redux/modules/locale/actions';
 import {
   fetchArticleProposal,
   fetchVotingEligibility,
 } from '../../../../shared/redux/modules/article/review/actions';
+import { voteOnProposal } from '../../../../shared/redux/modules/chain/actions';
+import { privToAddress } from '../../../../lib/accounts';
 import decorator from '../../../components/MegadraftEditor/decorator';
+import { readUploadedFileAsBuffer } from '../../../../shared/utils';
 import {
   Contributors,
   ErrorBoundary,
@@ -18,15 +25,96 @@ import {
   Label,
   InstantLoadingIndicator,
   MegadraftEditor,
+  Modal,
 } from '../../../components';
+import BlockchainSubmission from '../../chain/BlockchainSubmission/';
 import References from '../references/References';
 import ReviewSideSequence from './ReviewSideSequence';
 import styles from './styles';
 import { calculateDiff } from './diffUtils';
 
 class Review extends React.Component {
-  loadReview = () => {
-    const { account, fetchArticleProposal, fetchVotingEligibility, proposalParam } = this.props;
+  state = {
+    openedVoteModal: false,
+    vote: null,
+  };
+
+  toastId = null;
+
+  ipfs = ipfsAPI('ipfs.infura.io', 5001, { protocol: 'https' });
+
+  openVoteModal = () => {
+    this.setState({ openedVoteModal: true });
+  };
+
+  closeVoteModal = () => {
+    this.setState({ openedVoteModal: false });
+  };
+
+  onVote = (vote) => {
+    this.setState({ vote }, this.openVoteModal);
+  };
+
+  saveToIpfs = (arrayBuffer) => {
+    const buffer = Buffer.from(arrayBuffer);
+    return this.ipfs.add(buffer);
+  };
+
+  handleIPFSUpload = async (file) => {
+    try {
+      // Extract out file as text
+      const arrayBuffer = await readUploadedFileAsBuffer(file);
+      // Save it to ipfs
+      const [{ hash }] = await this.saveToIpfs(arrayBuffer);
+      // Return hash as a reference
+      return hash;
+    } catch (err) {
+      console.warn(err.message);
+    }
+  };
+
+  submitVote = async (privKey, gasPrice) => {
+    const {
+      vote: { accepted, checked },
+    } = this.state;
+    const { proposalParam, voteOnProposal } = this.props;
+    const proposalId = parseInt(proposalParam, 10);
+    const address = privToAddress(privKey);
+
+    // Upload file hash
+    const qmHash = await this.handleIPFSUpload(
+      new window.Blob([JSON.stringify(checked)], { type: 'application/json' })
+    );
+
+    if (!qmHash || qmHash === `QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH`) {
+      return new Error('IPFS error');
+    }
+
+    const ipfsHash = `0x${multihashes.toHexString(multihashes.fromB58String(qmHash)).slice(4)}`;
+
+    const responseId = toast.success(
+      'Vote submitted! You will receive a notification about the transaction shortly.'
+    );
+
+    // Send off proposal with response id so we can notify the user of updates
+    voteOnProposal(
+      responseId,
+      {
+        proposalId,
+        accepted,
+        ipfsHash,
+      },
+      {
+        from: address,
+        gas: 5e5,
+        gasPrice,
+      },
+      privKey
+    );
+  };
+
+  loadReview = (proposalParam) => {
+    const { account, fetchArticleProposal, fetchVotingEligibility } = this.props;
     const proposalId = parseInt(proposalParam, 10);
     fetchArticleProposal(proposalId);
     if (account) {
@@ -34,7 +122,38 @@ class Review extends React.Component {
     }
   };
 
+  componentDidUpdate({ transactionError, transaction }) {
+    const { classes } = this.props;
+    if (this.props.transaction !== transaction && this.props.transaction) {
+      toast.info(
+        () => (
+          <div className={classes.etherscan}>
+            <span>Transaction Hash - {get(this.props.transaction, 'transactionHash')}</span>
+            <a
+              className={classes.etherscan__link}
+              href={`https://etherscan.io/tx/${this.props.transaction.transactionHash}`}
+              target="_blank"
+              rel="noopener noreferrer">
+              View on Etherscan
+            </a>
+          </div>
+        ),
+        {
+          autoClose: false,
+          className: classes.toast__hash,
+        }
+      );
+    }
+
+    if (this.props.transactionError !== transactionError && this.props.transactionError) {
+      toast.error(`There was an error publishing! Error: ${transactionError.message}`, {
+        autoClose: false,
+      });
+    }
+  }
+
   render() {
+    const { openedVoteModal } = this.state;
     const {
       account,
       article,
@@ -111,8 +230,17 @@ class Review extends React.Component {
               article={article}
               eligibility={eligibility}
               isAuthor={isAuthor}
+              onSubmit={this.onVote}
             />
           </aside>
+          <Modal isOpen={openedVoteModal} onRequestClose={this.closeVoteModal}>
+            <BlockchainSubmission
+              onClose={this.closeVoteModal}
+              onSubmit={this.submitVote}
+              title={<FormattedMessage id="blockchain_vote" defaultMessage="Vote on Proposal" />}
+              type="publish-article"
+            />
+          </Modal>
         </InstantLoadingIndicator>
       </ErrorBoundary>
     );
@@ -150,6 +278,9 @@ const mapStateToProps = (
     article: {
       review: { error, data, isFetching, eligibility },
     },
+    chain: {
+      transaction: { error: transactionError, processing, data: transaction, responseId },
+    },
   },
   {
     match: {
@@ -166,11 +297,16 @@ const mapStateToProps = (
   isAuthor: data && data.fromAddress === account,
   proposalParam,
   titleParam,
+  transaction,
+  transactionError,
+  processing,
+  responseId,
 });
 
 const mapDispatchToProps = {
   fetchArticleProposal,
   fetchVotingEligibility,
+  voteOnProposal,
 };
 
 export default connect(

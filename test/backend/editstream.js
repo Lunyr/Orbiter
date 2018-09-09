@@ -17,7 +17,7 @@ describe('Edit Stream Data API', () => {
   it('should fetch an edit stream', async () => {
     const result = await getEditStream(1);
     assert(result.success, result.error);
-    assert.equal(result.data.length, 1, "Should have one result");
+    assert.isNotNull(result.data, "Should have one result");
   });
 
   it('add an edit stream', async () => {
@@ -31,9 +31,9 @@ describe('Edit Stream Data API', () => {
 
     const result = await getEditStream(100);
     assert(result.success, result.error);
-    assert.equal(result.data.length, 1, "Should have one result");
-    assert.equal(result.data[0].id, 100);
-    assert.equal(result.data[0].lang, 'en');
+    assert.isNotNull(result.data, "Should have one result");
+    assert.equal(result.data.id, 100);
+    assert.equal(result.data.lang, 'en');
   });
 
   it('update an edit stream', async () => {
@@ -51,10 +51,10 @@ describe('Edit Stream Data API', () => {
 
     const beforeResult = await getEditStream(ID);
     assert(beforeResult.success, beforeResult.error);
-    assert.equal(beforeResult.data.length, 1, "Should have one result");
-    assert.equal(beforeResult.data[0].id, ID);
-    assert.equal(beforeResult.data[0].lang, 'en');
-    assert.equal(beforeResult.data[0].title, ORIG_TITLE);
+    assert.isNotNull(beforeResult.data, "Should have one result");
+    assert.equal(beforeResult.data.id, ID);
+    assert.equal(beforeResult.data.lang, 'en');
+    assert.equal(beforeResult.data.title, ORIG_TITLE);
 
     const updateResult = await updateEditStream(ID, {
         title: NEW_TITLE,
@@ -64,8 +64,8 @@ describe('Edit Stream Data API', () => {
 
     const afterResult = await getEditStream(ID);
     assert(afterResult.success, afterResult.error);
-    assert.equal(afterResult.data.length, 1, "Should have one result");
-    assert.equal(afterResult.data[0].title, NEW_TITLE, "Should have updated the title");
+    assert.isNotNull(afterResult.data, "Should have one result");
+    assert.equal(afterResult.data.title, NEW_TITLE, "Should have updated the title");
 
   });
 });
