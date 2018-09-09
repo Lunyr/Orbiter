@@ -25,7 +25,7 @@ class ReviewSideSequence extends React.Component {
                 />
               </p>
               <p>
-                <Link to="/login" className={classes.link} isModal={true}>
+                <Link to="/login" className={classes.link}>
                   <FormattedMessage id="review_notLoggedIn_link" defaultMessage="Login" />
                 </Link>
               </p>

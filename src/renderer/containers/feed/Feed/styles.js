@@ -15,7 +15,8 @@ export default (theme) => ({
     paddingTop: theme.spacing * 2,
   },
   select: {
-    width: 150,
+    width: 200,
+    backgroundColor: theme.colors.white,
   },
   empty: {
     display: 'flex',

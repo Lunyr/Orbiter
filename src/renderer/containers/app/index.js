@@ -54,8 +54,8 @@ class App extends React.Component {
 
     // User changed accounts
     if (this.props.account !== prevProps.account) {
-      // Navigate back to feed and fetch user balance information
-      this.props.history.push('/');
+      // Logged in or changed user
+      this.props.history.replace('/');
       this.handleLoadingAccountInformation();
     }
   }

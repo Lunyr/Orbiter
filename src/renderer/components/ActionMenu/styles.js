@@ -44,7 +44,7 @@ export default (theme) => ({
   },
   menu: ({ width, alignedRight }) => ({
     position: 'absolute',
-    top: 30,
+    top: 40,
     zIndex: 10,
     marginTop: 2,
     width,
@@ -55,7 +55,7 @@ export default (theme) => ({
     paddingLeft: 0,
     listStyle: 'none',
     boxShadow: theme.boxShadows.large,
-    ...(alignedRight && { right: -7 }),
+    ...(alignedRight && { right: -10 }),
     ...(!alignedRight && { left: 0 }),
   }),
   list: {
