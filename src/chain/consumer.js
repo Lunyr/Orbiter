@@ -23,7 +23,7 @@ const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, { protocol: 'http' 
 const originBlock = settings.isDevelopment ? '0x0' : '0x41736a';
 
 // Whether or not a fetch is currently in progress
-let FETCH_IN_PROGRESS = {};
+const FETCH_IN_PROGRESS = {};
 
 const IGNORE_CONTRACTS = [
   '0x2b88b7c1f40cbd59344e739edbb9c5630af2bbcb', // Tagger testnet (bug)
@@ -57,9 +57,9 @@ const nextBlock = (blockNumber) => {
  */
 const getContractInstances = async (router, name) => {
   const counts = await router.methods.getTargetCount(name.toLowerCase()).call();
-  let targets = new Array();
+  const targets = [];
 
-  if (counts == 0) {
+  if (counts === 0) {
     const networkId = await web3.eth.net.getId();
     log.error(
       {
@@ -113,9 +113,9 @@ const getAddresses = async () => {
   let targets = [].concat.apply(
     [],
     await Promise.all([
-      await getContractInstances(router, 'peerreview'),
-      await getContractInstances(router, 'auctioneer'),
-      await getContractInstances(router, 'tagger'),
+      getContractInstances(router, 'peerreview'),
+      getContractInstances(router, 'auctioneer'),
+      getContractInstances(router, 'tagger'),
     ])
   );
 
@@ -229,7 +229,7 @@ const processLogs = (logs, queue) => {
  * @param {object} queue is the Bull queue instance to store the jobs
  * @return {Promise} a fake-thread promise that should never resolve
  */
-const consumeEvents = async (record, queue) => {
+const consumeEvents = (record, queue) => {
   let startBlock = originBlock;
   setInterval(async () => {
     try {
@@ -243,7 +243,7 @@ const consumeEvents = async (record, queue) => {
       log.error({ error: err.message }, 'Unhandled error in consumeEvents()');
       handleError(err);
     }
-  }, 30000);
+  }, 10000);
 };
 
 /**
