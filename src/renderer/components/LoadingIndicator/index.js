@@ -1,18 +1,19 @@
 import React from 'react';
 import injectStyles from 'react-jss';
 import cx from 'classnames';
+import { ThreeBounce } from 'better-react-spinkit';
 import styles from './styles';
 
-const LoadingIndicator = ({ classes, className, fadeIn, full, name, showing }) => (
+const LoadingIndicator = ({ classes, className, full, showing, size }) => (
   <div
     className={cx(classes.container, full && classes.full, className, !showing && classes.hidden)}>
-    {/* Find a decent loading indicator to put here */}
+    <ThreeBounce className={cx(classes.loader, className)} gutter={4} size={size} />
   </div>
 );
 
 LoadingIndicator.defaultProps = {
-  name: 'ball-scale-ripple',
   showing: false,
+  size: 20,
 };
 
 export default injectStyles(styles)(LoadingIndicator);

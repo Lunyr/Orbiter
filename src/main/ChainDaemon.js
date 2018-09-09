@@ -1,27 +1,30 @@
+import { ipcMain } from 'electron';
 import path from 'path';
 import { spawn, execSync } from 'child_process';
-import { getLogger, Raven } from '../lib/logger';
+import eventsQueue from '../lib/queuelite';
+import { getLogger } from '../lib/logger';
 import { handleError } from '../shared/handlers';
 
 const log = getLogger('ChainDaemon');
 
 export default class ChainDaemon {
   static path = path.resolve(__dirname, '../chain/chain-daemon.js');
-  subprocess;
-  handlers;
 
-  constructor() {
-    this.handlers = [];
-  }
+  subprocess = undefined;
+
+  handlers = [];
 
   launch() {
     log.info({ dirname: __dirname, path: ChainDaemon.path }, 'Launching daemon');
 
-    this.subprocess = spawn('node', [ChainDaemon.path], { stdio: ['pipe','inherit','inherit'] });
+    this.subprocess = spawn('babel-node', [ChainDaemon.path], {
+      stdio: ['pipe', 'inherit', 'inherit'],
+    });
 
     this.subprocess.on('exit', () => this.fire('exit'));
-    this.subprocess.on('error', error => {
-      log.error({ errorMessage: error.message }, "Unhandled error in Chain Daemon");
+
+    this.subprocess.on('error', (error) => {
+      log.error({ errorMessage: error.message }, 'Unhandled error in Chain Daemon');
       handleError(error);
     });
 
@@ -29,7 +32,7 @@ export default class ChainDaemon {
   }
 
   quit() {
-    log.info("Shutting down ChainDaemon...");
+    log.info('Shutting down ChainDaemon...');
     if (process.platform === 'win32') {
       try {
         execSync(`taskkill /pid ${this.subprocess.pid} /t /f`);
@@ -40,11 +43,65 @@ export default class ChainDaemon {
       if (typeof this.subprocess !== 'undefined') {
         this.subprocess.kill();
       } else {
-        log.warn("Unable to kill ChainDamon.  Process unknown.");
+        log.warn('Unable to kill ChainDamon.  Process unknown.');
       }
     }
-    log.info("ChainDaemon shut down.");
+    log.info('ChainDaemon shut down.');
   }
+
+  startMainProcessListeners = () => {
+    try {
+      let statusListenerInitialized = false;
+
+      let statusIntervalId = null;
+
+      const queue = eventsQueue('event_queue');
+
+      // Closure to clear the current status interval
+      const clearStatusInterval = () => {
+        if (statusIntervalId) {
+          clearInterval(statusIntervalId);
+        }
+      };
+
+      // Closure to create a new status interval
+      const generateStatusCheckInterval = (event, pingInterval) => {
+        if (!pingInterval) {
+          throw new Error('Cannot create a status interval with bad `pingInterval`');
+        }
+        // Clear out any previous interval
+        clearStatusInterval();
+        // Closure to poll for the status information
+        const statusPoller = async () => {
+          const status = await queue.status();
+          // Determine whether or not to change up the interval to be a
+          // little quicker if we are currently in the middle of processing
+          event.sender.send('queue-status-data', JSON.stringify(status));
+          log.debug({ status }, 'Emitted queue status');
+        };
+        // Emit status indicator every 10 seconds
+        statusIntervalId = setInterval(statusPoller, pingInterval);
+        log.info({ pingInterval }, 'Spawaning queue status listener');
+        statusListenerInitialized = true;
+        // Call once
+        return statusPoller();
+      };
+
+      // Add interval that emits the status information out on the ipc main process for a renderer to pick up
+      ipcMain.on('spawn-queue-status-listener', (event, pingInterval) => {
+        return generateStatusCheckInterval(event, pingInterval);
+      });
+
+      ipcMain.on('change-queue-status-interval', (event, pingInterval) => {
+        if (statusListenerInitialized) {
+          return generateStatusCheckInterval(event, pingInterval);
+        }
+      });
+    } catch (err) {
+      log.error(err);
+      return null;
+    }
+  };
 
   // Follows the publish/subscribe pattern
 
@@ -55,7 +112,7 @@ export default class ChainDaemon {
 
   // Publish method
   fire(event, args) {
-    this.handlers.forEach(topic => {
+    this.handlers.forEach((topic) => {
       if (topic.event === event) topic.handler(args);
     });
   }

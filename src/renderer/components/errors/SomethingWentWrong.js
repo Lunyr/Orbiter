@@ -1,7 +1,7 @@
 import React from 'react';
 
 const SomethingWentWrong = ({ error, info }) => (
-  <div style={{ height: '100%', width: '100%', overflowY: 'auto' }}>
+  <div style={{ height: '100%', width: '100%', overflowY: 'auto', padding: 20 }}>
     <h1>Something went wrong.</h1>
     <div>Info: {JSON.stringify(info)}</div>
     <br />

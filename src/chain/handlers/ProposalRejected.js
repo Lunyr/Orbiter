@@ -3,11 +3,7 @@
  */
 import { getLogger } from '../../lib/logger';
 import { handlerWrapper } from '../utils';
-import { 
-  addNotification,
-  getProposal,
-  rejectProposal,
-} from '../../backend/api';
+import { addNotification, getProposal, rejectProposal } from '../../backend/api';
 
 const EVENT_NAME = 'ProposalRejected';
 const log = getLogger(EVENT_NAME);
@@ -19,7 +15,7 @@ export default async (job, txHash, evData) => {
     const proposalCheck = await getProposal(evData.proposalId);
 
     if (!proposalCheck.success || proposalCheck.data.length < 1) {
-      throw new Error("Proposal not found!");
+      throw new Error('Proposal not found!');
     }
 
     const proposal = proposalCheck.data[0];
@@ -35,14 +31,16 @@ export default async (job, txHash, evData) => {
     job.progress(90);
 
     // Create a notification for the user
-    const notifResult = await addNotification(proposal.fromAddress, EVENT_NAME, {
+    if (proposal) {
+      const notifResult = await addNotification(proposal.fromAddress, EVENT_NAME, {
         proposalId: evData.proposalId,
         editStreamId: evData.editStreamId,
         title: proposal.title,
-    });
-    if (notifResult.success === false) {
-      log.error({ errorMessage: notifResult.error }, "Error adding notification!");
+      });
+      if (notifResult.success === false) {
+        log.error({ errorMessage: notifResult.error }, 'Error adding notification!');
+      }
     }
     job.progress(90);
   });
-}
+};

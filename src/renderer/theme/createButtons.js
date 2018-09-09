@@ -1,5 +1,5 @@
 const baseButton = {
-  height: 44,
+  height: 34,
   color: '#ffffff',
   background: '#eeeeee',
   border: '1px solid #cccccc',
@@ -21,10 +21,11 @@ const createButton = ({ boxShadows, borderRadius, fontFamily, fontSize, spacing 
     fontSize,
     backgroundColor: background.string(),
     color: color.string(),
-    borderColor: background.darken(0.1).string(),
+    borderColor: background.darken(0.05).string(),
     paddingLeft: spacing,
     paddingRight: spacing,
-    boxShadow: boxShadows.base,
+    boxShadow: boxShadows.medium,
+    fontWeight: 300,
     '&:hover': {
       backgroundColor: background.lighten(0.1).string(),
     },

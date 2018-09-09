@@ -1,8 +1,7 @@
 /**
  * This is the event handler for PeerReview.ProposalSubmitted
  */
-import multihashes from 'multihashes';
-import settings from '../../shared/settings';
+import { settings } from '../../shared/settings';
 import { getLogger } from '../../lib/logger';
 import {
   handlerWrapper,
@@ -11,8 +10,8 @@ import {
   ipfsFetch,
   EMPTY_IPFS_HEX,
 } from '../utils';
-import { ProposalState, TxType } from '../../shared/constants';
-import { 
+import { ProposalState } from '../../shared/constants';
+import {
   addNotification,
   addEditStream,
   getEditStream,
@@ -28,7 +27,7 @@ export default async (job, txHash, evData) => {
     const tx = await getTransaction(txHash);
     let blockStamp;
     if (!tx) {
-      throw new Error("Transaction not found!  Nodes out of sync?");
+      throw new Error('Transaction not found!  Nodes out of sync?');
     } else if (typeof tx.blockNumber !== 'undefined' && tx.blockNumber) {
       const block = await getBlockByNumber(tx.blockNumber);
       if (block) {
@@ -40,15 +39,15 @@ export default async (job, txHash, evData) => {
 
     // Check and see if the proposal already exists(it shouldn't)
     const proposalCheck = await getProposal(evData.proposalId);
-    if (proposalCheck.success === true && proposalCheck.data.length > 0) {
+    if (proposalCheck.success === true && (proposalCheck.data && proposalCheck.data.length > 0)) {
       log.warn({ proposalId: evData.proposalId }, 'Proposal already exists in DB.');
 
       // Verify that the conflict is valid and not an actual conflict
       // TODO: Check more values, like contentHash
-      const conflictingProp = proposalCheck.data[0];
+      //const conflictingProp = proposalCheck.data[0];
       if (
-        proposalCheck.editStreamId == evData.editStreamId
-        && proposalCheck.proposalId == evData.proposalId
+        proposalCheck.editStreamId === evData.editStreamId &&
+        proposalCheck.proposalId === evData.proposalId
       ) {
         return;
       } else {
@@ -58,9 +57,9 @@ export default async (job, txHash, evData) => {
 
     job.progress(33);
 
-    let proposal = {
+    const proposal = {
       id: evData.proposalId,
-      parentId: evData.parentId == 0 ? null : evData.parentId,
+      parentId: evData.parentId === 0 ? null : evData.parentId,
       state: ProposalState.IN_REVIEW,
       editStreamId: evData.editStreamId,
       fromAddress: evData.proposer,
@@ -73,28 +72,29 @@ export default async (job, txHash, evData) => {
       additionalContent: null,
       description: null,
       megadraft: null,
-    }
+    };
     if (blockStamp) {
-      proposal.created = blockStamp;
+      proposal.createdAt = blockStamp.toISOString();
     }
 
     let content;
 
     /**
-     * This really shouldn't happen often, but something that needs to be 
+     * This really shouldn't happen often, but something that needs to be
      * considered and dealt with in a slightly different way are when empty IPFS
-     * hashes are provided to the contract.  Without these, we have nothing to 
+     * hashes are provided to the contract.  Without these, we have nothing to
      * look up.
      */
-    if (evData.contentHash == EMPTY_IPFS_HEX) {
+    if (evData.contentHash === EMPTY_IPFS_HEX) {
       job.progress(34);
 
       // Let the user know what happened
       await addNotification(evData.proposer, 'Error', {
-          proposalId: evData.proposalId,
-          editStreamId: evData.editStreamId,
-          title: "",
-          message: "Sorry but there was an error with your proposal. Unfortunately you will be unable to resubmit your proposal until the proposal expires or is reviewed. A copy has been saved in your drafts.  We apologize for any inconvenience."
+        proposalId: evData.proposalId,
+        editStreamId: evData.editStreamId,
+        title: '',
+        message:
+          'Sorry but there was an error with your proposal. Unfortunately you will be unable to resubmit your proposal until the proposal expires or is reviewed. A copy has been saved in your drafts.  We apologize for any inconvenience.',
       });
 
       job.progress(68);
@@ -102,19 +102,19 @@ export default async (job, txHash, evData) => {
       job.progress(35);
 
       // Fetch data from IPFS
-      content = await ipfsFetch(evData.contentHash, 30000).catch(err => {
+      content = await ipfsFetch(evData.contentHash, 30000).catch((err) => {
         // Ignore the timeout error
         if (err.message.indexOf('timed out') === -1) {
           throw err;
         }
       });
       if (!content && job.attempts < settings.eventLogConfig.attempts) {
-        throw new Error('Unable to find ipfs file @ ' + evData.contentHash)
+        throw new Error('Unable to find ipfs file @ ' + evData.contentHash);
       } else if (!content && job.attempts >= settings.eventLogConfig.attempts) {
         job.progress(56);
 
         /**
-         * If we've tried 3 times and still can't get the IPFS data, it must be 
+         * If we've tried 3 times and still can't get the IPFS data, it must be
          * lost in the ether.  So, we're going to do our best to cope here
          */
         proposal.uuid = null;
@@ -134,8 +134,8 @@ export default async (job, txHash, evData) => {
         job.progress(55);
 
         /**
-         * This is some weird stuff with postgres.  If the JSON is an array, it 
-         * must be inserted using a string.  Otherwise, PG tries to convert the 
+         * This is some weird stuff with postgres.  If the JSON is an array, it
+         * must be inserted using a string.  Otherwise, PG tries to convert the
          * value into a postgres array instead of a JSON array.  This is dumb, I
          * don't know why.
          *
@@ -146,7 +146,7 @@ export default async (job, txHash, evData) => {
           refMap = JSON.stringify(refMap);
         }
 
-        let additional = content.additionalContent ;
+        let additional = content.additionalContent;
         if (typeof additional === 'object' && additional instanceof Array) {
           additional = JSON.stringify(additional);
         }
@@ -200,9 +200,9 @@ export default async (job, txHash, evData) => {
 
     job.progress(80);
 
-    // Create the proposal 
+    // Create the proposal
     await addProposal(proposal);
 
     job.progress(90);
   });
-}
+};

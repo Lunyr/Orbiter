@@ -44,6 +44,28 @@ const removeHexPrefix = (str) => {
 };
 
 /**
+ * dkToAddress returns an address from a derived key object
+ * @returns {string} an Ethereum address
+ */
+export const dkToAddress = (dk) => {
+  if (typeof dk === 'undefined' || typeof dk.privateKey === 'undefined') {
+    throw new Error("Invalid derived key object");
+  }
+  return keythereum.privateKeyToAddress(dk.privateKey);
+};
+
+/**
+ * privToAddress returns an address from a private key
+ * @returns {string} an Ethereum address
+ */
+export const privToAddress = (privKey) => {
+  if (typeof privKey === 'undefined') {
+    throw new Error("Invalid key");
+  }
+  return keythereum.privateKeyToAddress(removeHexPrefix(privKey));
+};
+
+/**
  * getList return an array of objects with the properties `address` and 
  *    `fileName` for each account in the local keystore.
  * @returns {Array} array of objects representing accounts in the keystore
@@ -51,6 +73,9 @@ const removeHexPrefix = (str) => {
 export const getList = async () => {
   // Reset our internal ACCOUNTS list
   if (ACCOUNTS.length > 0) ACCOUNTS = [];
+
+  // Check for the key dir to start, if it doesn't exist, we have no accounts
+  if (!fs.existsSync(KEY_DIR)) return ACCOUNTS;
 
   // Get all files in the key dir
   const files = await fs.readdirAsync(KEY_DIR, {});
@@ -64,7 +89,7 @@ export const getList = async () => {
     const jsonString = await fs.readFileSync(fd);
     try {
       const jsonObj = JSON.parse(jsonString);
-      ACCOUNTS.push({ fileName, address: jsonObj.address });
+      ACCOUNTS.push({ fileName, address: addHexPrefix(jsonObj.address) });
     } catch (err) {
       log.warn({ fileName }, "Unable to read file in key directory");
     }
@@ -100,7 +125,7 @@ export const unlock = async (args) => {
     const account = _.find(ACCOUNTS, (obj) => { return obj.address === args.address });
     if (!account) {
       log.warn({ address: args.address }, "Unknown account. Can not unlock.");
-      return null;
+      throw new Error("Unknown account");
     }
     fileName = account.fileName;
   } else {

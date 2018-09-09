@@ -1,21 +1,21 @@
 {
-  presets: [
+  "presets": [
     [
-      'env',
+      "env",
       {
-        targets: {
-          electron: '1.8',
+        "targets": {
+          "electron": "1.8"
         },
-        useBuiltIns: true,
-      },
+        "useBuiltIns": true
+      }
     ],
-    'react',
+    "react"
   ],
-  plugins: [
-    'transform-decorators-legacy',
-    'transform-class-properties',
-    'transform-object-rest-spread',
-    'transform-runtime',
-    'dynamic-import-node',
-  ],
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-class-properties",
+    "transform-object-rest-spread",
+    "transform-runtime",
+    "dynamic-import-node"
+  ]
 }

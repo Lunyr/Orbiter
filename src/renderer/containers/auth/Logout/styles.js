@@ -1,0 +1,30 @@
+export default (theme) => ({
+  container: {
+    display: 'flex',
+    position: 'fixed',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: 0,
+    left: 0,
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    color: theme.colors.primary,
+    zIndex: 20,
+    ...theme.typography.body,
+  },
+  loader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 60,
+    width: 60,
+    color: 'inherit',
+  },
+  title: theme.typography.h3,
+  help: {
+    ...theme.typography.h5,
+    color: theme.colors.gray,
+  },
+});

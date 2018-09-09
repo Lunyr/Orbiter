@@ -30,7 +30,6 @@ const ActionMenu = ({
   className,
   classes,
   id,
-  itemHeight,
   onSelected,
   children: [button, ...menuItems],
 }) => (
@@ -45,8 +44,8 @@ const ActionMenu = ({
         {React.Children.map(menuItems, (item, index) => {
           if (item) {
             return (
-              <li key={index}>
-                <ARIAItem className={classes.item} style={{ height: itemHeight }}>
+              <li key={index} className={classes.item__container}>
+                <ARIAItem className={classes.item} style={{ height: 'auto' }}>
                   {item}
                 </ARIAItem>
               </li>
@@ -61,7 +60,6 @@ const ActionMenu = ({
 ActionMenu.defaultProps = {
   alignedRight: false,
   arrow: true,
-  itemHeight: 40,
   width: 250,
 };
 
@@ -72,7 +70,6 @@ ActionMenu.propTypes = {
   className: PropTypes.string,
   classes: PropTypes.object.isRequired,
   id: PropTypes.string,
-  itemHeight: PropTypes.number.isRequired,
   onSelected: PropTypes.func,
   width: PropTypes.number.isRequired,
 };

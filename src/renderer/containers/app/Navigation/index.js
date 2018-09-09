@@ -1,16 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+//import PropTypes from 'prop-types';
 import injectStyles from 'react-jss';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { NavList } from '../../../components';
 import {
-  FaBullhorn as BullhornIcon,
+  //FaBullhorn as BullhornIcon,
   FaComment as CommentIcon,
-  FaFlag as FlagIcon,
-  FaStar as StarIcon,
-  FaThumbsUp as ThumbsUpIcon,
-  FaDesktop as DesktopIcon,
+  //FaFlag as FlagIcon,
+  //FaStar as StarIcon,
+  //FaThumbsUp as ThumbsUpIcon,
+  //FaDesktop as DesktopIcon,
   FaPencilAlt as PencilIcon,
   FaTag as TagIcon,
 } from 'react-icons/fa';
@@ -77,8 +78,8 @@ const mapStateToProps = (state, { intl }) => {
       exact: true,
       to: '/',
       display: intl.formatMessage({
-        id: 'link_home',
-        defaultMessage: 'Home',
+        id: 'link_feed',
+        defaultMessage: 'Feed',
       }),
     },
     {
@@ -86,7 +87,7 @@ const mapStateToProps = (state, { intl }) => {
       to: '/articles',
       display: intl.formatMessage({
         id: 'link_allArticles',
-        defaultMessage: 'All',
+        defaultMessage: 'All Articles',
       }),
     },
   ];
@@ -94,6 +95,7 @@ const mapStateToProps = (state, { intl }) => {
   return {
     articleLinks: baseLinks.concat(categories.map(toCategoryLink.bind(this, intl))),
     pageLinks: [
+      /*
       {
         to: '/articles/unreviewed',
         display: intl.formatMessage({
@@ -102,6 +104,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <ThumbsUpIcon />,
       },
+      */
       {
         to: '/tagging',
         display: intl.formatMessage({
@@ -119,6 +122,7 @@ const mapStateToProps = (state, { intl }) => {
         icon: <PencilIcon />,
         target: '_blank',
       },
+      /*
       {
         to: '/advertising',
         display: intl.formatMessage({
@@ -127,6 +131,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <FlagIcon />,
       },
+      */
       {
         to: '/about',
         display: intl.formatMessage({
@@ -143,6 +148,7 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <CommentIcon />,
       },
+      /*
       {
         to: '/announcements',
         display: intl.formatMessage({
@@ -151,17 +157,18 @@ const mapStateToProps = (state, { intl }) => {
         }),
         icon: <BullhornIcon />,
       },
+      */
     ],
   };
 };
 
-const mapDispatchToProps = {};
-
-export default injectIntl(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { withRef: true }
-  )(injectStyles(styles)(Navigation))
+export default withRouter(
+  injectIntl(
+    connect(
+      mapStateToProps,
+      null,
+      null,
+      { withRef: true }
+    )(injectStyles(styles)(Navigation))
+  )
 );

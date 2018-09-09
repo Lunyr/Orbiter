@@ -5,7 +5,7 @@ import cx from 'classnames';
 import styles, { modalStyles } from './styles';
 
 // Accessibility entry points for ReactModal
-ReactModal.setAppElement('#app');
+ReactModal.setAppElement('#root');
 
 const Modal = ({
   children,

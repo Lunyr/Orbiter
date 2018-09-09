@@ -1,6 +1,6 @@
 import { applyMiddleware, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { persistStore, persistReducer } from 'redux-persist';
+import { persistStore, persistReducer, REHYDRATE } from 'redux-persist';
 import promiseMiddleware from '../middleware/promiseMiddleware';
 import forwardToMain from '../middleware/forwardToMain';
 import forwardToRenderer from '../middleware/forwardToRenderer';
@@ -9,7 +9,7 @@ import replayMainAction from '../helpers/replayMainAction';
 import replayRendererAction from '../helpers/replayRendererAction';
 import storage from 'redux-persist/lib/storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
-import { reducers as rootReducer } from '../modules/index';
+import { reducers as appReducer } from '../modules/index';
 
 export const isProduction = process.env.NODE_ENV === 'production';
 
@@ -39,13 +39,34 @@ const productionStore = (reducer, initialState, isRendererStore) => {
  * Returns a map containing a redux store and persistor based on `initialState` and `options`
  */
 const configureStore = (initialState, storeKey, isRendererStore = true) => {
+  // Ensure we clear out the state when we logout
+  const rootReducer = (state, action) => {
+    if (action.type === 'auth/LOGOUT') {
+      state = undefined;
+    } else if (action.type === REHYDRATE) {
+      // Action interceptor to allow initial state to override incoming state
+      state = {
+        ...state,
+        app: {
+          ...state.app,
+          connected: false,
+          connecting: true,
+        },
+      };
+    }
+    return appReducer(state, action);
+  };
+
   if (isRendererStore) {
     const persistanceConfiguration = {
       key: storeKey,
       storage,
       stateReconciler: autoMergeLevel2,
+      blacklist: ['app', 'forms'],
     };
+
     const persistedReducer = persistReducer(persistanceConfiguration, rootReducer);
+
     const store = isProduction
       ? productionStore(persistedReducer, initialState, isRendererStore)
       : developmentStore(persistedReducer, initialState, isRendererStore);

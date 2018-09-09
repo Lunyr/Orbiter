@@ -1,16 +1,42 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { Link } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import cx from 'classnames';
 import { MdSearch as SearchIcon } from 'react-icons/md';
 import { FaSpinner as SpinIcon, FaTimesCircle as TimesCircleIcon } from 'react-icons/fa';
-import { AutoSizer, List, IconButton } from '../../../components';
+import { search } from '../../../../shared/redux/modules/search/actions';
+import { AutosizeInput, AutoSizer, List, IconButton } from '../../../components';
+import { cleanUnderscores } from '../../../../shared/utils';
 import styles from './styles';
 
-const renderArticleLink = () => <div>Article Link Here</div>;
-
+const renderArticleLink = ({ classes, onClick, results, detached }, { index, style }) => {
+  const { id, description, heroImageHash, title } = results[index];
+  const imageUrl = heroImageHash && `https://ipfs.io/ipfs/${heroImageHash}`;
+  return (
+    <Link
+      key={id}
+      to={`/article/${title}`}
+      className={cx(classes.link, classes.articleLink)}
+      onClick={onClick}
+      style={style}>
+      <div className={cx({ [classes.result]: true, [classes.result__detached]: detached })}>
+        <img
+          className={classes.result__image}
+          src={imageUrl}
+          alt="Sorry, we can't find the item in IPFS!"
+        />
+        <div className={classes.result__text}>
+          <div className={classes.result__title}>{cleanUnderscores(title)}</div>
+          <div className={classes.result__description}>{description}</div>
+        </div>
+      </div>
+    </Link>
+  );
+};
 const SearchResults = ({
   classes,
   error,
@@ -59,7 +85,12 @@ const SearchResults = ({
                   overscanRowCount={15}
                   rowCount={resultCount}
                   rowHeight={rowHeight}
-                  rowRenderer={renderArticleLink.bind(this, onClick, results, detached)}
+                  rowRenderer={renderArticleLink.bind(this, {
+                    classes,
+                    onClick,
+                    results,
+                    detached,
+                  })}
                   width={width}
                 />
               )}
@@ -71,7 +102,7 @@ const SearchResults = ({
               overscanRowCount={15}
               rowCount={resultCount}
               rowHeight={rowHeight}
-              rowRenderer={renderArticleLink.bind(this, onClick, results, detached)}
+              rowRenderer={renderArticleLink.bind(this, { classes, onClick, results, detached })}
               width={containerMinWidth}
             />
           )}
@@ -155,7 +186,6 @@ class SearchBar extends React.Component {
   }
 
   handleClear = () => {
-    /*
     this.setState(
       {
         isFocused: false,
@@ -163,7 +193,6 @@ class SearchBar extends React.Component {
       },
       this.props.clearSearchResults
     );
-    */
   };
 
   handleBlur = () => {
@@ -174,11 +203,9 @@ class SearchBar extends React.Component {
   };
 
   handleSearch = () => {
-    /*
     const { term } = this.state;
-    const { resultLimit, searchArticles } = this.props;
-    searchArticles(term, resultLimit);
-    */
+    const { resultLimit, search } = this.props;
+    search(term, resultLimit);
   };
 
   handleSearchInput = (e) => {
@@ -198,12 +225,46 @@ class SearchBar extends React.Component {
     }
   };
 
+  handleKeydown = (e) => {
+    switch (e.code) {
+      // Search on enter as well
+      case 'Enter': {
+        this.handleSearch();
+        break;
+      }
+
+      // Open when arrow down
+      case 'ArrowDown': {
+        const { isFocused } = this.state;
+        if (!isFocused) {
+          this.setState({ isFocused: true });
+        }
+        break;
+      }
+
+      // Close when arrow up or escape
+      case 'Escape':
+      case 'ArrowUp': {
+        const { isFocused } = this.state;
+        if (isFocused) {
+          this.setState({ isFocused: false });
+        }
+        break;
+      }
+
+      default:
+        return;
+    }
+  };
+
   componentDidUpdate(prevProps, prevState) {
     if (this.state.isFocused !== prevState.isFocused) {
       if (this.state.isFocused) {
         window.addEventListener('click', this.handleDocumentClick);
+        this.searchInput.removeEventListener('keydown', this.handleKeydown);
       } else {
         window.removeEventListener('click', this.handleDocumentClick);
+        this.searchInput.addEventListener('keydown', this.handleKeydown);
       }
     }
     setTimeout(() => {
@@ -240,27 +301,20 @@ class SearchBar extends React.Component {
             <label htmlFor="search-bar-input" className={classes.srOnly}>
               <FormattedMessage id="search_display" defaultMessage="Search" />
             </label>
-            <input
+            <AutosizeInput
               id="search-bar-input"
               autoFocus={true}
-              ref={(r) => (this.searchInput = r)}
-              className={classes.input}
+              inputRef={(r) => (this.searchInput = r)}
+              inputClassName={classes.input}
               disabled={isSearching}
               onChange={this.handleSearchInput}
               placeholder={intl.formatMessage({
                 id: 'search_placeholder',
                 defaultMessage: 'Search Articles',
               })}
-              style={{ width }}
-              type="text"
+              // style={{ width }}
+              type="search"
               value={term}
-            />
-            <ClearAction
-              classes={classes}
-              height={height}
-              isShowing={hasTerm}
-              isSearching={isSearching}
-              onClear={this.handleClear}
             />
           </div>
         </form>
@@ -281,4 +335,19 @@ class SearchBar extends React.Component {
   }
 }
 
-export default injectIntl(injectStyles(styles)(SearchBar));
+const mapStateToProps = ({
+  search: { loading: isSearching, data: searchResults, error: searchError },
+}) => ({
+  isSearching,
+  searchError,
+  searchResults,
+});
+
+const mapDispatchToProps = {
+  search,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectIntl(injectStyles(styles)(SearchBar)));

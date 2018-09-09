@@ -8,7 +8,7 @@ import { getWatch, setWatchState } from '../backend/api';
 import { TxState, TxType } from '../shared/constants';
 
 const log = getLogger('events-utils');
-const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, {protocol: 'https'});
+const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, { protocol: 'https' });
 export const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c77289f9ed46d843561e6';
 
 /**
@@ -19,16 +19,13 @@ export const EMPTY_IPFS_HEX = '0xbfccda787baba32b59c78450ac3d20b633360b43992c772
  */
 export const getEventData = (ev) => {
   // sanity check the event
-  if (
-    typeof ev.events === 'undefined'
-    || !(ev.events instanceof Array)
-  ) { 
-    throw new Error("Not an event format I can work with");
+  if (typeof ev.events === 'undefined' || !(ev.events instanceof Array)) {
+    throw new Error('Not an event format I can work with');
   }
 
   let ret = {};
   ev.events.map((arg) => {
-    ret[arg.name] = arg.value
+    ret[arg.name] = arg.value;
   });
   return ret;
 };
@@ -38,7 +35,7 @@ export const getEventData = (ev) => {
  */
 export const completeTransaction = async (txHash, txType) => {
   // sanity check
-  if (!txHash) new Error("txHash is missing");
+  if (!txHash) new Error('txHash is missing');
 
   // check for an existing transaction watch first
   let watchResult = await getWatch({ hash: txHash });
@@ -57,20 +54,19 @@ export const completeTransaction = async (txHash, txType) => {
  * @return {object} the JSON object that was stored in the file
  */
 export const ipfsFetch = (hash, duration) => {
-  if (!hash || hash === '0x') throw new Error("Hash not provided");
+  if (!hash || hash === '0x') throw new Error('Hash not provided');
   duration = duration ? duration : 15000; // default 15 seconds
   return new Promise(async (resolve, reject) => {
+    log.debug({ hash: hash }, 'ipfsFetch');
 
-    log.debug({ hash: hash }, "ipfsFetch");
-
-    if (hash.slice(0,2) === '0x') {
+    if (hash.slice(0, 2) === '0x') {
       hash = multihashes.toB58String(multihashes.fromHexString('1220' + hash.slice(2)));
     }
 
-    log.debug({ hash: hash }, "ipfsFetch");
+    log.debug({ hash: hash }, 'ipfsFetch');
 
     const timeout = setTimeout(() => {
-      log.warn({ hash, duration }, "IPFS fetch timeout reached!");
+      log.warn({ hash, duration }, 'IPFS fetch timeout reached!');
       return reject(new Error(`IPFS fetch timed out on ${hash}`));
     }, duration);
 
@@ -81,7 +77,7 @@ export const ipfsFetch = (hash, duration) => {
       clearTimeout(timeout);
       return resolve(JSON.parse(file));
     } catch (e) {
-      log.error({ err: e.message }, "Error fetching from IPFS")
+      log.error({ err: e.message }, 'Error fetching from IPFS');
       return reject(e);
     }
   });
@@ -93,34 +89,32 @@ export const ipfsFetch = (hash, duration) => {
  * @return {object} the results of the JSON-RPC query
  */
 export const getTransaction = async (txHash) => {
-  
-  log.debug({ txHash}, "getTransaction");
-  
+  log.debug({ txHash }, 'getTransaction');
+
   // Request options
   let options = {
-    method:'POST',
+    method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 1,
-      method: "eth_getTransactionByHash",
-      params: [txHash]
-    })
+      method: 'eth_getTransactionByHash',
+      params: [txHash],
+    }),
   };
-  
-  log.debug({ options: options }, "making request to JSON-RPC...");
-  
-  const result = await fetch(settings.jsonRPC.current, options)
-    .catch(err => { 
-      log.error({ err: err }, 'error fetching from nodes'); 
-      handleError(err);
-    });
-  
+
+  log.debug({ options: options }, 'making request to JSON-RPC...');
+
+  const result = await fetch(settings.jsonRPC.current, options).catch((err) => {
+    log.error({ err: err }, 'error fetching from nodes');
+    handleError(err);
+  });
+
   if (!result) return null;
 
-  const json = await result.json()
+  const json = await result.json();
 
   log.debug(`request to JSON-RPC complete.`);
 
@@ -133,34 +127,32 @@ export const getTransaction = async (txHash) => {
  * @return {object} the results of the JSON-RPC query
  */
 export const getTransactionReceipt = async (txHash) => {
-  
-  log.debug({ txHash }, "getTransactionReceipt");
-  
+  log.debug({ txHash }, 'getTransactionReceipt');
+
   // Request options
   let options = {
-    method:'POST',
+    method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 1,
-      method: "eth_getTransactionReceipt",
-      params: [txHash]
-    })
+      method: 'eth_getTransactionReceipt',
+      params: [txHash],
+    }),
   };
-  
-  log.debug({ options: options }, "making request to JSON-RPC...");
-  
-  const result = await fetch(settings.jsonRPC.current, options)
-    .catch(err => { 
-      log.error({ err: err }, 'error fetching from nodes'); 
-      handleError(err);
-    });
-  
+
+  log.debug({ options: options }, 'making request to JSON-RPC...');
+
+  const result = await fetch(settings.jsonRPC.current, options).catch((err) => {
+    log.error({ err: err }, 'error fetching from nodes');
+    handleError(err);
+  });
+
   if (!result) return null;
 
-  const json = await result.json()
+  const json = await result.json();
 
   log.debug(`request to JSON-RPC complete.`);
 
@@ -173,34 +165,32 @@ export const getTransactionReceipt = async (txHash) => {
  * @return {object} the results of the JSON-RPC query
  */
 export const getBlockByNumber = async (blockNo) => {
-  
-  log.debug({ blockNo }, "getBlockByNumber");
-  
+  log.debug({ blockNo }, 'getBlockByNumber');
+
   // Request options
   let options = {
-    method:'POST',
+    method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       id: 1,
-      method: "eth_getBlockByNumber",
-      params: [blockNo, false]
-    })
+      method: 'eth_getBlockByNumber',
+      params: [blockNo, false],
+    }),
   };
-  
-  log.debug({ options: options }, "making request to JSON-RPC...");
-  
-  const result = await fetch(settings.jsonRPC.current, options)
-    .catch(err => { 
-      log.error({ err: err }, 'error fetching from nodes'); 
-      handleError(err);
-    });
-  
+
+  log.debug({ options: options }, 'making request to JSON-RPC...');
+
+  const result = await fetch(settings.jsonRPC.current, options).catch((err) => {
+    log.error({ err: err }, 'error fetching from nodes');
+    handleError(err);
+  });
+
   if (!result) return null;
 
-  const json = await result.json()
+  const json = await result.json();
 
   log.debug({ json }, `request to JSON-RPC complete.`);
 
@@ -208,19 +198,18 @@ export const getBlockByNumber = async (blockNo) => {
 };
 
 /**
- * assertEvent checks the handler name from a job to be sure the correct 
+ * assertEvent checks the handler name from a job to be sure the correct
  * handler is being run for that job/event.  It's more like a last line of
  * defense for fat finger errors.  It throws an error if the evnet name doesn't
  * match the provided handler name.
  * @param {object} job is the job object from queuelite(or Bull)
  */
 export const assertEvent = (handlerName, job) => {
-  if (job.data.event.name !== handlerName)
-    throw new Error('Invalid event for this handler');
+  if (job.data.event.name !== handlerName) throw new Error('Invalid event for this handler');
 };
 
 /**
- * handlerWrapper wraps general handler functionality and takes care of 
+ * handlerWrapper wraps general handler functionality and takes care of
  * operations that happen for every handler.
  * @param {string} eventName is the name of the event that's being processed
  * @param {string} txHash is the transaction hash of the event being processed

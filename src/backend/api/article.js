@@ -11,18 +11,19 @@ export const getArticles = async (limit, page) => {
     page = page ? page : 0;
     const offset = page * limit;
 
-    const result = await db('edit_stream').innerJoin(
-      'proposal',
-      'proposal.edit_stream_id',
-      'edit_stream.edit_stream_id'
-    ).where({
-      proposal_state_id: ProposalState.ACCEPTED
-    }).offset(offset).limit(limit).select();
+    const result = await db('edit_stream')
+      .innerJoin('proposal', 'proposal.edit_stream_id', 'edit_stream.edit_stream_id')
+      .where({
+        proposal_state_id: ProposalState.ACCEPTED,
+      })
+      .offset(offset)
+      .limit(limit)
+      .select();
 
-    log.debug({ result }, "getArticles result");
+    log.debug({ result }, 'getArticles result');
 
     // Get IDs for the votes query
-    const proposalIds = result.map(p => p.proposal_id);
+    const proposalIds = result.map((p) => p.proposal_id);
 
     const votesResult = await db('vote')
       .where('proposal_id', 'IN', proposalIds)
@@ -43,12 +44,12 @@ export const getArticles = async (limit, page) => {
     // Repack and assemble objects for frontend use
     const data = result.reduce((acc, a) => {
       if (!Array.isArray(acc)) acc = [toArticle(acc)];
-      
+
       acc.push(toArticle(a));
 
       // Handle votes in the results
       if (votesByProposal[a.proposal_id] instanceof Array) {
-        acc[acc.length-1].votes = votesByProposal[a.proposal_id];
+        acc[acc.length - 1].votes = votesByProposal[a.proposal_id];
       }
 
       return acc;
@@ -61,6 +62,7 @@ export const getArticles = async (limit, page) => {
   } catch (error) {
     return {
       success: false,
+      data: [],
       error: error.message,
     };
   }
@@ -68,17 +70,18 @@ export const getArticles = async (limit, page) => {
 
 export const getCurrentArticle = async (editStreamId) => {
   try {
-    const result = await db('edit_stream').innerJoin(
-      'proposal',
-      'proposal.edit_stream_id',
-      'edit_stream.edit_stream_id'
-    ).where({
-      'edit_stream.edit_stream_id': editStreamId
-    }).orderBy('created', 'DESC').limit(1).select();
+    const result = await db('edit_stream')
+      .innerJoin('proposal', 'proposal.edit_stream_id', 'edit_stream.edit_stream_id')
+      .where({
+        'edit_stream.edit_stream_id': editStreamId,
+      })
+      .orderBy('created', 'DESC')
+      .limit(1)
+      .select();
 
-    log.debug({ result }, "getCurrentArticle result");
+    log.debug({ result }, 'getCurrentArticle result');
 
-    const data = result.map(a => toArticle(a));
+    const data = result.map((a) => toArticle(a));
 
     return {
       success: true,
@@ -94,21 +97,22 @@ export const getCurrentArticle = async (editStreamId) => {
 
 export const getCurrentArticleByTitle = async (title) => {
   try {
-    const result = await db('edit_stream').innerJoin(
-      'proposal',
-      'proposal.edit_stream_id',
-      'edit_stream.edit_stream_id'
-    ).where({
-      'edit_stream.title': title,
-    }).orderBy('created', 'DESC').limit(1).select();
+    const result = await db('edit_stream')
+      .innerJoin('proposal', 'proposal.edit_stream_id', 'edit_stream.edit_stream_id')
+      .where({
+        'edit_stream.title': title,
+      })
+      .orderBy('created', 'DESC')
+      .limit(1)
+      .select();
 
-    log.debug({ result }, "getCurrentArticleByTitle result");
+    log.debug({ result }, 'getCurrentArticleByTitle result');
 
-    const data = result.map(a => toArticle(a));
+    const data = result.map((a) => toArticle(a));
 
     return {
       success: true,
-      data,
+      data: data ? data[0] : null,
     };
   } catch (error) {
     return {
@@ -120,17 +124,16 @@ export const getCurrentArticleByTitle = async (title) => {
 
 export const getContributors = async (editStreamId) => {
   try {
-    const result = await db('edit_stream').innerJoin(
-      'proposal',
-      'proposal.edit_stream_id',
-      'edit_stream.edit_stream_id'
-    ).where({
-      'edit_stream.edit_stream_id': editStreamId
-    }).select('from_address');
+    const result = await db('edit_stream')
+      .innerJoin('proposal', 'proposal.edit_stream_id', 'edit_stream.edit_stream_id')
+      .where({
+        'edit_stream.edit_stream_id': editStreamId,
+      })
+      .select('from_address');
 
-    log.debug({ result }, "getContributors result");
+    log.debug({ result }, 'getContributors result');
 
-    const data = result.map(a => a.from_address);
+    const data = result.map((a) => a.from_address);
 
     return {
       success: true,

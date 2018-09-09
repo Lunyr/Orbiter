@@ -1,10 +1,6 @@
 {
   "root": true,
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
@@ -12,7 +8,7 @@
       "modules": true
     }
   },
-  "plugins": [ "react" ],
+  "plugins": ["react"],
   "rules": {
     "prefer-const": "warn",
     "no-console": "off",
@@ -20,8 +16,8 @@
     "new-cap": "off",
     "no-param-reassign": "warn",
     "func-names": "off",
-    "no-unused-expressions" : "error",
-    "block-scoped-var": "error",
+    "no-unused-expressions": "error",
+    "block-scoped-let": "error",
     "react/prop-types": "off"
   },
   "settings": {
