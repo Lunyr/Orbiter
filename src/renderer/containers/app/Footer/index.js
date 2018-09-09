@@ -101,7 +101,7 @@ class Footer extends React.PureComponent {
     // Start capturing all the events coming in
     ipcRenderer.on('queue-status-data', (event, status) => {
       try {
-        console.info(`=== Sync In Progress ${status}`);
+        console.info(`=== Chain sync status: ${status}`);
         const parsedStatus = JSON.parse(status);
         this.props.updateQueueStatus(parsedStatus);
         this.checkChangeIntervalPolling(parsedStatus);
