@@ -34,3 +34,4 @@ export { default as Placeholders } from './placeholders';
 export { default as AutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer/AutoSizer';
 export { default as AutosizeInput } from 'react-input-autosize';
 export { default as List } from 'react-virtualized/dist/commonjs/List/List';
+export { default as Table } from 'react-table';

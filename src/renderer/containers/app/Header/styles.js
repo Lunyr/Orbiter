@@ -31,7 +31,6 @@ export default (theme) => ({
   },
   write: {
     marginRight: theme.spacing,
-    borderRadius: 30,
   },
   account: {
     display: 'flex',
