@@ -63,6 +63,7 @@ class Wallet extends React.PureComponent {
                         <span>{value}</span>
                       </div>
                     ),
+                    width: 150,
                   },
                   {
                     id: 'address', // Required because our accessor is not a string
