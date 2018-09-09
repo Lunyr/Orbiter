@@ -3,7 +3,7 @@
  */
 import { getLogger } from '../../lib/logger';
 import { handlerWrapper } from '../utils';
-import { 
+import {
   addNotification,
   getEditStream,
   updateEditStream,
@@ -20,8 +20,8 @@ export default async (job, txHash, evData) => {
 
     const proposalCheck = await getProposal(evData.proposalId);
 
-    if (!proposalCheck.success || proposalCheck.data.length < 1) {
-      throw new Error("Proposal not found!");
+    if (!proposalCheck.success || !proposalCheck.data || proposalCheck.data.length < 1) {
+      throw new Error('Proposal not found!');
     }
 
     const proposal = proposalCheck.data[0];
@@ -31,8 +31,8 @@ export default async (job, txHash, evData) => {
     // Update edit stream if necessary
     const editStreamCheck = await getEditStream(evData.editStreamId);
 
-    if (!editStreamCheck.success || editStreamCheck.data.length < 1) {
-      throw new Error("Unknown edit stream!  Events out of order?");
+    if (!editStreamCheck.success || !editStreamCheck.data || editStreamCheck.data.length < 1) {
+      throw new Error('Unknown edit stream!  Events out of order?');
     }
 
     job.progress(35);
@@ -46,13 +46,16 @@ export default async (job, txHash, evData) => {
     }
 
     // update the edit stream title if necessary
-    if (editStreamCheck.data[0].title != proposal.title) {
+    if (editStreamCheck.data[0].title !== proposal.title) {
       if (!editStreamPatch) editStreamPatch = {};
       editStreamPatch.title = proposal.title;
     }
 
     if (editStreamPatch) {
-      const updateEditStreamResult = await updateEditStream(editStreamCheck.data[0].editStreamId, editStreamPatch);
+      const updateEditStreamResult = await updateEditStream(
+        editStreamCheck.data[0].editStreamId,
+        editStreamPatch
+      );
       if (!updateEditStreamResult.success) {
         throw new Error(updateEditStreamResult.error);
       }
@@ -72,8 +75,8 @@ export default async (job, txHash, evData) => {
       title: proposal.title,
     });
     if (notifResult.success === false) {
-      log.error({ errorMessage: notifResult.error }, "Error adding notification!");
+      log.error({ errorMessage: notifResult.error }, 'Error adding notification!');
     }
     job.progress(90);
   });
-}
+};

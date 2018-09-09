@@ -10,6 +10,13 @@ const initialState = {
   network: null,
   sidebarWidth: 175,
   version: process.env.BUILD_TAG || packageJson.version,
+  queue: {
+    syncing: false,
+    total: 0,
+    complete: 0,
+    percentComplete: 100,
+    pollIntervalMS: 60000,
+  },
 };
 
 const appReducer = (state = initialState, action) => {
@@ -38,6 +45,17 @@ const appReducer = (state = initialState, action) => {
       return {
         ...state,
         connecting: false,
+      };
+    }
+
+    case actions.UPDATE_QUEUE_STATUS:
+    case actions.SET_QUEUE_SYNCING: {
+      return {
+        ...state,
+        queue: {
+          ...state.queue,
+          ...payload,
+        },
       };
     }
 

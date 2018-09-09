@@ -4,20 +4,14 @@
 import multihashes from 'multihashes';
 import settings from '../../shared/settings';
 import { getLogger } from '../../lib/logger';
-import { 
+import {
   handlerWrapper,
   getTransaction,
   getBlockByNumber,
   ipfsFetch,
-  EMPTY_IPFS_HEX
+  EMPTY_IPFS_HEX,
 } from '../utils';
-import { TxType } from '../../shared/constants';
-import { 
-  addNotification,
-  getProposal,
-  getVote,
-  addVote,
-} from '../../backend/api';
+import { addNotification, getProposal, getVote, addVote } from '../../backend/api';
 
 const EVENT_NAME = 'VoteOccurred';
 const log = getLogger(EVENT_NAME);
@@ -27,7 +21,7 @@ export default async (job, txHash, evData) => {
     const tx = await getTransaction(txHash);
     let blockStamp;
     if (!tx) {
-      throw new Error("Transaction not found!  Nodes out of sync?");
+      throw new Error('Transaction not found!  Nodes out of sync?');
     } else if (typeof tx.blockNumber !== 'undefined' && tx.blockNumber) {
       const block = await getBlockByNumber(tx.blockNumber);
       if (block) {
@@ -39,8 +33,8 @@ export default async (job, txHash, evData) => {
 
     const proposalCheck = await getProposal(evData.proposalId);
 
-    if (!proposalCheck.success || proposalCheck.data.length < 1) {
-      throw new Error("Proposal for vote not found")
+    if (!proposalCheck.success || !proposalCheck.data || proposalCheck.data.length < 1) {
+      throw new Error('Proposal for vote not found');
     }
 
     const proposal = proposalCheck.data[0];
@@ -50,14 +44,17 @@ export default async (job, txHash, evData) => {
     // No duplicates
     const voteCheck = await getVote(evData.voteId);
     if (voteCheck.data.length > 0) {
-      log.warn({ voteId: evData.voteId, proposalId: evData.proposalId }, 'Vote already exists in DB.');
+      log.warn(
+        { voteId: evData.voteId, proposalId: evData.proposalId },
+        'Vote already exists in DB.'
+      );
 
       // Verify that the conflict is valid and not an actual conflict
       // TODO: Check more values, like contentHash
       const conflictingVote = voteCheck.data[0];
       if (
-        conflictingVote.id == evData.voteId
-        && conflictingVote.proposalId == evData.proposalId
+        conflictingVote.id === evData.voteId &&
+        conflictingVote.proposalId === evData.proposalId
       ) {
         return;
       } else {
@@ -68,11 +65,13 @@ export default async (job, txHash, evData) => {
     job.progress(20);
 
     // Add notification
-    await addNotification(proposal.fromAddress, EVENT_NAME, {
+    if (proposal && proposal.fromAddress) {
+      await addNotification(proposal.fromAddress, EVENT_NAME, {
         voter: evData.voter,
         proposalId: evData.proposalId,
         title: proposal.title,
-    });
+      });
+    }
 
     // Populate what we can from the blockchain
     const vote = {
@@ -90,21 +89,21 @@ export default async (job, txHash, evData) => {
       sources: 0,
       thoroughResearch: 0,
       checklist: null,
-      notes: "",
-    }
+      notes: '',
+    };
 
     // Use blockchain timestamp if we have it
-    if (blockStamp)
-      vote.createdAt = blockStamp.toISOString();
+    if (blockStamp) vote.createdAt = blockStamp.toISOString();
 
     job.progress(45);
 
-    if (evData.surveyHash == EMPTY_IPFS_HEX) {
+    if (evData.surveyHash === EMPTY_IPFS_HEX) {
       log.warn({ voteId: evData.voteId }, 'Received empty ipfs hash for vote');
     } else {
-      const ipfsHash = multihashes.toB58String(multihashes.fromHexString('1220' + evData.surveyHash.slice(2)))
-      let timedoutFetch = false;
-      const content = await ipfsFetch(ipfsHash).catch(err => {
+      const ipfsHash = multihashes.toB58String(
+        multihashes.fromHexString('1220' + evData.surveyHash.slice(2))
+      );
+      const content = await ipfsFetch(ipfsHash).catch((err) => {
         // Ignore the timeout error
         if (err.message.indexOf('timed out') === -1) {
           throw err;
@@ -113,11 +112,11 @@ export default async (job, txHash, evData) => {
 
       if (!content) {
         /**
-         * If we've tried 3 times and still can't get the IPFS data, it must be 
+         * If we've tried 3 times and still can't get the IPFS data, it must be
          * lost to the ether.  So, we're going to do our best to cope here
          */
         if (job.attempts < settings.eventLogConfig.attempts) {
-          throw new Error('Unable to find ipfs file @ ' + evData.contentHash)
+          throw new Error('Unable to find ipfs file @ ' + evData.contentHash);
         } else if (job.attempts >= settings.eventLogConfig.attempts) {
           vote.dirty = true;
         }
@@ -145,7 +144,7 @@ export default async (job, txHash, evData) => {
 
     job.progress(75);
 
-    log.debug({ vote }, "Adding vote");
+    log.debug({ vote }, 'Adding vote');
 
     await addVote(vote);
 

@@ -11,6 +11,7 @@ const log = getLogger('events');
 export const init = () => {
   log.info('Starting up events...');
   const queue = eventsQueue('event_queue');
+
   /**
    * TODO: Really take a hard look at the choices here.  If this
    *  really makes sense, maybe these should be entirely separate

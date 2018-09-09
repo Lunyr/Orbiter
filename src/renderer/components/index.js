@@ -23,6 +23,7 @@ export { default as MegadraftEditor } from './MegadraftEditor';
 export { default as Modal } from './Modal';
 export { default as NavList } from './NavList';
 export { default as Page } from './Page';
+export { default as ProgressBar } from './ProgressBar';
 export { default as Select } from './selects/Select';
 export { default as TitleEditor } from './TitleEditor';
 export { default as TwoColumn } from './TwoColumn';

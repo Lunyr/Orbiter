@@ -81,6 +81,7 @@ const readyHandler = async () => {
     });
 
     chainDaemon.launch();
+    chainDaemon.startMainProcessListeners();
   }
 
   // Setup node based redux store that will act as our source of truth

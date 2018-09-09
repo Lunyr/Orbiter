@@ -205,7 +205,11 @@ export default {
   isDevelopment: isDevelopment(),
   privacy,
   logging: {
-    logLevel: process.env.LOG_LEVEL || isDevelopment() ? 20 : 30,
+    logLevel: process.env.LOG_LEVEL
+      ? parseInt(process.env.LOG_LEVEL, 10)
+      : isDevelopment()
+        ? 20
+        : 30,
   },
   ipfs,
   jsonRPC,

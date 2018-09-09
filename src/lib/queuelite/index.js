@@ -11,7 +11,6 @@
  * });
  * const job = q.get();
  */
-
 import knex from 'knex';
 import { getLogger } from '../logger';
 import { Job } from './Job';
@@ -170,7 +169,7 @@ export default (tableName = DEFAULT_TABLE_NAME, maxAttempts = DEFAULT_MAX_ATTEMP
       .select();
 
     if (job.length < 1) {
-      log.warn({ job_id }, 'Unalbe to update job! Job not found.');
+      log.warn({ job_id }, 'Unable to update job! Job not found.');
       return null;
     }
 

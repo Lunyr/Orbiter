@@ -8,8 +8,16 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
+import { MdRefresh as RefreshIcon } from 'react-icons/md';
 import { fetchFeed, fetchMoreFeed, setFilter } from '../../../../shared/redux/modules/feed/actions';
-import { ErrorBoundary, LoadingIndicator, Placeholders, Select } from '../../../components/';
+import {
+  IconButton,
+  ButtonGroup,
+  ErrorBoundary,
+  LoadingIndicator,
+  Placeholders,
+  Select,
+} from '../../../components/';
 import ArticleEntry from '../ArticleEntry';
 import ReviewEntry from '../ReviewEntry';
 import VotedEntry from '../VotedEntry';
@@ -78,7 +86,7 @@ class Feed extends React.Component {
   /*
   * Collapses votes down into a single array if they follow one after another
   */
-  coalesceVotes(feed) {
+  coalesceVotes(feed = []) {
     const coalescedFeed = feed.reduce(
       (acc, item) => {
         const { type } = item;
@@ -116,7 +124,9 @@ class Feed extends React.Component {
   };
 
   fetchFeedList = ({ limit, offset }) => {
-    this.props.fetchFeed({ limit, offset });
+    this.setState({ isReady: false }, () => {
+      this.props.fetchFeed({ limit, offset });
+    });
   };
 
   loadMore = (page) => {
@@ -143,10 +153,6 @@ class Feed extends React.Component {
       limit,
       offset: 0,
     });
-
-    setTimeout(() => {
-      this.setState({ isReady: true });
-    }, this.minReadTimeout);
   }
 
   componentDidUpdate({ isFetching }) {
@@ -169,6 +175,7 @@ class Feed extends React.Component {
       isFetchingMore,
       setFilter,
     } = this.props;
+    const { limit, offset } = this.state;
     const filteredFeed = this.filteredFeeds();
     const localizedFilterTypes = filterTypes.map(({ value, label }) => ({
       value,
@@ -182,9 +189,22 @@ class Feed extends React.Component {
         <section className={classes.feed}>
           <div className={classes.feed__column}>
             <header className={classes.feed__header}>
-              <h2 className={classes.header__title}>
-                <FormattedMessage id="feed_title" defaultMessage="Lunyr Feed" />
-              </h2>
+              <ButtonGroup gap={10}>
+                <h2 className={classes.header__title}>
+                  <FormattedMessage id="feed_title" defaultMessage="Lunyr Feed" />
+                </h2>
+                <IconButton
+                  type="button"
+                  theme="text"
+                  onClick={() => {
+                    this.fetchFeedList({
+                      limit,
+                      offset,
+                    });
+                  }}
+                  icon={<RefreshIcon size={20} />}
+                />
+              </ButtonGroup>
               <Select
                 className={classes.select}
                 options={localizedFilterTypes}

@@ -7,6 +7,9 @@ export default (theme) => ({
     overflow: 'auto',
     paddingRight: theme.spacing * 2,
   },
+  actions: {
+    display: 'inline-flex',
+  },
   feed: {
     display: 'inline-flex',
     justifyContent: 'center',

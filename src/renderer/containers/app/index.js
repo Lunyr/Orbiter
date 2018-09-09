@@ -23,7 +23,7 @@ import Announcements from './Announcements';
 import FAQ from './FAQ/';
 import Sidebar from './Sidebar/';
 import Header from './Header/';
-import Footer from './Footer';
+import Footer from './Footer/';
 
 class App extends React.Component {
   previousLocation = this.props.location;

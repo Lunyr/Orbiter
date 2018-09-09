@@ -1,5 +1,7 @@
+import { ipcMain } from 'electron';
 import path from 'path';
 import { spawn, execSync } from 'child_process';
+import eventsQueue from '../lib/queuelite';
 import { getLogger } from '../lib/logger';
 import { handleError } from '../shared/handlers';
 
@@ -46,6 +48,60 @@ export default class ChainDaemon {
     }
     log.info('ChainDaemon shut down.');
   }
+
+  startMainProcessListeners = () => {
+    try {
+      let statusListenerInitialized = false;
+
+      let statusIntervalId = null;
+
+      const queue = eventsQueue('event_queue');
+
+      // Closure to clear the current status interval
+      const clearStatusInterval = () => {
+        if (statusIntervalId) {
+          clearInterval(statusIntervalId);
+        }
+      };
+
+      // Closure to create a new status interval
+      const generateStatusCheckInterval = (event, pingInterval) => {
+        if (!pingInterval) {
+          throw new Error('Cannot create a status interval with bad `pingInterval`');
+        }
+        // Clear out any previous interval
+        clearStatusInterval();
+        // Closure to poll for the status information
+        const statusPoller = async () => {
+          const status = await queue.status();
+          // Determine whether or not to change up the interval to be a
+          // little quicker if we are currently in the middle of processing
+          event.sender.send('queue-status-data', JSON.stringify(status));
+          log.debug({ status }, 'Emitted queue status');
+        };
+        // Emit status indicator every 10 seconds
+        statusIntervalId = setInterval(statusPoller, pingInterval);
+        log.info({ pingInterval }, 'Spawaning queue status listener');
+        statusListenerInitialized = true;
+        // Call once
+        return statusPoller();
+      };
+
+      // Add interval that emits the status information out on the ipc main process for a renderer to pick up
+      ipcMain.on('spawn-queue-status-listener', (event, pingInterval) => {
+        return generateStatusCheckInterval(event, pingInterval);
+      });
+
+      ipcMain.on('change-queue-status-interval', (event, pingInterval) => {
+        if (statusListenerInitialized) {
+          return generateStatusCheckInterval(event, pingInterval);
+        }
+      });
+    } catch (err) {
+      log.error(err);
+      return null;
+    }
+  };
 
   // Follows the publish/subscribe pattern
 
