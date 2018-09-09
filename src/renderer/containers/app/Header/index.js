@@ -59,11 +59,13 @@ const Header = ({ auth, classes, history, wallet }) => {
                 <WalletOverview wallet={wallet} />
               </Link>
               {accounts.length > 1 && (
-                <Link className={cx(classes.header__item, classes.link)} to="/login">
+                <Link
+                  className={cx(classes.header__item, classes.link, classes.padded)}
+                  to="/login">
                   Switch Accounts
                 </Link>
               )}
-              <Link className={cx(classes.header__item, classes.link)} to="/logout">
+              <Link className={cx(classes.header__item, classes.link, classes.padded)} to="/logout">
                 Logout
               </Link>
             </ActionMenu>

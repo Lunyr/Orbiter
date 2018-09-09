@@ -49,4 +49,7 @@ export default (theme) => ({
       color: theme.colors.link,
     },
   },
+  padded: {
+    paddingLeft: theme.spacing,
+  },
 });
