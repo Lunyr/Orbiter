@@ -71,7 +71,7 @@ class Feed extends React.Component {
       limit: 30,
       loadingMore: false,
     };
-    this.minReadTimeout = 2000;
+    this.minReadTimeout = 350;
     this.loadMore = throttle(this.loadMore, 5000);
   }
 

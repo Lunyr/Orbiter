@@ -1,6 +1,6 @@
 import { applyMiddleware, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { persistStore, persistReducer } from 'redux-persist';
+import { persistStore, persistReducer, REHYDRATE } from 'redux-persist';
 import promiseMiddleware from '../middleware/promiseMiddleware';
 import forwardToMain from '../middleware/forwardToMain';
 import forwardToRenderer from '../middleware/forwardToRenderer';
@@ -43,6 +43,16 @@ const configureStore = (initialState, storeKey, isRendererStore = true) => {
   const rootReducer = (state, action) => {
     if (action.type === 'auth/LOGOUT') {
       state = undefined;
+    } else if (action.type === REHYDRATE) {
+      // Action interceptor to allow initial state to override incoming state
+      state = {
+        ...state,
+        app: {
+          ...state.app,
+          connected: false,
+          connecting: true,
+        },
+      };
     }
     return appReducer(state, action);
   };
@@ -52,7 +62,7 @@ const configureStore = (initialState, storeKey, isRendererStore = true) => {
       key: storeKey,
       storage,
       stateReconciler: autoMergeLevel2,
-      blacklist: ['forms'],
+      blacklist: ['app', 'forms'],
     };
 
     const persistedReducer = persistReducer(persistanceConfiguration, rootReducer);

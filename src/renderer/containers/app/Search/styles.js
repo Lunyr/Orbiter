@@ -4,12 +4,12 @@ export default (theme) => ({
     alignItems: 'center',
     position: 'relative',
     border: 'none',
-    borderRadius: theme.borderRadius,
+    borderRadius: 0,
   },
   form: {
     display: 'inline-flex',
     alignItems: 'center',
-    borderRadius: 2,
+    borderRadius: 0,
     minWidth: 275,
   },
   action: {
@@ -20,6 +20,8 @@ export default (theme) => ({
     width: 30,
     height: '100%',
     backgroundColor: theme.colors.white,
+    position: 'relative',
+    top: 3,
   },
   offsetLeft: {
     paddingLeft: theme.spacing,
@@ -48,12 +50,16 @@ export default (theme) => ({
     width: '100%',
   },
   input: {
-    height: '100%',
-    width: '100%',
     padding: '0 10px',
     border: 'none',
     outline: 'none',
     fontSize: '0.9rem',
+    minWidth: 150,
+    minHeight: 40,
+    maxWidth: 400,
+    '&:focus': {
+      borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+    },
   },
   srOnly: {
     ...theme.srOnly,
@@ -68,6 +74,7 @@ export default (theme) => ({
     zIndex: 3,
     overflow: 'auto',
     maxWidth: 600,
+    border: '1px solid rgba(0, 0, 0, 0.1)',
   },
   results__detached: {
     display: 'block',

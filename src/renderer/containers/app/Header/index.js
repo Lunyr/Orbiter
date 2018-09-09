@@ -1,9 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
+import { withRouter } from 'react-router-dom';
+import cx from 'classnames';
 import get from 'lodash/get';
 import { ActionMenu, Avatar, Button, ButtonGroup, Link, Select } from '../../../components';
 import Search from '../Search/';
+import WalletOverview from './WalletOverview';
 import styles from './styles';
 
 const IntlSelect = injectStyles((theme) => ({
@@ -19,7 +22,13 @@ const IntlSelect = injectStyles((theme) => ({
   />
 ));
 
-const Header = ({ auth, classes }) => {
+const onSelected = (history, { props }) => {
+  if (props.to) {
+    history.replace(props.to);
+  }
+};
+
+const Header = ({ auth, classes, history, wallet }) => {
   const address = get(auth, 'account');
   const accounts = get(auth, 'accounts', []);
   return (
@@ -39,19 +48,24 @@ const Header = ({ auth, classes }) => {
             <ActionMenu
               id="user-dropdown-menu"
               className={classes.menu}
-              itemHeight={45}
-              width={250}
-              alignedRight>
-              <span className={classes.trigger}>
+              width={400}
+              alignedRight
+              onSelected={onSelected.bind(this, history)}>
+              <span className={cx(classes.trigger, classes.header__item)}>
                 <Avatar className={classes.avatar} seed={address} size={35} />
                 {address ? `${address.substring(0, 16)}...` : 'N/A'}
               </span>
-              <div className={classes.address} tabIndex="-1">
-                <span className={classes.address__value}>{address}</span>
-              </div>
-              <Link to="/wallet">Wallet</Link>
-              {accounts.length > 1 && <Link to="/login">Switch Accounts</Link>}
-              <Link to="/logout">Logout</Link>
+              <Link className={cx(classes.account, classes.header__item)} to="/wallet">
+                <WalletOverview wallet={wallet} />
+              </Link>
+              {accounts.length > 1 && (
+                <Link className={cx(classes.header__item, classes.link)} to="/login">
+                  Switch Accounts
+                </Link>
+              )}
+              <Link className={cx(classes.header__item, classes.link)} to="/logout">
+                Logout
+              </Link>
             </ActionMenu>
           )}
         </ButtonGroup>
@@ -60,6 +74,6 @@ const Header = ({ auth, classes }) => {
   );
 };
 
-const mapStateToProps = ({ auth }) => ({ auth });
+const mapStateToProps = ({ auth, wallet }) => ({ auth, wallet });
 
-export default connect(mapStateToProps)(injectStyles(styles)(Header));
+export default withRouter(connect(mapStateToProps)(injectStyles(styles)(Header)));

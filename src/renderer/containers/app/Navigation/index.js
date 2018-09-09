@@ -1,16 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+//import PropTypes from 'prop-types';
 import injectStyles from 'react-jss';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { NavList } from '../../../components';
 import {
-  FaBullhorn as BullhornIcon,
+  //FaBullhorn as BullhornIcon,
   FaComment as CommentIcon,
-  FaFlag as FlagIcon,
-  FaStar as StarIcon,
-  FaThumbsUp as ThumbsUpIcon,
-  FaDesktop as DesktopIcon,
+  //FaFlag as FlagIcon,
+  //FaStar as StarIcon,
+  //FaThumbsUp as ThumbsUpIcon,
+  //FaDesktop as DesktopIcon,
   FaPencilAlt as PencilIcon,
   FaTag as TagIcon,
 } from 'react-icons/fa';
@@ -161,13 +162,13 @@ const mapStateToProps = (state, { intl }) => {
   };
 };
 
-const mapDispatchToProps = {};
-
-export default injectIntl(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { withRef: true }
-  )(injectStyles(styles)(Navigation))
+export default withRouter(
+  injectIntl(
+    connect(
+      mapStateToProps,
+      null,
+      null,
+      { withRef: true }
+    )(injectStyles(styles)(Navigation))
+  )
 );

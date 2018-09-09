@@ -11,6 +11,13 @@ export default (theme) => ({
     boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.1)',
     zIndex: 100,
   }),
+  header__item: {
+    display: 'flex',
+    alignItems: 'center',
+    minHeight: 45,
+    paddingLeft: theme.spacing,
+    width: '100%',
+  },
   right: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -27,14 +34,20 @@ export default (theme) => ({
     marginRight: theme.spacing,
     borderRadius: 30,
   },
-  address: {
+  account: {
     display: 'flex',
-    alignItems: 'center',
-    height: 50,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    height: 'auto',
+    paddingLeft: 0,
+    width: '100%',
+    textDecoration: 'none',
   },
-  address__value: {
-    wordBreak: 'break-all',
+  link: {
     color: theme.colors.gray,
-    paddingRight: theme.spacing,
+    textDecoration: 'none',
+    '&:hover': {
+      color: theme.colors.link,
+    },
   },
 });

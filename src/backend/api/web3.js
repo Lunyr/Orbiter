@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { settings } from '../../shared/settings';
 import { getLogger } from '../../lib/logger';
 import { initRouter, initContract } from '../../shared/contracts';
+import { fromWei, lunyrConversion } from '../../shared/utils';
 
 const log = getLogger('api-web3');
 
@@ -63,7 +64,7 @@ const initializeContracts = async (network) => {
       auctioneer,
       lunyrToken,
       contributors,
-      lunPoolContributors,
+      lunPool,
       environment,
       tagger,
     ] = allContracts;
@@ -72,7 +73,7 @@ const initializeContracts = async (network) => {
     log.info('Auctioneer address', auctioneer.options.address);
     log.info('LunyrToken address', lunyrToken.options.address);
     log.info('Contributors address', contributors.options.address);
-    log.info('Lun Pool address', lunPoolContributors.options.address);
+    log.info('Lun Pool address', lunPool.options.address);
     log.info('Environment address', environment.options.address);
     log.info('Tagger address', tagger.options.address);
 
@@ -82,7 +83,7 @@ const initializeContracts = async (network) => {
       auctioneer,
       lunyrToken,
       contributors,
-      lunPoolContributors,
+      lunPool,
       environment,
       tagger,
     };
@@ -94,8 +95,7 @@ const initializeContracts = async (network) => {
       },
     };
   } catch (err) {
-    console.log(err);
-    log.error({ err }, 'There was an error while initailizing the contractrs');
+    log.error({ err }, 'There was an error while initailizing the contracts');
     return {
       success: false,
       error: err.message,
@@ -103,7 +103,62 @@ const initializeContracts = async (network) => {
   }
 };
 
+const fetchAccountInformation = async (address) => {
+  try {
+    // Reference web3 and contracts we need
+    const {
+      web3,
+      contracts: { contributors, lunyrToken, lunPool },
+    } = global;
+
+    // Run calls in parallel
+    const [ethereum, lunyr, hp, cp, pool] = await Promise.all([
+      // Eth balance
+      web3.eth.getBalance(address).then(fromWei),
+      // Lunyr balance
+      lunyrToken.methods
+        .balanceOf(address)
+        .call()
+        .then(lunyrConversion),
+      // Honor points
+      contributors.methods.getHNR(address).call(),
+      // Contribution points
+      contributors.methods.getCBN(address).call(),
+      // Pool Information
+      lunyrToken.methods
+        .balanceOf(lunPool.options.address)
+        .call()
+        .then(lunyrConversion),
+    ]);
+
+    return {
+      success: true,
+      data: {
+        address,
+        balances: {
+          ethereum,
+          lunyr,
+        },
+        rewards: {
+          cp,
+          hp,
+          pool,
+        },
+      },
+    };
+  } catch (err) {
+    console.error(err);
+    const errorMessage = `There was an error while fetching account information linked to address ${address}`;
+    log.error({ err }, errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+};
+
 export default {
   connect,
+  fetchAccountInformation,
   initializeContracts,
 };

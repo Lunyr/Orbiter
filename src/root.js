@@ -26,7 +26,7 @@ const LocalizedRoot = connect(({ locale }) => locale)(({ locale, messages }) => 
 ));
 
 // Initialize the redux store from the global state
-const { store, persistor } = configureStore(remote.getGlobal('state'), 'orbiter-renderer');
+const { store, persistor } = configureStore({}, 'orbiter-renderer');
 
 const Root = hot(module)(() => (
   <Provider store={store}>

@@ -9,7 +9,7 @@ import cx from 'classnames';
 import { MdSearch as SearchIcon } from 'react-icons/md';
 import { FaSpinner as SpinIcon, FaTimesCircle as TimesCircleIcon } from 'react-icons/fa';
 import { search } from '../../../../shared/redux/modules/search/actions';
-import { AutoSizer, List, IconButton } from '../../../components';
+import { AutosizeInput, AutoSizer, List, IconButton } from '../../../components';
 import { cleanUnderscores } from '../../../../shared/utils';
 import styles from './styles';
 
@@ -301,18 +301,18 @@ class SearchBar extends React.Component {
             <label htmlFor="search-bar-input" className={classes.srOnly}>
               <FormattedMessage id="search_display" defaultMessage="Search" />
             </label>
-            <input
+            <AutosizeInput
               id="search-bar-input"
               autoFocus={true}
-              ref={(r) => (this.searchInput = r)}
-              className={classes.input}
+              inputRef={(r) => (this.searchInput = r)}
+              inputClassName={classes.input}
               disabled={isSearching}
               onChange={this.handleSearchInput}
               placeholder={intl.formatMessage({
                 id: 'search_placeholder',
                 defaultMessage: 'Search Articles',
               })}
-              style={{ width }}
+              // style={{ width }}
               type="search"
               value={term}
             />

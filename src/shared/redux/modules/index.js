@@ -8,6 +8,7 @@ import explorer from './explorer/reducer';
 import feed from './feed/reducer';
 import locale from './locale/reducer';
 import search from './search/reducer';
+import wallet from './wallet/reducer';
 
 /*
 * Unify module reducers for a single state tree
@@ -23,4 +24,5 @@ export const reducers = combineReducers({
   form,
   locale,
   search,
+  wallet,
 });

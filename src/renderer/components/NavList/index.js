@@ -10,7 +10,7 @@ const NavList = ({ activeLinkClass, classes, className, horizontal, items, title
   <nav className={cx(classes.nav, className)}>
     {title && <h1 className={classes.title}>{title}</h1>}
     <ul className={cx(classes.list, horizontal && classes.horizontal)}>
-      {items.map(({ display, icon, to, target, ...rest }, index) => {
+      {items.map(({ display, icon, to, target, exact }, index) => {
         return (
           <li
             key={`${display}_${index}`}
@@ -26,10 +26,12 @@ const NavList = ({ activeLinkClass, classes, className, horizontal, items, title
               </a>
             ) : (
               <NavLink
-                {...rest}
                 to={to}
+                exact={exact}
                 className={classes.link}
-                activeClassName={`${cx(classes.active, classes.activeLink)} ${activeLinkClass}`}>
+                /* Hash router does not support active class names */
+                /* activeClassName={`${cx(classes.active, classes.activeLink)} ${activeLinkClass}`} */
+              >
                 {showIcon && (
                   <div className={classes.icon}>
                     {!icon ? <DashIcon className={classes.navLinkIcon} /> : icon}

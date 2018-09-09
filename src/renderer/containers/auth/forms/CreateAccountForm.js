@@ -82,7 +82,7 @@ class CreateAccountForm extends React.Component {
           <ButtonGroup>
             <ActionButton
               className={classes.cancel}
-              type="text"
+              type="button"
               onClick={history.goBack}
               value="Cancel"
             />
@@ -147,11 +147,11 @@ const mapDispatchToProps = {
 export default withRouter(
   connect(
     null,
-    mapDispatchToProps,
+    mapDispatchToProps
   )(
     reduxForm({
       form: 'forms.create-account',
       validate,
-    })(injectIntl(injectStyles(styles)(CreateAccountForm))),
-  ),
+    })(injectIntl(injectStyles(styles)(CreateAccountForm)))
+  )
 );

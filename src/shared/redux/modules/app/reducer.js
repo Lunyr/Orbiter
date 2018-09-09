@@ -3,7 +3,7 @@ import actions from './actions';
 
 const initialState = {
   connecting: true,
-  loading: false,
+  connected: false,
   headerHeight: 70,
   footerHeight: 70,
   name: 'Orbiter',
@@ -29,6 +29,7 @@ const appReducer = (state = initialState, action) => {
       return {
         ...state,
         connecting: false,
+        connected: true,
         ...payload.data,
       };
     }

@@ -114,7 +114,7 @@ class LoginForm extends React.Component {
           <ButtonGroup>
             <ActionButton
               className={classes.cancel}
-              type="text"
+              type="button"
               onClick={history.goBack}
               value="Cancel"
             />

@@ -48,7 +48,7 @@ export default (theme) => ({
     zIndex: 10,
     marginTop: 2,
     width,
-    maxWidth: 300,
+    maxWidth: 400,
     background: theme.colors.white,
     border: '1px solid',
     borderColor: theme.colors.lightestGray,
@@ -63,13 +63,20 @@ export default (theme) => ({
     padding: 0,
     margin: 0,
   },
+  item__container: {
+    '&:hover': {
+      backgroundColor: theme.colors.lightestGray,
+    },
+    '&:active': {
+      backgroundColor: theme.colors.lightestGray,
+    },
+    '&:focus': {
+      backgroundColor: theme.colors.lightestGray,
+    },
+  },
   item: {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
-    paddingLeft: theme.spacing,
-    '&:hover': {
-      backgroundColor: theme.colors.lightestGray,
-    },
   },
 });

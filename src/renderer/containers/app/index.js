@@ -4,6 +4,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
 import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
+import { fetchAccountInformation } from '../../../shared/redux/modules/wallet/actions';
 import { TwoColumn } from '../../components';
 import Articles from '../article/Articles';
 import Draft from '../article/Draft';
@@ -15,6 +16,7 @@ import Rejected from '../article/Rejected';
 import Review from '../article/Review';
 import Login from '../auth/Login/';
 import Logout from '../auth/Logout/';
+import Wallet from '../wallet/';
 import ConnectingSplash from './ConnectingSplash';
 import About from './About';
 import Announcements from './Announcements';
@@ -32,14 +34,35 @@ class App extends React.Component {
     });
   };
 
-  async componentDidUpdate(prevProps) {
+  handleLoadingAccountInformation = () => {
+    if (this.props.account && this.props.connected) {
+      console.info('Fetching new user account information', this.props.account);
+      this.props.fetchAccountInformation(this.props.account);
+    }
+  };
+
+  handleNewConnectionEstablished = () => {
+    this.showNewConnectionStatus(this.props.network);
+    this.handleLoadingAccountInformation();
+  };
+
+  componentDidUpdate(prevProps) {
+    // Fresh connectione established
     if (prevProps.connecting && !this.props.connecting) {
-      this.showNewConnectionStatus(this.props.network);
+      this.handleNewConnectionEstablished();
+    }
+
+    // User changed accounts
+    if (this.props.account !== prevProps.account) {
+      // Navigate back to feed and fetch user balance information
+      this.props.history.push('/');
+      this.handleLoadingAccountInformation();
     }
   }
 
   componentDidMount() {
     this.props.connectToBlockchain();
+    this.handleLoadingAccountInformation();
   }
 
   componentWillUpdate(nextProps) {
@@ -82,11 +105,7 @@ class App extends React.Component {
                 <Route exact path="/faq" component={FAQ} />
                 <Route exact path="/announcements" component={Announcements} />
                 <Route exact path="/transactions" component={() => <div>transactions</div>} />
-                <Route
-                  exact
-                  path="/wallet"
-                  component={() => <div>user info and wallet goes here</div>}
-                />
+                <Route exact path="/wallet" component={Wallet} />
                 <Route component={Feed} />
               </Switch>
             </div>
@@ -99,9 +118,20 @@ class App extends React.Component {
 }
 
 const mapStateToProps = ({
-  app: { connecting, footerHeight, headerHeight, initializingContracts, network, sidebarWidth },
+  auth: { account },
+  app: {
+    connecting,
+    connected,
+    footerHeight,
+    headerHeight,
+    initializingContracts,
+    network,
+    sidebarWidth,
+  },
 }) => ({
+  account,
   connecting,
+  connected,
   footerHeight,
   headerHeight,
   initializingContracts,
@@ -111,6 +141,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = {
   connectToBlockchain,
+  fetchAccountInformation,
 };
 
 const styles = (theme) => ({
