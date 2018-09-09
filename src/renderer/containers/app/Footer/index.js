@@ -30,10 +30,11 @@ const SyncProgressBar = ({ classes, progress = 0, remaining }) => (
       strokeWidth: 4,
       color: 'rgb(255, 132, 94)',
       trailColor: '#CCCCCC',
-      trailWidth: 2,
+      trailWidth: 3,
       svgStyle: {
         width: '100%',
         height: 25,
+        borderRadius: 6,
       },
       text: {
         style: {

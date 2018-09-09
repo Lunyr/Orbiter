@@ -56,5 +56,6 @@ export default (theme) => ({
     paddingRight: theme.spacing,
     width: `calc(100% - ${theme.spacing * 2}px)`,
     color: theme.colors.white,
+    borderRadius: 6,
   },
 });
