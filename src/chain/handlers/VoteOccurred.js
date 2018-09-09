@@ -2,7 +2,7 @@
  * This is the event handler for PeerReview.VoteOccurred
  */
 import multihashes from 'multihashes';
-import settings from '../../shared/settings';
+import { settings } from '../../shared/settings';
 import { getLogger } from '../../lib/logger';
 import {
   handlerWrapper,

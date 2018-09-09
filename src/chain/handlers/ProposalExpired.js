@@ -3,25 +3,20 @@
  */
 import { getLogger } from '../../lib/logger';
 import { handlerWrapper } from '../utils';
-import { 
-  addNotification,
-  getProposal,
-  expireProposal,
-} from '../../backend/api';
+import { addNotification, getProposal, expireProposal } from '../../backend/api';
 
 const EVENT_NAME = 'ProposalExpired';
 const log = getLogger(EVENT_NAME);
 
 export default async (job, txHash, evData) => {
   return handlerWrapper(EVENT_NAME, txHash, job, log, async () => {
-
     /**
      * LISTEN UP, BITCHES!
      * This here is what happens when you make a mistake on an immutable database.
      * There was a bug in the ProposalExpired event.  The bad event was triggered
-     * on mainnet thrice, and twice on testnet, so three txs needs to be accounted 
-     * for here. ProposalExpired was sending the proposalId of the replacing 
-     * proposal, not the expired proposal.  So here, we're forcibly setting the 
+     * on mainnet thrice, and twice on testnet, so three txs needs to be accounted
+     * for here. ProposalExpired was sending the proposalId of the replacing
+     * proposal, not the expired proposal.  So here, we're forcibly setting the
      * right ID because we know the exact offenders.
      *
      * At least the fix is simple, this time.  But let this be a cautionary tale.
@@ -40,8 +35,8 @@ export default async (job, txHash, evData) => {
 
     const proposalCheck = await getProposal(evData.proposalId);
 
-    if (!proposalCheck.success || proposalCheck.data.length < 1) {
-      throw new Error("Proposal not found!");
+    if (!proposalCheck.success || !proposalCheck.data || proposalCheck.data.length < 1) {
+      throw new Error('Proposal not found!');
     }
 
     const proposal = proposalCheck.data[0];
@@ -51,21 +46,24 @@ export default async (job, txHash, evData) => {
     // Update proosal state
     const expireResult = await expireProposal(evData.proposalId);
     if (expireResult.success === false) {
-      log.error({ errorMessage: expireResult.error }, "Error expiring proposal!");
+      log.error({ errorMessage: expireResult.error }, 'Error expiring proposal!');
       throw new Error(expireResult.error);
     }
 
     job.progress(80);
 
     // Create a notification for the user
-    const notifResult = await addNotification(proposal.fromAddress, EVENT_NAME, {
-      proposalId: evData.proposalId,
-      editStreamId: evData.editStreamId,
-      title: proposal.title,
-    });
-    if (notifResult.success === false) {
-      log.error({ errorMessage: notifResult.error }, "Error adding notification!");
+    if (proposal) {
+      const notifResult = await addNotification(proposal.fromAddress, EVENT_NAME, {
+        proposalId: evData.proposalId,
+        editStreamId: evData.editStreamId,
+        title: proposal.title,
+      });
+      if (notifResult.success === false) {
+        log.error({ errorMessage: notifResult.error }, 'Error adding notification!');
+      }
     }
+
     job.progress(90);
   });
-}
+};

@@ -62,6 +62,7 @@ export const getArticles = async (limit, page) => {
   } catch (error) {
     return {
       success: false,
+      data: [],
       error: error.message,
     };
   }

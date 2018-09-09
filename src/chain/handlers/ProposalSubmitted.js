@@ -1,8 +1,7 @@
 /**
  * This is the event handler for PeerReview.ProposalSubmitted
  */
-import multihashes from 'multihashes';
-import settings from '../../shared/settings';
+import { settings } from '../../shared/settings';
 import { getLogger } from '../../lib/logger';
 import {
   handlerWrapper,
@@ -11,7 +10,7 @@ import {
   ipfsFetch,
   EMPTY_IPFS_HEX,
 } from '../utils';
-import { ProposalState, TxType } from '../../shared/constants';
+import { ProposalState } from '../../shared/constants';
 import {
   addNotification,
   addEditStream,
@@ -45,10 +44,10 @@ export default async (job, txHash, evData) => {
 
       // Verify that the conflict is valid and not an actual conflict
       // TODO: Check more values, like contentHash
-      const conflictingProp = proposalCheck.data[0];
+      //const conflictingProp = proposalCheck.data[0];
       if (
-        proposalCheck.editStreamId == evData.editStreamId &&
-        proposalCheck.proposalId == evData.proposalId
+        proposalCheck.editStreamId === evData.editStreamId &&
+        proposalCheck.proposalId === evData.proposalId
       ) {
         return;
       } else {
@@ -58,9 +57,9 @@ export default async (job, txHash, evData) => {
 
     job.progress(33);
 
-    let proposal = {
+    const proposal = {
       id: evData.proposalId,
-      parentId: evData.parentId == 0 ? null : evData.parentId,
+      parentId: evData.parentId === 0 ? null : evData.parentId,
       state: ProposalState.IN_REVIEW,
       editStreamId: evData.editStreamId,
       fromAddress: evData.proposer,
@@ -86,7 +85,7 @@ export default async (job, txHash, evData) => {
      * hashes are provided to the contract.  Without these, we have nothing to
      * look up.
      */
-    if (evData.contentHash == EMPTY_IPFS_HEX) {
+    if (evData.contentHash === EMPTY_IPFS_HEX) {
       job.progress(34);
 
       // Let the user know what happened

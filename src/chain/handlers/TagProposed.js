@@ -3,13 +3,7 @@
  */
 import { getLogger } from '../../lib/logger';
 import { handlerWrapper } from '../utils';
-import { TxType } from '../../shared/constants';
-import { 
-  addNotification,
-  getTag,
-  addTag,
-  addTagProposal,
-} from '../../backend/api';
+import { addNotification, getTag, addTag, addTagProposal } from '../../backend/api';
 
 const EVENT_NAME = 'TagProposed';
 const log = getLogger(EVENT_NAME);
@@ -24,8 +18,8 @@ export default async (job, txHash, evData) => {
 
     if (!tagCheck.success || tagCheck.data.length < 1) {
       tagCheck = await addTag(evData.tagName);
-      if (!tagCheck.sucess) {
-        throw new Error(tagCheck.error || "Unknown error");
+      if (!tagCheck.success) {
+        throw new Error(tagCheck.error || 'Unknown error');
       }
     }
 

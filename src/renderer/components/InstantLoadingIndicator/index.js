@@ -35,7 +35,7 @@ class InstantLoadingIndicator extends React.PureComponent {
           showing={showInstantLoader}
           full
         />
-        {children}
+        {typeof children === 'function' ? children(showInstantLoader) : children}
       </div>
     );
   }

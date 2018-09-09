@@ -31,7 +31,7 @@ export default async (job, txHash, evData) => {
     // Update edit stream if necessary
     const editStreamCheck = await getEditStream(evData.editStreamId);
 
-    if (!editStreamCheck.success || !editStreamCheck.data || editStreamCheck.data.length < 1) {
+    if (!editStreamCheck.success || editStreamCheck.data.length < 1) {
       throw new Error('Unknown edit stream!  Events out of order?');
     }
 
@@ -40,13 +40,14 @@ export default async (job, txHash, evData) => {
     // We need to update the title only if it changed and lang only if it was never set
     let editStreamPatch = null;
 
-    if (editStreamCheck.data[0].lang === null && proposal.lang !== null) {
+    // Patch edit stream with proposal lang
+    if (proposal && proposal.lang !== null && editStreamCheck.data[0].lang === null) {
       if (!editStreamPatch) editStreamPatch = {};
       editStreamPatch.lang = proposal.lang;
     }
 
     // update the edit stream title if necessary
-    if (editStreamCheck.data[0].title !== proposal.title) {
+    if (proposal && proposal.title !== null && editStreamCheck.data[0].title) {
       if (!editStreamPatch) editStreamPatch = {};
       editStreamPatch.title = proposal.title;
     }
@@ -69,14 +70,17 @@ export default async (job, txHash, evData) => {
     job.progress(80);
 
     // Create a notification for the user
-    const notifResult = await addNotification(proposal.fromAddress, EVENT_NAME, {
-      proposalId: evData.proposalId,
-      editStreamId: evData.editStreamId,
-      title: proposal.title,
-    });
-    if (notifResult.success === false) {
-      log.error({ errorMessage: notifResult.error }, 'Error adding notification!');
+    if (proposal) {
+      const notifResult = await addNotification(proposal.fromAddress, EVENT_NAME, {
+        proposalId: evData.proposalId,
+        editStreamId: evData.editStreamId,
+        title: proposal.title,
+      });
+      if (notifResult.success === false) {
+        log.error({ errorMessage: notifResult.error }, 'Error adding notification!');
+      }
     }
+
     job.progress(90);
   });
 };

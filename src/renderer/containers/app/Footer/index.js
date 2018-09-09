@@ -23,14 +23,14 @@ const FooterLink = ({ className, href, children }) => (
 const SyncProgressBar = ({ classes, progress = 0, remaining }) => (
   <ProgressBar.Line
     progress={progress}
-    text={`Syncing with Blockchain ${(progress * 100).toFixed(2)}% (Remaining: ${
-      remaining === null ? 'Determining...' : remaining
+    text={`Syncing with Blockchain ${(progress * 100).toFixed(2)}% (${
+      remaining === null ? 'Please wait...establishing sync queue...' : `Remaining: ${remaining}`
     })`}
     options={{
       strokeWidth: 4,
       color: 'rgb(255, 132, 94)',
       trailColor: '#CCCCCC',
-      trailWidth: 3,
+      trailWidth: 2,
       svgStyle: {
         width: '100%',
         height: 25,
@@ -78,6 +78,9 @@ class Footer extends React.PureComponent {
       setQueueSyncing(true, this.statusIntervals.progress);
     } else if (progress === 1 && syncing) {
       setQueueSyncing(false, this.statusIntervals.ping);
+      new Notification('Finished Sync', {
+        body: 'Orbiter has synced with the blockchain.',
+      });
     }
   };
 
