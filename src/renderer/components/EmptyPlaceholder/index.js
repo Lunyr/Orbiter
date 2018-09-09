@@ -3,10 +3,14 @@ import injectStyles from 'react-jss';
 import { FormattedMessage } from 'react-intl';
 import styles from './styles';
 
-const EmptyPlaceholder = ({ classes, children }) => (
+const EmptyPlaceholder = ({ classes, children, title }) => (
   <div className={classes.container}>
     <h1 className={classes.title}>
-      <FormattedMessage id="empty-placeholder" defaultMessage="No Results Found" />
+      {!title ? (
+        <FormattedMessage id="empty-placeholder" defaultMessage="No Results Found" />
+      ) : (
+        title
+      )}
     </h1>
     {children}
   </div>

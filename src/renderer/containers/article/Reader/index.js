@@ -4,6 +4,7 @@ import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { fetchArticleByTitle } from '../../../../shared/redux/modules/article/reader/actions';
 import {
+  AdditionalContent,
   Contributors,
   ErrorBoundary,
   Hero,
@@ -13,10 +14,6 @@ import {
 } from '../../../components';
 import References from '../references/References';
 import styles from './styles';
-
-const AddtionalContent = ({ additionalContent }) => (
-  <div>{JSON.stringify(additionalContent, null, 4)}</div>
-);
 
 class Reader extends React.Component {
   load = () => {
@@ -69,13 +66,28 @@ class Reader extends React.Component {
             </div>
           </section>
           <aside className={classes.aside}>
-            <AddtionalContent additionalContent={additionalContent} />
+            <AdditionalContent additionalContent={additionalContent} />
           </aside>
         </InstantLoadingIndicator>
       </ErrorBoundary>
     );
   }
 }
+
+// Temporary helper to fix double stringified content
+const deserializeAdditionalContent = (additionalContent) => {
+  try {
+    let parsedContent = JSON.parse(additionalContent);
+    if (typeof parsedContent === 'string') {
+      // Recursively just try to parse for now until we get an actual array
+      parsedContent = deserializeAdditionalContent(parsedContent);
+    }
+    return parsedContent;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
 
 /**
  * Returns a formatted article object to be used in the Readt
@@ -87,10 +99,11 @@ const assembleArticle = (article) => {
     return {};
   }
   const { additionalContent, ...rest } = article;
-
+  const parsedAdditionalContent = deserializeAdditionalContent(additionalContent);
+  console.log('assembling article meow', parsedAdditionalContent);
   return {
     ...rest,
-    additionalContent: JSON.parse(additionalContent),
+    additionalContent: parsedAdditionalContent,
   };
 };
 

@@ -15,7 +15,6 @@ export default (theme) => ({
     display: 'flex',
     alignItems: 'center',
     minHeight: 45,
-    paddingLeft: theme.spacing,
     width: '100%',
   },
   right: {

@@ -1,4 +1,5 @@
 export { default as ActionMenu } from './ActionMenu';
+export { default as AdditionalContent } from './AdditionalContent';
 export { default as ArticleCard } from './ArticleCard';
 export { default as AsyncLoader } from './AsyncLoader';
 export { default as AsyncSelect } from './selects/AsyncSelect';
