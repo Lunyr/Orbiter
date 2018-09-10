@@ -97,7 +97,7 @@ export default {
   boxShadows,
   buttons: createButtons({
     boxShadows,
-    borderRadius,
+    borderRadius: 30,
     fontFamily,
     fontSize,
     spacing,

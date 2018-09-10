@@ -71,7 +71,8 @@
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
     "sentry": "^0.1.2",
-    "through2": "^2.0.3"
+    "through2": "^2.0.3",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
