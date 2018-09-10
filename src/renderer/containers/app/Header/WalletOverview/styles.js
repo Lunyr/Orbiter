@@ -3,12 +3,11 @@ export default (theme) => ({
     display: 'flex',
     position: 'relative',
     flexDirection: 'column',
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.lightestGray,
     padding: theme.spacing,
     width: `calc(100% - ${theme.spacing * 2}px)`,
-    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
     '&:hover': {
-      backgroundColor: theme.colors.lightestGray,
+      backgroundColor: theme.colors.lightGray,
     },
   },
   header: {
@@ -16,7 +15,7 @@ export default (theme) => ({
     ...theme.overflow,
     marginTop: theme.spacing,
     textTransform: 'uppercase',
-    color: theme.colors.accent,
+    color: theme.colors.primary,
     fontWeight: 600,
   },
   header__address: {
