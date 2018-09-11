@@ -1,5 +1,7 @@
 export default (theme) => ({
   container: {
+    display: 'flex',
+    flexDirection: 'column',
     height: 'auto',
     width: 'auto',
   },
@@ -23,5 +25,11 @@ export default (theme) => ({
   },
   hidden: {
     display: 'none',
+  },
+  text: {
+    ...theme.typography.h2,
+    color: 'inherit',
+    marginBottom: theme.spacing,
+    fontSize: '1.4rem',
   },
 });

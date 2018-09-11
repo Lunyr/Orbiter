@@ -16,22 +16,23 @@ export default (theme) => ({
     alignItems: 'center',
     minHeight: 45,
     width: '100%',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
   },
   right: {
     display: 'flex',
     justifyContent: 'flex-end',
   },
   trigger: {
-    display: 'inline-flex',
+    display: 'flex',
     alignItems: 'center',
-    height: 35,
+    minHeight: 45,
+    width: '100%',
   },
   avatar: {
     marginRight: theme.spacing * 0.75,
   },
   write: {
     marginRight: theme.spacing,
-    borderRadius: 30,
   },
   account: {
     display: 'flex',
@@ -48,5 +49,11 @@ export default (theme) => ({
     '&:hover': {
       color: theme.colors.link,
     },
+  },
+  padded: {
+    paddingLeft: theme.spacing,
+  },
+  logout: {
+    borderBottom: 'none',
   },
 });

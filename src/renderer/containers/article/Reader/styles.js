@@ -75,4 +75,7 @@ export default (theme) => ({
     fontSize: '0.9rem',
     fontWeight: 400,
   },
+  hidden: {
+    display: 'none',
+  },
 });

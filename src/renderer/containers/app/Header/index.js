@@ -51,7 +51,7 @@ const Header = ({ auth, classes, history, wallet }) => {
               width={400}
               alignedRight
               onSelected={onSelected.bind(this, history)}>
-              <span className={cx(classes.trigger, classes.header__item)}>
+              <span className={classes.trigger}>
                 <Avatar className={classes.avatar} seed={address} size={35} />
                 {address ? `${address.substring(0, 16)}...` : 'N/A'}
               </span>
@@ -59,11 +59,15 @@ const Header = ({ auth, classes, history, wallet }) => {
                 <WalletOverview wallet={wallet} />
               </Link>
               {accounts.length > 1 && (
-                <Link className={cx(classes.header__item, classes.link)} to="/login">
+                <Link
+                  className={cx(classes.header__item, classes.link, classes.padded)}
+                  to="/login">
                   Switch Accounts
                 </Link>
               )}
-              <Link className={cx(classes.header__item, classes.link)} to="/logout">
+              <Link
+                className={cx(classes.header__item, classes.link, classes.padded, classes.logout)}
+                to="/logout">
                 Logout
               </Link>
             </ActionMenu>

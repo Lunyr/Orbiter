@@ -17,7 +17,6 @@
     "no-param-reassign": "warn",
     "func-names": "off",
     "no-unused-expressions": "error",
-    "block-scoped-let": "error",
     "react/prop-types": "off"
   },
   "settings": {
