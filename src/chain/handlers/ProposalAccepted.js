@@ -20,7 +20,7 @@ export default async (job, txHash, evData) => {
 
     const proposalCheck = await getProposal(evData.proposalId);
 
-    if (!proposalCheck.success || !proposalCheck.data || proposalCheck.data.length < 1) {
+    if (!proposalCheck.success || !proposalCheck.data) {
       throw new Error('Proposal not found!');
     }
 
@@ -31,7 +31,7 @@ export default async (job, txHash, evData) => {
     // Update edit stream if necessary
     const editStreamCheck = await getEditStream(evData.editStreamId);
 
-    if (!editStreamCheck.success || editStreamCheck.data.length < 1) {
+    if (!editStreamCheck.success || !editStreamCheck.data) {
       throw new Error('Unknown edit stream!  Events out of order?');
     }
 

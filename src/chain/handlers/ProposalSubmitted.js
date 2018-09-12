@@ -39,15 +39,15 @@ export default async (job, txHash, evData) => {
 
     // Check and see if the proposal already exists(it shouldn't)
     const proposalCheck = await getProposal(evData.proposalId);
-    if (proposalCheck.success === true && (proposalCheck.data && proposalCheck.data.length > 0)) {
+    if (proposalCheck.success === true && proposalCheck.data) {
       log.warn({ proposalId: evData.proposalId }, 'Proposal already exists in DB.');
 
       // Verify that the conflict is valid and not an actual conflict
       // TODO: Check more values, like contentHash
       //const conflictingProp = proposalCheck.data[0];
       if (
-        proposalCheck.editStreamId === evData.editStreamId &&
-        proposalCheck.proposalId === evData.proposalId
+        proposalCheck.data.editStreamId === evData.editStreamId &&
+        proposalCheck.data.proposalId === evData.proposalId
       ) {
         return;
       } else {
@@ -185,7 +185,7 @@ export default async (job, txHash, evData) => {
     job.progress(75);
 
     // Create a new edit stream if this one isn't in the DB
-    if (editStreamCheck.data.length < 1) {
+    if (!editStreamCheck.data) {
       // Set language only if we're creating a new stream, otherwise, see ProposalAccepted
       let lang = null;
       if (content) {

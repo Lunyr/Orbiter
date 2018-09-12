@@ -10,7 +10,6 @@
   "repository": "https://github.com/Lunyr/Orbiter",
   "license": "MIT",
   "dependencies": {
-    "abi-decoder": "^1.1.0",
     "babel-cli": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "better-react-spinkit": "^2.0.4",
@@ -33,6 +32,7 @@
     "megadraft-section-title": "^0.3.1",
     "megadraft-video-plugin": "^0.4.2",
     "mkdirp": "^0.5.1",
+    "mocha-webpack": "^1.1.0",
     "moment": "^2.22.2",
     "multihashes": "^0.4.14",
     "ordered-hashmap": "^1.0.0",
@@ -75,6 +75,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "abi-decoder": "^1.1.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^7.1.5",
@@ -127,6 +128,8 @@
     "flow-typed": "^2.5.1",
     "husky": "^0.14.3",
     "identity-obj-proxy": "^3.0.0",
+    "ipfs-api": "^24.0.1",
+    "keythereum": "^1.0.4",
     "lint-staged": "^7.2.0",
     "mini-css-extract-plugin": "^0.4.1",
     "minimist": "^1.2.0",
@@ -146,6 +149,7 @@
     "stylelint-config-standard": "^18.2.0",
     "uglifyjs-webpack-plugin": "1.2.7",
     "url-loader": "^1.0.1",
+    "web3": "^1.0.0-beta.35",
     "webpack": "^4.16.3",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.1.0",
@@ -161,7 +165,7 @@
     "dev": "cross-env START_HOT=1 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "dev:bunyan": "LOG_LEVEL=30 yarn dev | bunyan -o short",
     "dev-no-hmr": "cross-env START_HOT=0 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=0 yarn start-renderer-dev",
-    "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir src",
+    "electron-rebuild": "./node_modules/.bin/electron-rebuild --parallel --force --types prod,dev,optional --module-dir .",
     "flow": "flow",
     "flow-typed": "rimraf flow-typed/npm && flow-typed install --overwrite || true",
     "lint": "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
@@ -179,11 +183,11 @@
     "start": "cross-env NODE_ENV=production electron -r babel-register ./src/root.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./src/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
-    "test": "yarn compile && ./node_modules/.bin/electron-mocha --renderer -R spec --require babel-core/register --require test/mocha.env.js",
+    "compile": "babel src/ --copy-files --out-dir build --ignore build,node_modules",
+    "test": "yarn run compile && ./node_modules/.bin/electron-mocha --renderer -R spec --require babel-register --require test/mocha.env.js",
     "test-all": "yarn lint && yarn build && yarn test && yarn test-e2e",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
-    "test-watch": "yarn test --watch",
-    "compile": "babel src/ --copy-files --out-dir build --ignore build,node_modules"
+    "test-watch": "yarn test --watch"
   },
   "browserslist": "electron 1.6",
   "lint-staged": {

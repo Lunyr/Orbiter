@@ -16,7 +16,7 @@ export default async (job, txHash, evData) => {
 
     job.progress(50);
 
-    if (!tagCheck.success || tagCheck.data.length < 1) {
+    if (!tagCheck.success || !tagCheck.data) {
       tagCheck = await addTag(evData.tagName);
       if (!tagCheck.success) {
         throw new Error(tagCheck.error || 'Unknown error');

@@ -33,17 +33,17 @@ export default async (job, txHash, evData) => {
 
     const proposalCheck = await getProposal(evData.proposalId);
 
-    if (!proposalCheck.success || !proposalCheck.data || proposalCheck.data.length < 1) {
+    if (!proposalCheck.success || !proposalCheck.data) {
       throw new Error('Proposal for vote not found');
     }
 
-    const proposal = proposalCheck.data[0];
+    const proposal = proposalCheck.data;
 
     job.progress(15);
 
     // No duplicates
     const voteCheck = await getVote(evData.voteId);
-    if (voteCheck.data.length > 0) {
+    if (voteCheck.data) {
       log.warn(
         { voteId: evData.voteId, proposalId: evData.proposalId },
         'Vote already exists in DB.'
@@ -51,7 +51,7 @@ export default async (job, txHash, evData) => {
 
       // Verify that the conflict is valid and not an actual conflict
       // TODO: Check more values, like contentHash
-      const conflictingVote = voteCheck.data[0];
+      const conflictingVote = voteCheck.data;
       if (
         conflictingVote.id === evData.voteId &&
         conflictingVote.proposalId === evData.proposalId

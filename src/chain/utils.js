@@ -41,7 +41,7 @@ export const completeTransaction = async (txHash, txType) => {
   let watchResult = await getWatch({ hash: txHash });
 
   // If it exists, update
-  if (watchResult.success) {
+  if (watchResult.success && watchResult.data) {
     // Set state to 1(complete)
     await setWatchState(txHash, TxState.SUCCESS);
   }

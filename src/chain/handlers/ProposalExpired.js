@@ -35,11 +35,11 @@ export default async (job, txHash, evData) => {
 
     const proposalCheck = await getProposal(evData.proposalId);
 
-    if (!proposalCheck.success || !proposalCheck.data || proposalCheck.data.length < 1) {
+    if (!proposalCheck.success || !proposalCheck.data) {
       throw new Error('Proposal not found!');
     }
 
-    const proposal = proposalCheck.data[0];
+    const proposal = proposalCheck.data;
 
     job.progress(35);
 

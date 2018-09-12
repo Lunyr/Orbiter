@@ -19,7 +19,7 @@ export const getProposal = async (proposalId) => {
 
     return {
       success: true,
-      data: data ? data[0] : null,
+      data: data.length > 0 ? data[0] : null,
     };
   } catch (error) {
     return {

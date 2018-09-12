@@ -63,7 +63,7 @@ describe('Account management', () => {
       assert.equal(typeof acct.fileName, 'string');
       assert.isAbove(acct.fileName.length, 0);
       assert.equal(typeof acct.address, 'string');
-      assert.equal(acct.address.length, 40);
+      assert.equal(acct.address.length, 42);
     });
   });
 

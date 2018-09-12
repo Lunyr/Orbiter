@@ -118,6 +118,9 @@ export const unlock = async (args) => {
 
   let fileName;
   if (typeof args.address !== 'undefined') {
+    // Make sure it's prefixed
+    args.address = addHexPrefix(args.address);
+
     // Refresh account list if it's empty
     if (ACCOUNTS.length === 0) await getList();
 

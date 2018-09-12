@@ -16,7 +16,7 @@ export const getEditStream = async (editStreamId) => {
 
     return {
       success: true,
-      data,
+      data: data.length > 0 ? data[0] : null,
     };
   } catch (error) {
     return {

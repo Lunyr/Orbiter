@@ -312,7 +312,7 @@ export class Sweeper {
     log.debug({ txHash: tx.id }, 'Setting transaction state in database.');
     // Set state in DB
     const watchCheck = await getWatch(tx.id);
-    if (watchCheck.success && watchCheck.data.length > 0) {
+    if (watchCheck.success && watchCheck.data) {
       const updateResult = await setWatchState(tx.id, state);
       if (!updateResult.success) {
         throw new Error(updateResult.error);

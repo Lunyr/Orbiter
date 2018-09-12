@@ -16,11 +16,14 @@ jobs:
 
       - run: sudo apt -y install libgtk-3-0 libgtkextra-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
 
-      - run: yarn install --production=false
+      - run: yarn install --production=false && yarn run electron-rebuild
+
+      - run: cd src && yarn install --production=false && cd ..
 
       - save_cache:
           paths:
             - node_modules
+            - src/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
         
       - run: xvfb-run yarn test test/**/*.js

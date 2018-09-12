@@ -14,10 +14,8 @@ describe('Article API', () => {
 
   it('should get an article', async () => {
     const result = await getCurrentArticle(1);
-    console.log('result', result);
-    assert.equal(result.data.length, 1, `Unexpected result length`);
-
-    const article = result.data[0];
+    assert.isNotNull(result.data, 'Should have received one article');
+    const article = result.data;
 
     assert.equal(article.id, 1, `proposal_id is incorrect`);
     assert.equal(article.state, ProposalState.ACCEPTED, `proposal_state_id is incorrect`);
@@ -33,7 +31,6 @@ describe('Article API', () => {
     // Get second page
     const result2 = await getArticles(null, 1);
     assert.equal(result2.data.length, 25, `Unexpected result length with page`);
-    console.log('result2.data[0]', result2.data[0]);
     assert.notEqual(
       result2.data[0].id,
       result.data[0].id,
@@ -48,8 +45,8 @@ describe('Article API', () => {
 
   it('should get an article by title', async () => {
     const result = await getCurrentArticleByTitle('Test');
-    assert.equal(result.data.length, 1, 'Should have one article');
-    assert.equal(result.data[0].title, 'Test', 'Should have an with this title');
+    assert.isNotNull(result.data, 'Should have received one article');
+    assert.equal(result.data.title, 'Test', 'Should have an with this title');
   });
 
   it('should get the contributors of an article', async () => {

@@ -19,7 +19,7 @@ export default async (job, txHash, evData) => {
 
     const tagResult = await getTag(evData.tagName);
 
-    if (!tagResult.success || tagResult.data.length < 1) {
+    if (!tagResult.success || !tagResult.data) {
       throw new Error("Unknown tag!  Events out of order?");
     }
 
