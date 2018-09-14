@@ -46,11 +46,11 @@ export default async (job, txHash, evData) => {
     if (voteCheck.data) {
       log.warn(
         { voteId: evData.voteId, proposalId: evData.proposalId },
-        'Vote already exists in DB.'
+        'Vote already exists in DB.',
       );
 
       // Verify that the conflict is valid and not an actual conflict
-      // TODO: Check more values, like contentHash
+      // TODO: Check more values, like surveyHash
       const conflictingVote = voteCheck.data;
       if (
         conflictingVote.id === evData.voteId &&
@@ -101,7 +101,7 @@ export default async (job, txHash, evData) => {
       log.warn({ voteId: evData.voteId }, 'Received empty ipfs hash for vote');
     } else {
       const ipfsHash = multihashes.toB58String(
-        multihashes.fromHexString('1220' + evData.surveyHash.slice(2))
+        multihashes.fromHexString('1220' + evData.surveyHash.slice(2)),
       );
       const content = await ipfsFetch(ipfsHash).catch((err) => {
         // Ignore the timeout error
@@ -116,7 +116,7 @@ export default async (job, txHash, evData) => {
          * lost to the ether.  So, we're going to do our best to cope here
          */
         if (job.attempts < settings.eventLogConfig.attempts) {
-          throw new Error('Unable to find ipfs file @ ' + evData.contentHash);
+          throw new Error('Unable to find ipfs file @ ' + ipfsHash);
         } else if (job.attempts >= settings.eventLogConfig.attempts) {
           vote.dirty = true;
         }

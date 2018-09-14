@@ -2,6 +2,7 @@ import os from 'os';
 import path from 'path';
 import knex from 'knex';
 import { getLogger } from '../lib/logger';
+import { default as settings } from '../shared/defaults';
 
 const log = getLogger('db');
 
@@ -13,7 +14,7 @@ const getDateString = () => {
 const getDBByEnvironment = () => {
   return process.env.NODE_ENV === 'test'
     ? path.join(os.tmpdir(), `test-orbiter-${getDateString()}.sqlite`)
-    : './orbiter.sqlite';
+    : path.join(settings.configDir, `orbiter.${process.env.NODE_ENV}.sqlite`);
 };
 
 const DB_FILE = getDBByEnvironment();
@@ -27,6 +28,7 @@ const db = knex({
     dateStrings: true,
   },
   useNullAsDefault: true,
+  acquireConnectionTimeout: 5000,
 });
 
 export { db };

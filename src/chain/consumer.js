@@ -135,8 +135,11 @@ const getLogs = async (record, fromBlock) => {
 
   log.debug({ address: record.address, fromBlock: fromBlock }, 'getLogs');
 
-  if (FETCH_IN_PROGRESS[record.address]) return null;
-  else FETCH_IN_PROGRESS[record.address] = true;
+  if (FETCH_IN_PROGRESS[record.address]) {
+    log.debug({ address: record.address }, "Fetch already in progress");
+    return null;
+  }
+  FETCH_IN_PROGRESS[record.address] = true;
 
   // Request options
   let options = {
@@ -168,7 +171,10 @@ const getLogs = async (record, fromBlock) => {
 
   FETCH_IN_PROGRESS[record.address] = false;
 
-  if (!result || result.status !== 200) return null;
+  if (!result || result.status !== 200) {
+    log.warn({ httpStatus: result.status }, 'JSON-RPC provider returned improperly');
+    return null;
+  }
 
   const json = await result.json();
 
@@ -186,7 +192,7 @@ const getLogs = async (record, fromBlock) => {
  * @returns {string} a hex number of the latest block number with a processed
  *    event
  */
-const processLogs = (logs, queue) => {
+const processLogs = async (logs, queue) => {
   if (typeof logs === 'undefined' || !logs) return null;
   if (!(logs instanceof Array)) throw new Error('Logs given to processLogs are not an array');
   let eventCount = 0;
@@ -197,7 +203,7 @@ const processLogs = (logs, queue) => {
       const decoded = abiDecoder.decodeLogs([logs[i]])[0];
       if (decoded) {
         eventCount++;
-        queue.put(decoded.name + ': ' + logs[i].transactionHash, {
+        await queue.put(decoded.name + ': ' + logs[i].transactionHash, {
           txHash: logs[i].transactionHash,
           logIndex: logs[i].logIndex,
           blockNumber: logs[i].blockNumber,
@@ -208,7 +214,7 @@ const processLogs = (logs, queue) => {
         latestBlock = logs[i].blockNumber;
       }
     } catch (err) {
-      log.error({ message: err.message, evntLog: logs[i] }, 'Error decoding logs!');
+      log.error({ message: err.message, evntLog: logs[i] }, 'Error when decoding log and adding to queue!');
       handleError(err);
     }
   }
@@ -234,10 +240,16 @@ const consumeEvents = (record, queue) => {
   setInterval(async () => {
     try {
       const logs = await getLogs(record, startBlock);
-      const latestBlock = processLogs(logs, queue);
-      if (latestBlock !== startBlock) {
-        startBlock = nextBlock(latestBlock);
-        log.info({ contract: record.address, startBlock }, 'New startBlock');
+      if (logs && logs.length > 0) {
+        const latestBlock = await processLogs(logs, queue);
+        if (latestBlock && latestBlock !== startBlock) {
+          startBlock = nextBlock(latestBlock);
+          log.info({ contract: record.address, startBlock }, 'New startBlock');
+        } else if (!latestBlock) {
+          log.info("No new logs processed");
+        }
+      } else {
+        log.debug({ address: record.address }, "There are logs for this contract");
       }
     } catch (err) {
       log.error({ error: err.message }, 'Unhandled error in consumeEvents()');

@@ -11,9 +11,11 @@
  * });
  * const job = q.get();
  */
+import path from 'path';
 import knex from 'knex';
 import { getLogger } from '../logger';
 import { Job } from './Job';
+import { default as settings } from '../../shared/defaults';
 
 const DEFAULT_TABLE_NAME = 'queue';
 const DEFAULT_MAX_ATTEMPTS = 3;
@@ -28,8 +30,9 @@ export default (tableName = DEFAULT_TABLE_NAME, maxAttempts = DEFAULT_MAX_ATTEMP
   const queue = knex({
     client: 'sqlite3',
     connection: {
-      filename: './eventqueue.sqlite',
+      filename: path.join(settings.configDir, `eventqueue.${process.env.NODE_ENV}.sqlite`),
     },
+    acquireConnectionTimeout: 120000,
   });
 
   log.debug('QueueLite Start');
@@ -184,12 +187,12 @@ export default (tableName = DEFAULT_TABLE_NAME, maxAttempts = DEFAULT_MAX_ATTEMP
   };
 
   /**
-   * process will continually process all "unprocessed" jobs in the queue using
+   * processJobs will continually process all "unprocessed" jobs in the queue using
    *  the provided handler.  The handler should accept a Job object (see: ./Job)
    * @param {function} handler is the function that will process each job
    * @returns ?
    */
-  const process = async (handler) => {
+  const processJobs = async (handler) => {
     let interval = 5;
     const processOne = async (handler) => {
       const record = await get();
@@ -243,7 +246,7 @@ export default (tableName = DEFAULT_TABLE_NAME, maxAttempts = DEFAULT_MAX_ATTEMP
     put,
     get,
     revert,
-    process,
+    processJobs,
     status,
   };
 };

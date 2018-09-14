@@ -25,7 +25,7 @@ export default async (job, txHash, evData) => {
 
     job.progress(65);
 
-    const tagPropResult = await addTagProposal(tagCheck.data[0].tag_id, evData.creator);
+    const tagPropResult = await addTagProposal(tagCheck.data.tag_id, evData.creator);
     if (!tagPropResult.success) {
       throw new Error(tagPropResult.error);
     }
