@@ -21,18 +21,22 @@ function filterDepWithoutEntryPoints(dep) {
       .toString();
     const pkg = JSON.parse(pgkString);
     const fields = ['main', 'module', 'jsnext:main', 'browser'];
-    return !fields.some(field => field in pkg);
+    return !fields.some((field) => field in pkg);
   } catch (e) {
     console.log(e);
     return true;
   }
 }
 
+const excluded = [
+  ...Object.keys(externals || {}),
+  ...Object.keys(possibleExternals || {}).filter(filterDepWithoutEntryPoints),
+];
+
+console.log('Excluded webpack deps', excluded);
+
 export default {
-  externals: [
-    ...Object.keys(externals || {}),
-    ...Object.keys(possibleExternals || {}).filter(filterDepWithoutEntryPoints)
-  ],
+  externals: excluded,
 
   module: {
     rules: [
@@ -42,17 +46,17 @@ export default {
         use: {
           loader: 'babel-loader',
           options: {
-            cacheDirectory: true
-          }
-        }
-      }
-    ]
+            cacheDirectory: true,
+          },
+        },
+      },
+    ],
   },
 
   output: {
     path: path.join(__dirname, 'src'),
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
   },
 
   /**
@@ -60,14 +64,14 @@ export default {
    */
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
-    modules: [path.join(__dirname, 'src'), 'node_modules']
+    modules: [path.join(__dirname, 'src'), 'node_modules'],
   },
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
     }),
 
-    new webpack.NamedModulesPlugin()
-  ]
+    new webpack.NamedModulesPlugin(),
+  ],
 };
