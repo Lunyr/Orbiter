@@ -55,6 +55,12 @@ const WalletOverview = ({ classes, wallet }) => (
             <span className={classes.value}>{get(wallet, ['rewards', 'pool'], 'N/A')}</span>
           </span>
         </li>
+        <li className={classes.item}>
+          <span>
+            Total CP:
+            <span className={classes.value}>{get(wallet, ['rewards', 'totalCp'], 'N/A')}</span>
+          </span>
+        </li>
       </ul>
     </div>
   </ErrorBoundary>

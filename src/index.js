@@ -1,5 +1,4 @@
 import React from 'react';
-import { remote } from 'electron';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader';
 import { addLocaleData, IntlProvider } from 'react-intl';
@@ -10,6 +9,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { configureStore } from './shared/redux/store/index';
 import theme from './renderer/theme/index';
 import App from './renderer/containers/app';
+import './main.global.css';
 
 // Add locales
 import en from 'react-intl/locale-data/en';

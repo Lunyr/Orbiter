@@ -2,7 +2,7 @@
  * Reference popover component for the content inside popover
  * @craiglu
  */
-
+/*
 import React, { Component } from 'react';
 
 // NPM Modules
@@ -52,3 +52,4 @@ const styles = StyleSheet.create({
     fontSize: '12px',
   },
 });
+*/

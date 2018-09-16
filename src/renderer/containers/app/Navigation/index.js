@@ -134,7 +134,6 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         }),
         icon: <ThumbsUpIcon />,
       },
-      */
       {
         to: '/tagging',
         display: intl.formatMessage({
@@ -143,6 +142,7 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         }),
         icon: <TagIcon />,
       },
+      */
       {
         to: 'https://lunyragent.gitbooks.io/lunyr-manual/content/',
         display: intl.formatMessage({

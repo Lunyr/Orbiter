@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
-import { connectToBlockchain } from '../../../shared/redux/modules/app/actions';
+import { toast } from 'react-toastify';
+import { connectToBlockchain, closeSidebar } from '../../../shared/redux/modules/app/actions';
 import { fetchAccountInformation } from '../../../shared/redux/modules/wallet/actions';
-import { TwoColumn } from '../../components';
+import { TwoColumn, Notifications } from '../../components';
 import Articles from '../article/Articles';
 import Drafts from '../article/Drafts';
 import Draft from '../article/Draft';
@@ -74,7 +75,16 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes, connecting, footerHeight, headerHeight, location, sidebarWidth } = this.props;
+    const {
+      classes,
+      connecting,
+      footerHeight,
+      headerHeight,
+      location,
+      closeSidebar,
+      sidebarWidth,
+      sideBarOpened,
+    } = this.props;
     const isModal = !!(
       location.state &&
       location.state.modal &&
@@ -82,7 +92,7 @@ class App extends React.Component {
     );
     return (
       <ConnectingSplash connecting={connecting}>
-        <TwoColumn sidebarWidth={sidebarWidth}>
+        <TwoColumn sidebarWidth={sidebarWidth} isOpened={sideBarOpened} onToggle={closeSidebar}>
           <Sidebar />
           <React.Fragment>
             <Header height={headerHeight} />
@@ -111,6 +121,7 @@ class App extends React.Component {
             <Footer height={footerHeight} />
           </React.Fragment>
         </TwoColumn>
+        <Notifications position={toast.POSITION.BOTTOM_CENTER} />
       </ConnectingSplash>
     );
   }
@@ -125,6 +136,7 @@ const mapStateToProps = ({
     headerHeight,
     initializingContracts,
     network,
+    sideBarOpened,
     sidebarWidth,
   },
 }) => ({
@@ -135,11 +147,13 @@ const mapStateToProps = ({
   headerHeight,
   initializingContracts,
   network,
+  sideBarOpened,
   sidebarWidth,
 });
 
 const mapDispatchToProps = {
   connectToBlockchain,
+  closeSidebar,
   fetchAccountInformation,
 };
 

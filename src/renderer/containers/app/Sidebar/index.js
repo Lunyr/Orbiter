@@ -8,7 +8,7 @@ import styles from './styles';
 const Sidebar = ({ classes }) => (
   <div className={classes.container}>
     <header className={classes.header}>
-      <Logo hasTitle={true} size={25} />
+      <Logo hasTitle={true} size={20} />
     </header>
     <Navigation />
   </div>

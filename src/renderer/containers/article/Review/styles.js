@@ -87,4 +87,15 @@ export default (theme) => ({
     padding: 5,
     alignSelf: 'flex-start',
   },
+  toast__hash: {
+    width: 550,
+  },
+  etherscan: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  etherscan__link: {
+    marginTop: 10,
+    color: theme.colors.white,
+  },
 });

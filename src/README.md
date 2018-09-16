@@ -17,4 +17,4 @@ The single main process that spawns based on the property `main` within the pack
 ### `renderer`
 
 A folder that contains the entire client application. The entry point for the application is
-`index.html` which injects the script `root.js` which loads the root app component into the DOM.
+`index.html` which injects the script `index.js` which loads the root app component into the DOM.

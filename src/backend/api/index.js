@@ -43,10 +43,18 @@ export {
   associateTag,
   getTagAssociation,
 } from './tag';
-export { getDraft, getDraftByProposalId, setDraftToDraft, addDraft, editDraft } from './draft';
+export {
+  getDraft,
+  getDrafts,
+  getDraftByProposalId,
+  setDraftToDraft,
+  createDraft,
+  saveDraft,
+} from './draft';
 export { getFeed, getFeedArticlesAccepted, getFeedArticlesInReview, getFeedVotes } from './feed';
 export { getDiscover } from './discover';
 export { getUserSettings, setUserSetting } from './setting';
 export { searchArticles } from './search';
 export { authenticate } from './auth';
+
 export { default as Web3API } from './web3';

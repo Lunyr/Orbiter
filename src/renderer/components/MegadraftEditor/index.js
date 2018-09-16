@@ -1,6 +1,7 @@
 import React from 'react';
 import injectStyles from 'react-jss';
 import { editorStateFromRaw, editorStateToJSON, MegadraftEditor as Megadraft } from 'megadraft';
+import cx from 'classnames';
 import SectionTitlePlugin from 'megadraft-section-title';
 import UploadImagePlugin from 'megadraft-image-plugin';
 import VideoUploadPlugin from 'megadraft-video-plugin';
@@ -22,22 +23,20 @@ class MegadraftEditor extends React.Component {
 
   constructor(props) {
     super(props);
-    this.handleSaveEditor = debounce(this.handleSaveEditor, 1000);
+    this.handleSaveEditor = debounce(this.handleSaveEditor, 300);
   }
 
   static getDerivedStateFromProps(props, state) {
     try {
       const editorState = editorStateFromRaw(props.editorState, decorator);
-      if (
-        typeof state.editorState === 'undefined' ||
-        state.editorState.getCurrentContent() !== editorState.getCurrentContent()
-      ) {
+      if (typeof state.editorState === 'undefined') {
         return {
           editorState,
         };
       }
       return state;
     } catch (error) {
+      console.warn(error);
       return {
         editorState: editorStateFromRaw(null, decorator),
       };
@@ -45,11 +44,21 @@ class MegadraftEditor extends React.Component {
   }
 
   handleSaveEditor = () => {
-    this.props.onSave(editorStateToJSON(this.state.editorState));
+    // Take out a snippet to use as a description
+    const description = this.getDescription();
+    const wordCount = this.getArticleWordCount();
+    this.props.onSave(editorStateToJSON(this.state.editorState), description, wordCount);
   };
 
   handleEditorChange = (editorState) => {
     this.setState({ editorState }, this.handleSaveEditor);
+  };
+
+  getDescription = () => {
+    return this.state.editorState
+      .getCurrentContent()
+      .getPlainText()
+      .slice(0, 255);
   };
 
   getArticleWordCount = () => {
@@ -74,10 +83,10 @@ class MegadraftEditor extends React.Component {
   };
 
   render() {
-    const { addWordCount, classes, onUploadFile, onUpload, readOnly = false } = this.props;
+    const { classes, onUpload, onAfterUpload, readOnly = false } = this.props;
     const megadraftOptions = {
-      onUploadFile,
-      uploadCallback: onUpload,
+      uploadFile: onUpload,
+      uploadCallback: onAfterUpload,
     };
     const plugins = [
       SectionTitlePlugin,
@@ -87,9 +96,6 @@ class MegadraftEditor extends React.Component {
     return (
       <ErrorBoundary errorMsg="There was an error while trying to load the editor state">
         <div className={classes.editor}>
-          {addWordCount && (
-            <div className={classes.wordCount}>Words: {this.getArticleWordCount()}</div>
-          )}
           <Megadraft
             actions={actions}
             customStyleMap={customStyleMap}

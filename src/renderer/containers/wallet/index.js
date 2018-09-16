@@ -3,27 +3,39 @@ import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import get from 'lodash/get';
 import { MdStars as StarIcon } from 'react-icons/md/';
+import { fetchAccountInformation } from '../../../shared/redux/modules/wallet/actions';
 import { ButtonGroup, Button } from '../../components';
 import WalletTable from './WalletTable';
 import styles from './styles';
 
 class Wallet extends React.PureComponent {
+  load = () => {
+    this.props.fetchAccountInformation(get(this.props.wallet, 'address'));
+  };
+
+  componentDidMount() {
+    this.load();
+  }
+
   render() {
     const { classes, wallet } = this.props;
     return (
       <div className={classes.container}>
         <header className={classes.header}>
           <div className={classes.header__top}>
-            <h1 className={classes.header__title}>Wallet</h1>
+            <h1 className={classes.header__title}>My Wallet</h1>
             <ButtonGroup>
+              <Button onClick={this.load} type="button" value="Refresh" />
+              {/*
               <Button type="button" theme="primary" value="Private Key" />
               <Button type="button" theme="primary" value="Withdraw Funds" />
+              */}
             </ButtonGroup>
           </div>
         </header>
         <div className={classes.content}>
           <section className={classes.section}>
-            <h2 className={classes.section__title}>Balances</h2>
+            <h2 className={classes.section__title}>My Balances</h2>
             <div className={classes.section__content}>
               <WalletTable
                 data={[
@@ -75,7 +87,7 @@ class Wallet extends React.PureComponent {
             </div>
           </section>
           <section className={classes.section}>
-            <h2 className={classes.section__title}>Rewards</h2>
+            <h2 className={classes.section__title}>My Rewards</h2>
             <div className={classes.section__content}>
               <WalletTable
                 data={[
@@ -116,6 +128,79 @@ class Wallet extends React.PureComponent {
               />
             </div>
           </section>
+          <section className={classes.section}>
+            <h2 className={classes.section__title}>Lunyr Rewards and Punishments</h2>
+            <div className={classes.section__content}>
+              <WalletTable
+                data={[
+                  {
+                    type: 'Voted with Majority (CP)',
+                    value: get(wallet, ['environment', 'majorityVoteCpReward']),
+                  },
+                  {
+                    type: 'Vote with Minority (CP)',
+                    value: -get(wallet, ['environment', 'minorityVoteCpPunishment']),
+                  },
+                  {
+                    type: 'Voted with Majority (HP)',
+                    value: get(wallet, ['environment', 'majorityVoteHpReward']),
+                  },
+                  {
+                    type: 'Vote with Minority (HP)',
+                    value: -get(wallet, ['environment', 'minorityVoteHpPunishment']),
+                  },
+                  {
+                    type: 'Create Article (CP)',
+                    value: get(wallet, ['environment', 'createCpReward']),
+                  },
+                  {
+                    type: 'Create Article (HP)',
+                    value: get(wallet, ['environment', 'createHpReward']),
+                  },
+                  {
+                    type: 'Edit Article (CP)',
+                    value: get(wallet, ['environment', 'editCpReward']),
+                  },
+                  {
+                    type: 'Edit Article (HP)',
+                    value: get(wallet, ['environment', 'editHpReward']),
+                  },
+                  {
+                    type: 'Rejected Article (CP)',
+                    value: get(wallet, ['environment', 'rejectCpPunishment']),
+                  },
+                  {
+                    type: 'Rejected Article (HP)',
+                    value: -get(wallet, ['environment', 'rejectHpPunishment']),
+                  },
+                ]}
+                columns={[
+                  {
+                    id: 'programType',
+                    Header: 'Type',
+                    accessor: 'type',
+                    Cell: ({ value }) => {
+                      return (
+                        <div className={classes.name}>
+                          <span>{value}</span>
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    id: 'programValue',
+                    Header: 'Value',
+                    accessor: 'value',
+                    Cell: ({ value }) => (
+                      <div className={classes.balance}>
+                        <span>{value}</span>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </div>
+          </section>
         </div>
       </div>
     );
@@ -124,4 +209,7 @@ class Wallet extends React.PureComponent {
 
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
-export default connect(mapStateToProps)(injectStyles(styles)(Wallet));
+export default connect(
+  mapStateToProps,
+  { fetchAccountInformation }
+)(injectStyles(styles)(Wallet));

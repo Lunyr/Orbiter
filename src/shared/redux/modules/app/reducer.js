@@ -8,6 +8,7 @@ const initialState = {
   footerHeight: 70,
   name: 'Orbiter',
   network: null,
+  sideBarOpened: true,
   sidebarWidth: 175,
   version: process.env.BUILD_TAG || packageJson.version,
   queue: {
@@ -45,6 +46,20 @@ const appReducer = (state = initialState, action) => {
       return {
         ...state,
         connecting: false,
+      };
+    }
+
+    case actions.OPEN_SIDEBAR: {
+      return {
+        ...state,
+        sideBarOpened: true,
+      };
+    }
+
+    case actions.CLOSE_SIDEBAR: {
+      return {
+        ...state,
+        sideBarOpened: false,
       };
     }
 

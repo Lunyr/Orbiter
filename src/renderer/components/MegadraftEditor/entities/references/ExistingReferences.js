@@ -3,6 +3,7 @@
  * @craiglu
  */
 
+/*
 import React from 'react';
 
 // NPM Modules
@@ -14,7 +15,7 @@ import ReferenceFormatter from '../../references/ReferenceFormatter';
 export default class ExistingReferences extends React.Component {
   render() {
     return (
-      <div className={css(styles.existingReferencesContainer)}>
+      <div className={classes.existingReferencesContainer)}>
         {this.props.referenceArray
           ? this.props.referenceArray.map((reference, index) => {
               return (
@@ -22,25 +23,25 @@ export default class ExistingReferences extends React.Component {
                   key={`existing_reference_${reference.block_key}_${reference.endOffset}_${
                     reference.creation_date
                   }_${reference.update_date}`}
-                  className={css(styles.referenceContainer)}
+                  className={classes.referenceContainer)}
                 >
-                  <div className={css(styles.reference)}>
-                    <span className={css(styles.referenceNumber)}>{reference.refNum}</span>
-                    <div className={css(styles.referenceInfoContainer)}>
-                      <span className={css(styles.referenceInfo)}>
+                  <div className={classes.reference)}>
+                    <span className={classes.referenceNumber)}>{reference.refNum}</span>
+                    <div className={classes.referenceInfoContainer)}>
+                      <span className={classes.referenceInfo)}>
                         <ReferenceFormatter reference={reference} />
                       </span>
                     </div>
                   </div>
-                  <div className={css(styles.iconsContainer)}>
+                  <div className={classes.iconsContainer)}>
                     <i
                       onClick={() => this.props.editButton(index)}
-                      className={css(styles.icon) + ' fa fa-pencil-square-o'}
+                      className={classes.icon) + ' fa fa-pencil-square-o'}
                       aria-hidden="true"
                     />
                     <i
                       onClick={() => this.props.removeReference(index)}
-                      className={css(styles.icon) + ' fa fa-trash-o'}
+                      className={classes.icon) + ' fa fa-trash-o'}
                       aria-hidden="true"
                     />
                   </div>
@@ -103,3 +104,4 @@ const styles = StyleSheet.create({
     },
   },
 });
+*/

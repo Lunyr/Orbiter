@@ -8,7 +8,7 @@ import { MdWarning as WarningIcon } from 'react-icons/md';
 
 class ReviewSideSequence extends React.Component {
   render() {
-    const { account, classes, eligibility, isAuthor } = this.props;
+    const { account, classes, eligibility, isAuthor, onSubmit } = this.props;
     return (
       <div className={cx({ [classes.reviewSideSequence]: true, [classes.hide]: isAuthor })}>
         <div className={classes.reviewSection}>
@@ -31,7 +31,7 @@ class ReviewSideSequence extends React.Component {
               </p>
             </div>
           ) : (
-            <ReviewSequence {...eligibility} />
+            <ReviewSequence {...eligibility} onSubmit={onSubmit} />
           )}
         </div>
       </div>

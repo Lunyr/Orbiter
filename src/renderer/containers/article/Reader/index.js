@@ -17,8 +17,8 @@ import References from '../references/References';
 import styles from './styles';
 
 class Reader extends React.Component {
-  load = () => {
-    this.props.fetchArticleByTitle(this.props.titleParam);
+  load = (titleParam) => {
+    this.props.fetchArticleByTitle(titleParam);
   };
 
   render() {
@@ -104,12 +104,7 @@ const assembleArticle = (article) => {
   if (!article) {
     return {};
   }
-  const { additionalContent, ...rest } = article;
-  const parsedAdditionalContent = deserializeAdditionalContent(additionalContent);
-  return {
-    ...rest,
-    additionalContent: parsedAdditionalContent,
-  };
+  return article;
 };
 
 const mapStateToProps = (

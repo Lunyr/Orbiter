@@ -21,6 +21,7 @@ export { default as Link } from './Link';
 export { default as LoadingIndicator } from './LoadingIndicator';
 export { default as Logo } from './Logo';
 export { default as MegadraftEditor } from './MegadraftEditor';
+export { default as MinimumFader } from './MinimumFader';
 export { default as Modal } from './Modal';
 export { default as NavList } from './NavList';
 export { default as Page } from './Page';
@@ -35,3 +36,6 @@ export { default as AutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer/
 export { default as AutosizeInput } from 'react-input-autosize';
 export { default as List } from 'react-virtualized/dist/commonjs/List/List';
 export { default as Table } from 'react-table';
+export { ToastContainer as Notifications } from 'react-toastify';
+export { default as Tooltip } from 'react-tooltip';
+export { default as Slider } from 'rc-slider';

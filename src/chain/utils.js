@@ -5,7 +5,7 @@ import { getLogger } from '../lib/logger';
 import { settings } from '../shared/settings';
 import { handleError } from '../shared/handlers';
 import { getWatch, setWatchState } from '../backend/api';
-import { TxState, TxType } from '../shared/constants';
+import { TxState } from '../shared/constants';
 
 const log = getLogger('events-utils');
 const ipfs = ipfsAPI(settings.ipfs.host, settings.ipfs.port, { protocol: 'https' });

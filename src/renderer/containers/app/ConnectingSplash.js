@@ -63,7 +63,7 @@ class ConnectingSplash extends React.Component {
         )}
       </div>
     ) : (
-      React.Children.only(children)
+      children
     );
   }
 }

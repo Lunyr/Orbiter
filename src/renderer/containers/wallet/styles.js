@@ -10,12 +10,9 @@ export default (theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     flexShrink: 0,
-    backgroundColor: theme.colors.white,
     padding: theme.spacing * 2,
-    boxShadow: theme.boxShadows.small,
-    position: 'sticky',
+    paddingBottom: 0,
     zIndex: 1,
-    top: 0,
   },
   header__top: {
     display: 'flex',

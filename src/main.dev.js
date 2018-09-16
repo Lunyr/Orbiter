@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, globalShortcut } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import findProcess from 'find-process';
 import installExtensions from './main/installExtensions';
 import windowConfig from './main/windowConfig';
@@ -122,12 +122,12 @@ const readyHandler = async () => {
     }
   });
 
-  mainWindow.webContents.on('crashed', (e, killed) => {
-    console.log('CRASHED', e, killed);
+  mainWindow.webContents.on('crashed', (err, killed) => {
+    log.error({ err, killed }, 'CRASHED');
   });
 
-  mainWindow.webContents.on('did-fail-load', (e, errCode, errDesc) => {
-    console.log('FAILED TO LOAD', e, errCode, errDesc);
+  mainWindow.webContents.on('did-fail-load', (err, errCode, errDesc) => {
+    log.error({ err, errCode, errDesc }, 'FAILED TO LOAD');
     // Attempt to reload the url again
     if (mainWindow) {
       mainWindow.loadURL(`file://${__dirname}/index.html`);
@@ -135,15 +135,15 @@ const readyHandler = async () => {
   });
 
   mainWindow.webContents.on('unresponsive', () => {
-    console.log('UNRESPONSIVE');
+    log.info('UNRESPONSIVE');
   });
 
   mainWindow.webContents.on('destroyed', () => {
-    console.log('DESTROYED');
+    log.info('DESTROYED');
   });
 
-  mainWindow.webContents.on('plugin-crashed', (e, name, vers) => {
-    console.log('PLUGIN CRASHED', e, name, vers);
+  mainWindow.webContents.on('plugin-crashed', (err, name, vers) => {
+    log.error({ err, name, vers }, 'PLUGIN CRASHED');
   });
 
   if (isDevelopment) {

@@ -21,10 +21,34 @@ export default (theme) => ({
   editor: {
     position: 'relative',
   },
-  wordCount: {
-    ...theme.typography.help,
-    position: 'absolute',
-    right: 20,
-    top: -15,
+  editor__details: {
+    display: 'flex',
+    right: theme.spacing,
+    position: 'sticky',
+    top: 2,
+    zIndex: 999,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: 35,
+    paddingRight: theme.spacing,
+    backgroundColor: theme.colors.white,
+  },
+  details__text: {
+    display: 'flex',
+    ...theme.typography.small,
+    margin: 0,
+    marginLeft: theme.spacing,
+    color: theme.colors.black,
+    textTransform: 'uppercase',
+    transition: 'opacity 0.3s ease-out',
+  },
+  saver: {
+    opacity: 1,
+  },
+  invisible: {
+    opacity: 0,
+  },
+  hidden: {
+    display: 'none',
   },
 });

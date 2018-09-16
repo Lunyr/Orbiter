@@ -195,7 +195,7 @@ const getConfigDir = () => {
 const getAPIRoot = () => {
   if (typeof process.env.API_ROOT !== 'undefined') {
     return process.env.API_ROOT;
-  } else if (isDevelopment) {
+  } else if (isDevelopment()) {
     return 'https://testapi.lunyr.com/';
   }
   return 'https://api.lunyr.com/';
