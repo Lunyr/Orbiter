@@ -20,7 +20,7 @@ export const getDraft = async (uuid) => {
 
     return {
       success: true,
-      data: data ? data[0] : {},
+      data: data ? data[0] : null,
     };
   } catch (error) {
     return {
@@ -44,7 +44,7 @@ export const getDrafts = async () => {
 
     return {
       success: true,
-      data: data.length > 0 ? data[0] : null,
+      data,
     };
   } catch (error) {
     return {

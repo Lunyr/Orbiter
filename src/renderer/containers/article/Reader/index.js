@@ -117,7 +117,7 @@ const mapStateToProps = (
     match: {
       params: { title: titleParam },
     },
-  }
+  },
 ) => ({
   article: assembleArticle(data),
   error,
@@ -131,5 +131,5 @@ const mapDispatchToProps = {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(injectIntl(injectStyles(styles)(Reader)));

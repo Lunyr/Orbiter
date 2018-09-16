@@ -7,6 +7,7 @@
   "license": "MIT",
   "main": "./src/main.prod.js",
   "dependencies": {
+    "babel-cli": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "better-react-spinkit": "^2.0.4",
     "bignumber.js": "^7.2.1",
@@ -28,6 +29,7 @@
     "megadraft-section-title": "^0.3.1",
     "megadraft-video-plugin": "^0.4.2",
     "mkdirp": "^0.5.1",
+    "mocha-webpack": "^1.1.0",
     "moment": "^2.22.2",
     "multihashes": "^0.4.14",
     "ordered-hashmap": "^1.0.0",
@@ -76,7 +78,6 @@
   },
   "devDependencies": {
     "abi-decoder": "^1.1.0",
-    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^7.1.5",
