@@ -9,11 +9,12 @@ import { default as settings } from '../shared/defaults';
 const log = getLogger('ChainDaemon');
 
 export default class ChainDaemon {
-  //static path = path.resolve(__dirname, '../chain/chain-daemon.js');
-  static path = settings.isDevelopment
+  static path = path.resolve(__dirname, '../chain/chain-daemon.js');
+
+  /*static path = settings.isDevelopment
     ? path.resolve(__dirname, '../chain/chain-daemon.js')
     : path.resolve(process.resourcesPath, 'app/chain-daemon.prod.js');
-
+  */
   subprocess = undefined;
 
   handlers = [];
