@@ -7,7 +7,6 @@
   "license": "MIT",
   "main": "./src/main.prod.js",
   "dependencies": {
-    "babel-cli": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "better-react-spinkit": "^2.0.4",
     "bignumber.js": "^7.2.1",
@@ -73,12 +72,12 @@
     "redux-thunk": "^2.3.0",
     "sentry": "^0.1.2",
     "through2": "^2.0.3",
-    "uuid": "^3.3.2",
-    "websocket": "^1.0.26"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "abi-decoder": "^1.1.0",
     "babel-core": "^6.26.3",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.6",
     "babel-loader": "^7.1.5",
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -212,20 +211,13 @@
     "extends": null,
     "productName": "Orbiter",
     "appId": "com.lunyr.orbiter",
-    "publish": {
-      "provider": "s3",
-      "bucket": "lunyr-electron",
-      "endpoint": "https://s3-us-west-2.amazonaws.com/lunyr-electron/"
-    },
     "asar": false,
     "files": [
-      "src/",
-      "dist/",
-      "node_modules/",
+      "src/**/*",
+      "dist/**/*",
       "index.html",
       "main.prod.js",
       "main.prod.js.map",
-      "package.json",
       "chain-daemon.prod.js",
       "node_modules/**/*",
       "node_modules/.bin/*",

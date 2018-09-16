@@ -4,7 +4,7 @@ import { fork, execSync, spawn } from 'child_process';
 import eventsQueue from '../lib/queuelite';
 import { getLogger } from '../lib/logger';
 import { handleError } from '../shared/handlers';
-import { default as settings } from '../shared/defaults';
+// import { default as settings } from '../shared/defaults';
 
 const log = getLogger('ChainDaemon');
 
@@ -46,7 +46,7 @@ export default class ChainDaemon {
     */
 
     this.subprocess = spawn('babel-node', [ChainDaemon.path], {
-      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+      stdio: ['pipe', 'inherit', 'inherit'],
     });
 
     this.subprocess.on('exit', () => this.fire('exit'));
