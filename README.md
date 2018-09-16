@@ -2,7 +2,11 @@
 
 [![CircleCI](https://circleci.com/gh/Lunyr/Orbiter/tree/master.svg?style=svg&circle-token=3b4d992ec4996123226a816aaba2b7da60bce6ea)](https://circleci.com/gh/Lunyr/Orbiter/tree/master)
 
-A decentralized Lunyr electron application 
+A decentralized Lunyr electron application
+
+**This is experimental software. There are known issues, missing functionality, and some components
+may not work.** There will be continuous work on Orbiter going forward but for the time being it is
+not a replacement for the Web app at [lunyr.com](https://lunyr.com/).
 
 ## Development
 
@@ -14,9 +18,9 @@ yarn install && yarn start
 
 Toggle DevTools:
 
-* OSX: <kbd>Cmd</kbd> <kbd>Alt</kbd> <kbd>I</kbd> or <kbd>F12</kbd>
-* Linux: <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>I</kbd> or <kbd>F12</kbd>
-* Windows: <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>I</kbd> or <kbd>F12</kbd>
+- OSX: <kbd>Cmd</kbd> <kbd>Alt</kbd> <kbd>I</kbd> or <kbd>F12</kbd>
+- Linux: <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>I</kbd> or <kbd>F12</kbd>
+- Windows: <kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>I</kbd> or <kbd>F12</kbd>
 
 ## Packaging
 
@@ -25,11 +29,13 @@ Modify [electron-builder.yml](./electron-builder.yml) to edit package info.
 For a full list of options see: https://www.electron.build/configuration/configuration
 
 Create a package for OSX, Windows and Linux
+
 ```
 yarn pack
 ```
 
 Or target a specific platform
+
 ```
 yarn pack:mac
 yarn pack:win
