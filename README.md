@@ -5,8 +5,7 @@
 A decentralized Lunyr electron application
 
 **This is experimental software. There are known issues, missing functionality, and some components
-may not work.** There will be continuous work on Orbiter going forward but for the time being it is
-not a replacement for the Web app at [lunyr.com](https://lunyr.com/).
+may not work.** There will be continuous work on Orbiter going forward.
 
 ## Development
 
