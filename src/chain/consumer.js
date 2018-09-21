@@ -278,6 +278,7 @@ export default async (queue) => {
       })
     );
   } catch (error) {
+    console.log(error);
     log.error({ error: error.message }, 'Error initializing consumer');
     return error;
   }

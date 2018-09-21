@@ -61,7 +61,7 @@ const SyncProgressBar = ({ classes, progress = 0, remaining }) => (
 
 class Footer extends React.PureComponent {
   statusIntervals = {
-    progress: 1000, // ping every 1 seconds while in progress to get a smoother update on progress bar
+    progress: 3000, // ping every 3 seconds while in progress to get a smoother update on progress bar
     ping: 60000, // ping every 60 seconds by default
   };
 

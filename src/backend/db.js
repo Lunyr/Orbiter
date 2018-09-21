@@ -27,6 +27,13 @@ const db = knex({
     filename: DB_FILE,
     dateStrings: true,
   },
+  pool: {
+    afterCreate: (conn, done) => {
+      conn.run('PRAGMA busy_timeout = 6000;', (err, res) => {
+        done(err, conn);
+      });
+    }
+  },
   useNullAsDefault: true,
   acquireConnectionTimeout: 5000,
 });

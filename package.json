@@ -4,7 +4,7 @@
   "description": "Ethereum-based Encyclopedia",
   "author": "Lunyr Inc <support@lunyr.com> (https://lunyr.com)",
   "repository": "https://github.com/Lunyr/Orbiter",
-  "license": "MIT",
+  "license": "GPLv3",
   "main": "./src/main.prod.js",
   "dependencies": {
     "babel-runtime": "^6.26.0",
@@ -135,6 +135,7 @@
     "lint-staged": "^7.2.0",
     "mini-css-extract-plugin": "^0.4.1",
     "minimist": "^1.2.0",
+    "node-fetch": "^2.2.0",
     "npm-logical-tree": "^1.2.1",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
     "prettier": "^1.14.0",
@@ -185,7 +186,7 @@
     "start": "cross-env NODE_ENV=production electron -r babel-register ./src/index.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./src/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
-    "compile": "babel src/ --copy-files --out-dir build --ignore build,node_modules",
+    "compile": "babel src/ --copy-files --out-dir build --ignore *.prod.js,dist,build,node_modules",
     "test": "yarn run compile && ./node_modules/.bin/electron-mocha --renderer -R spec --require babel-register --require test/mocha.env.js",
     "test-all": "yarn lint && yarn build && yarn test && yarn test-e2e",
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
@@ -209,20 +210,24 @@
     "appId": "com.lunyr.orbiter",
     "asar": false,
     "files": [
-      "src/**/*",
-      "dist/**/*",
+      "src/node_modules/",
+      "src/",
       "index.html",
       "main.prod.js",
       "main.prod.js.map",
       "chain-daemon.prod.js",
-      "node_modules/**/*",
-      "node_modules/.bin/*",
+      "node_modules/",
       "package.json"
     ],
     "extraFiles": [
-      "src/chain/*.js",
-      "src/chain/handlers/*.js",
-      "src/chain/.babelrc"
+      {
+        "from": "src/node_modules",
+        "to": "resources/app/node_modules"
+      },
+      {
+        "from": "node_modules/electron/dist",
+        "to": "usr/lib/electron"
+      }
     ],
     "mac": {
       "category": "public.app-category.reference",

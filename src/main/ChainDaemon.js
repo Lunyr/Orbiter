@@ -4,17 +4,17 @@ import { fork, execSync, spawn } from 'child_process';
 import eventsQueue from '../lib/queuelite';
 import { getLogger } from '../lib/logger';
 import { handleError } from '../shared/handlers';
-// import { default as settings } from '../shared/defaults';
+import { default as settings } from '../shared/defaults';
 
 const log = getLogger('ChainDaemon');
 
 export default class ChainDaemon {
-  static path = path.resolve(__dirname, '../chain/chain-daemon.js');
-
-  /*static path = settings.isDevelopment
+  static path = settings.isDevelopment
     ? path.resolve(__dirname, '../chain/chain-daemon.js')
-    : path.resolve(process.resourcesPath, 'app/chain-daemon.prod.js');
-  */
+    : path.resolve(process.resourcesPath, 'app/src/chain-daemon.prod.js');
+  static execPath = settings.isDevelopment
+    ? 'electron'
+    : path.resolve(process.resourcesPath, '../usr/lib/electron/electron');
   subprocess = undefined;
 
   handlers = [];
@@ -24,28 +24,12 @@ export default class ChainDaemon {
       {
         dirname: __dirname,
         path: ChainDaemon.path,
-        execPath: process.execPath,
+        execPath: ChainDaemon.execPath,
       },
       'Launching daemon'
     );
 
-    /*this.subprocess = spawn(path.resolve(
-      process.resourcesPath,
-      'app/node_modules/.bin/electron'
-    ), [ChainDaemon.path], {
-      stdio: ['pipe', 'inherit', 'inherit'],
-    });*/
-
-    /*
-    this.subprocess = fork(ChainDaemon.path, null, {
-      stdio: ['pipe', 'inherit', 'inherit'],
-      env: {
-        ELECTRON_RUN_AS_NODE: undefined,
-      },
-    });
-    */
-
-    this.subprocess = spawn('babel-node', [ChainDaemon.path], {
+    this.subprocess = spawn(ChainDaemon.execPath, [ChainDaemon.path], {
       stdio: ['pipe', 'inherit', 'inherit'],
     });
 
@@ -101,15 +85,23 @@ export default class ChainDaemon {
         clearStatusInterval();
         // Closure to poll for the status information
         const statusPoller = async () => {
-          const status = await queue.status();
-          // Determine whether or not to change up the interval to be a
-          // little quicker if we are currently in the middle of processing
-          event.sender.send('queue-status-data', JSON.stringify(status));
-          log.debug({ status }, 'Emitted queue status');
+          try {
+            const status = await queue.status();
+            // Determine whether or not to change up the interval to be a
+            // little quicker if we are currently in the middle of processing
+            event.sender.send('queue-status-data', JSON.stringify(status));
+            log.debug({ status }, 'Emitted queue status');
+          } catch (err) {
+            if (err && err.message && err.message.indexOf('SQLITE_BUSY') > -1) {
+              log.debug("DB locked and unable to get status");
+            } else {
+              throw err;
+            }
+          }
         };
         // Emit status indicator every 10 seconds
         statusIntervalId = setInterval(statusPoller, pingInterval);
-        log.info({ pingInterval }, 'Spawaning queue status listener');
+        log.info({ pingInterval }, 'Spawning queue status listener');
         statusListenerInitialized = true;
         // Call once
         return statusPoller();

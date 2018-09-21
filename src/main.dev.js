@@ -123,6 +123,7 @@ const readyHandler = async () => {
   });
 
   mainWindow.webContents.on('crashed', (err, killed) => {
+    if (chainDaemon) chainDaemon.quit();
     log.error({ err, killed }, 'CRASHED');
   });
 
@@ -139,6 +140,7 @@ const readyHandler = async () => {
   });
 
   mainWindow.webContents.on('destroyed', () => {
+    if (chainDaemon) chainDaemon.quit();
     log.info('DESTROYED');
   });
 
