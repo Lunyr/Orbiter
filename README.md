@@ -9,14 +9,12 @@ may not work.** There will be continuous work on Orbiter going forward.
 
 ## Download
 
-| Release | IPFS Hash | | -------------------------------- +
-------------------------------------------------- | | 0.0.2 - Linux x86-64 (AppImage) |
-[QmPm3dzLze3BeBqXvAv8TsGT6WXJy7Ta27pAXnTHooujav](https://ipfs.io/ipfs/QmPm3dzLze3BeBqXvAv8TsGT6WXJy7Ta27pAXnTHooujav)
-| | 0.0.2 - Linux x86-64 (deb) |
-[QmP44uLACUrhwRQbpvDAGe19PQpsHtcSdec5gpjKRvHtm3](https://ipfs.io/ipfs/QmP44uLACUrhwRQbpvDAGe19PQpsHtcSdec5gpjKRvHtm3)
-| | 0.0.2 - Windows Universal |
-[Qmdc4cUdUuSABkdwi6Xh3w9EdAHvNZxzN23AQzFNqNrRod](https://ipfs.io/ipfs/Qmdc4cUdUuSABkdwi6Xh3w9EdAHvNZxzN23AQzFNqNrRod)
-| | 0.0.2 - OSX x86-64 | - |
+| Release                          | IPFS Hash                                         |
+| -------------------------------- | ------------------------------------------------- |
+| 0.0.2 - Linux x86-64 (AppImage)  | [QmPm3dzLze3BeBqXvAv8TsGT6WXJy7Ta27pAXnTHooujav](https://ipfs.io/ipfs/QmPm3dzLze3BeBqXvAv8TsGT6WXJy7Ta27pAXnTHooujav) |
+| 0.0.2 - Linux x86-64 (deb)       | [QmP44uLACUrhwRQbpvDAGe19PQpsHtcSdec5gpjKRvHtm3](https://ipfs.io/ipfs/QmP44uLACUrhwRQbpvDAGe19PQpsHtcSdec5gpjKRvHtm3) |
+| 0.0.2 - Windows Universal        | [Qmdc4cUdUuSABkdwi6Xh3w9EdAHvNZxzN23AQzFNqNrRod](https://ipfs.io/ipfs/Qmdc4cUdUuSABkdwi6Xh3w9EdAHvNZxzN23AQzFNqNrRod) |
+| 0.0.2 - OSX x86-64               | -                                                 |
 
 ## Development
 
