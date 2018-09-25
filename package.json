@@ -4,7 +4,7 @@
   "description": "Ethereum-based Encyclopedia",
   "author": "Lunyr Inc <support@lunyr.com> (https://lunyr.com)",
   "repository": "https://github.com/Lunyr/Orbiter",
-  "license": "GPLv3",
+  "license": "GPL-3.0-or-later",
   "main": "./src/main.prod.js",
   "dependencies": {
     "babel-runtime": "^6.26.0",
