@@ -7,14 +7,17 @@ import { toast } from 'react-toastify';
 import { connectToBlockchain, closeSidebar } from '../../../shared/redux/modules/app/actions';
 import { fetchAccountInformation } from '../../../shared/redux/modules/wallet/actions';
 import { TwoColumn, Notifications } from '../../components';
+import Advertising from '../advertising/';
 import Articles from '../article/Articles';
 import Drafts from '../article/Drafts';
 import Draft from '../article/Draft';
 import Feed from '../feed/Feed';
+import PeerReview from '../review/';
 import Proposal from '../article/Proposal';
 import Reader from '../article/Reader';
 import Rejected from '../article/Rejected';
 import Review from '../article/Review';
+import Tagging from '../tagging/';
 import Login from '../auth/Login/';
 import Logout from '../auth/Logout/';
 import Wallet from '../wallet/';
@@ -107,9 +110,9 @@ class App extends React.Component {
                 <Route exact path="/rejected/:id" component={Rejected} />
                 <Route exact path="/review/:proposalId/:title" component={Review} />
                 <Route exact path="/articles" component={Articles} />
-                <Route exact path="/articles/unreviewed" component={() => <div>Peer Review</div>} />
-                <Route exact path="/tagging" component={() => <div>Tagging</div>} />
-                <Route exact path="/advertising" component={() => <div>Advertising</div>} />
+                <Route exact path="/articles/unreviewed" component={PeerReview} />
+                <Route exact path="/tagging" component={Tagging} />
+                <Route exact path="/advertising" component={Advertising} />
                 <Route exact path="/about" component={About} />
                 <Route exact path="/faq" component={FAQ} />
                 <Route exact path="/announcements" component={Announcements} />
