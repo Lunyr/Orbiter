@@ -36,7 +36,7 @@ const TagsView = ({ classes, onApproval, selected, tags = [] }) => (
                   )}
                 </React.Fragment>
               ) : (
-                <Label type="lightBlue" value={articleCount} styles={{ label: styles.label }} />
+                <Label className={classes.tag__count} type="primary" value={articleCount || 0} />
               )}
             </li>
           ))}
@@ -115,6 +115,13 @@ const styles = (theme) => ({
   },
   label: {
     borderRadius: 100,
+  },
+  tag__count: {
+    height: 25,
+    width: 25,
+    borderRadius: 100,
+    color: theme.colors.white,
+    padding: 0,
   },
 });
 

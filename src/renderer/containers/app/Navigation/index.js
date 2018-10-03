@@ -150,6 +150,7 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         icon: <PencilIcon />,
         target: '_blank',
       },
+      /*
       {
         to: '/advertising',
         display: intl.formatMessage({
@@ -158,6 +159,7 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         }),
         icon: <FlagIcon />,
       },
+      */
       {
         to: '/about',
         display: intl.formatMessage({

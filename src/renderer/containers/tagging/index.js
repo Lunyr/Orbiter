@@ -180,9 +180,8 @@ class Tagging extends React.Component {
   };
   
   render() {
-    const { approveModal, approvedTag, proposedTag, tagRestrictions, usersHP } = this.state;
+    const { tagRestrictions, usersHP } = this.state;
     const { classes, fetching, selected, tags } = this.props;
-    console.log('this.props', this.props);
     return (
       <div className={classes.container}>
         <div className={classes.header}>
