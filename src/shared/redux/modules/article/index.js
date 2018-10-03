@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import draft from './draft/reducer';
+import proposals from './proposals/reducer';
 import reader from './reader/reducer';
 import review from './review/reducer';
 
@@ -9,6 +10,7 @@ import review from './review/reducer';
 
 export default combineReducers({
   draft,
+  proposals,
   reader,
   review,
 });

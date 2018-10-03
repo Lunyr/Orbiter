@@ -1,0 +1,23 @@
+.rc-slider-disabled {
+    background-color: transparent;
+}
+
+.rc-slider-disabled .rc-slider-handle,
+.rc-slider-disabled .rc-slider-dot {
+    cursor: auto;
+}
+
+.ReactModal__Body--open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.react-calendar__tile:disabled {
+    border-radius: 0px;
+}
+
+.react-calendar__navigation button:disabled {
+    border-radius: 0px;
+}

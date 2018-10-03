@@ -1,0 +1,46 @@
+/***
+ * Stylesheet to customize react-table
+ * @patr -- patrick@quantfive.org
+ */
+
+.rt-resizer {
+    display: none !important;
+}
+
+.rt-resizable-header-content {
+    text-align: left;
+}
+
+.rt-noData {
+    display: none !important;
+}
+
+.rt-resizable-header {
+    border-right: none !important;
+    font-size: 11px;
+    color: #8D8E90;
+}
+
+.header {
+    border-right: none !important;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-x: auto !important;
+    white-space: nowrap;
+}
+
+.pagination-bottom {
+    display: none !important;
+}
+
+.ReactTable {
+    border: none !important;
+}
+
+.-header {
+    box-shadow: none !important;
+    border-bottom: 1px solid #eee;
+}

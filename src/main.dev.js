@@ -23,7 +23,6 @@ global.web3 = null;
 // Initialize some globals so they dont get garbage collected
 let mainWindow = null;
 let store = null;
-let testSeed = false;
 let chainDaemon = null;
 let forceQuit = true;
 

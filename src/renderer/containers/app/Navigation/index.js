@@ -9,9 +9,9 @@ import {
   //FaBullhorn as BullhornIcon,
   FaComment as CommentIcon,
   FaEdit as EditIcon,
-  //FaFlag as FlagIcon,
+  FaFlag as FlagIcon,
   //FaStar as StarIcon,
-  //FaThumbsUp as ThumbsUpIcon,
+  FaThumbsUp as ThumbsUpIcon,
   //FaDesktop as DesktopIcon,
   FaPencilAlt as PencilIcon,
   FaTag as TagIcon,
@@ -125,7 +125,6 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         ]
       : [],
     pageLinks: [
-      /*
       {
         to: '/articles/unreviewed',
         display: intl.formatMessage({
@@ -142,7 +141,6 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         }),
         icon: <TagIcon />,
       },
-      */
       {
         to: 'https://lunyragent.gitbooks.io/lunyr-manual/content/',
         display: intl.formatMessage({

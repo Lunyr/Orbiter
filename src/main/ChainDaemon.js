@@ -12,9 +12,11 @@ export default class ChainDaemon {
   static path = settings.isDevelopment
     ? path.resolve(__dirname, '../chain/chain-daemon.js')
     : path.resolve(process.resourcesPath, 'app/src/chain-daemon.prod.js');
+
   static execPath = settings.isDevelopment
-    ? 'electron'
+    ? 'babel-node'
     : path.resolve(process.resourcesPath, '../usr/lib/electron/electron');
+
   subprocess = undefined;
 
   handlers = [];
@@ -93,7 +95,7 @@ export default class ChainDaemon {
             log.debug({ status }, 'Emitted queue status');
           } catch (err) {
             if (err && err.message && err.message.indexOf('SQLITE_BUSY') > -1) {
-              log.debug("DB locked and unable to get status");
+              log.debug('DB locked and unable to get status');
             } else {
               throw err;
             }
