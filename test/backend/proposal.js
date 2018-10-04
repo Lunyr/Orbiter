@@ -11,6 +11,7 @@ const {
   getProposalsWrittenBy,
   getProposalsInReviewBy,
   getProposalsInReview,
+  getProposalsStats,
 } = require('../../build/backend/api');
 const mock = require('../mock');
 const { ProposalState } = require('../../build/shared/constants');
@@ -214,5 +215,29 @@ describe('Proposal Data API', () => {
       afterResult.data.additionalContent,
       "Proposal's additionalContent should be an Array",
     );
+  });
+
+  it('should return proposal statistics without user', async () => {
+    const result = await getProposalsStats();
+    assert(result.success, result.error);
+    console.log("result.data.reviewed", result.data.reviewed);
+    assert.isAbove(result.data.reviewed, 0, 'Should have some reviewed proposals');
+    assert.isAbove(result.data.submitted, 0, 'Should have some proposals');
+    assert.isAbove(result.data.unreviewed, 0, 'Should have some unreviewed proposals');
+    assert.isNull(result.data.accepted, 'Should not have any user stats');
+    assert.isNull(result.data.rejected, 'Should not have any user stats');
+    assert.isNull(result.data.inReview, 'Should not have any user stats');
+  });
+
+  it('should return proposal statistics with a user', async () => {
+    const result = await getProposalsStats(mock.ADDRESS1);
+    assert(result.success, result.error);
+    assert.isAbove(result.data.reviewed, 0, 'Should have some reviewed proposals');
+    assert.isAbove(result.data.submitted, 0, 'Should have some proposals');
+    assert.isAbove(result.data.unreviewed, 0, 'Should have some unreviewed proposals');
+    assert.isAbove(result.data.accepted, 0, 'Should have some user stats');
+    // TODO: Get a rejected article on this user's history
+    assert.equal(result.data.rejected, 0, 'User should not have any rejected articles');
+    assert.isAbove(result.data.inReview, 0, 'Should have some user stats');
   });
 });

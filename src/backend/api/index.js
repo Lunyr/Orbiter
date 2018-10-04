@@ -14,6 +14,7 @@ export {
   getProposalsWrittenBy,
   getProposalsInReviewBy,
   getProposalsInReview,
+  getProposalsStats,
 } from './proposal';
 export {
   getArticles,

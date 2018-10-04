@@ -225,9 +225,100 @@ export const getProposalsInReview = async (limit, page) => {
       .limit(limit)
       .select();
 
-    log.debug({ result }, 'getProposalsInReviewBy result');
+    log.debug({ result }, 'getProposalsInReview result');
 
     const data = result.map((p) => toArticle(p));
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const getProposalsStats = async (userAddress) => {
+  try {
+    const result = await db.raw(
+      `SELECT
+        (SELECT COUNT(proposal_id)
+          FROM proposal) AS submitted,
+        (SELECT COUNT(proposal_id)
+          FROM proposal
+          WHERE proposal_state_id = ? OR proposal_state_id = ?) AS reviewed,
+        (SELECT COUNT(proposal_id)
+          FROM proposal
+          WHERE proposal_state_id = ?) AS unreviewed;`,
+      [
+        ProposalState.ACCEPTED, 
+        ProposalState.REJECTED,
+        ProposalState.IN_REVIEW,
+      ]
+    );
+
+    // Now user specific
+    let userResult;
+    if (userAddress) {
+      userResult = await db.raw(
+        `SELECT
+          (SELECT COUNT(proposal_id)
+            FROM proposal
+            WHERE proposal_state_id = ?
+            AND from_address = ?) AS accepted,
+          (SELECT COUNT(proposal_id)
+            FROM proposal
+            WHERE proposal_state_id = ?
+            AND from_address = ?) AS rejected,
+          (SELECT COUNT(proposal_id)
+            FROM proposal
+            WHERE proposal_state_id = ?
+            AND from_address = ?) AS review;`,
+        [
+          ProposalState.ACCEPTED,
+          userAddress,
+          ProposalState.REJECTED,
+          userAddress,
+          ProposalState.IN_REVIEW,
+          userAddress,
+        ]
+      );
+    }
+
+    log.debug({ result, userResult }, 'getProposalsInReview result');
+
+    if (!result || result.length < 1) {
+      log.warn("No results for proposal statistics.  Not synced?");
+      return {
+        success: false,
+        error: "No results",
+      };
+    }
+
+    const stats = result[0];
+    const user_stats = userResult && userResult.length > 0 
+      ? userResult[0]
+      : null;
+
+    // Build the output object
+    const data = {
+      reviewed: stats.reviewed,      // # of reviewed proposals ever 
+      submitted: stats.submitted,    // # of submitted proposals ever
+      unreviewed: stats.unreviewed,  // # of unreviewed proposals ever
+      accepted: null,                // # of accepted proposals from a user by address 
+      rejected: null,                // # of rejected proposals from a user by address
+      inReview: null,                // # of inReview proposals from a user by address
+    };
+
+    // Fill in user stats if we have 'em
+    if (user_stats) {
+      data.accepted = user_stats.accepted;
+      data.rejected = user_stats.rejected;
+      data.inReview = user_stats.review;
+    };
 
     return {
       success: true,
