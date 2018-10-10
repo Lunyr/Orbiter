@@ -10,11 +10,13 @@ import styles from './styles';
 
 class Wallet extends React.PureComponent {
   load = () => {
-    this.props.fetchAccountInformation(get(this.props.wallet, 'address'));
+    this.props.fetchAccountInformation(this.props.account);
   };
 
   componentDidMount() {
-    this.load();
+    if(this.props.account){
+      this.load();
+    }
   }
 
   render() {
@@ -207,7 +209,7 @@ class Wallet extends React.PureComponent {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({ auth: { account }, wallet }) => ({ account, wallet });
 
 export default connect(
   mapStateToProps,

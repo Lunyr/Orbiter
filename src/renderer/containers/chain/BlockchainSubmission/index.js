@@ -351,7 +351,7 @@ class BlockchainSubmission extends React.Component {
   };
 
   load = () => {
-    const account = get(this.props, ['wallet', 'address']);
+    const account = get(this.props, ['auth', 'account']);
     if (account) {
       this.setState(
         { isInitialized: false, error: null },

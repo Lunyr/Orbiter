@@ -173,6 +173,8 @@ const fetchAccountInformation = async (address) => {
       contracts: { contributors, environment, lunyrToken, lunPool },
     } = global;
 
+    let address = typeof address === 'string' ? address : address.address;
+
     // Run calls in parallel
     const [ethereum, lunyr, hp, cp, pool, totalCp] = await Promise.all([
       // Eth balance

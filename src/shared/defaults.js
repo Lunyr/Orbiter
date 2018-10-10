@@ -1,4 +1,5 @@
 import path from 'path';
+import { app } from 'electron';
 
 const isDevelopment = () => {
   return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
@@ -181,7 +182,8 @@ const ipfs = {
 };
 
 const getConfigDir = () => {
-  let configPath;
+  const configPath = app.getPath('appData');
+  /*
   if (typeof process.env.APPDATA !== 'undefined') {
     configPath = process.env.APPDATA;
   } else if (process.platform == 'darwin') {
@@ -189,6 +191,7 @@ const getConfigDir = () => {
   } else {
     configPath = path.join(process.env.HOME, '.config');
   }
+  */
   return path.join(configPath, 'lunyr-orbiter');
 };
 
