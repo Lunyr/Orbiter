@@ -45,11 +45,28 @@ export const initRouter = async (addr) => {
   return router;
 };
 
-export const ipfsFetch = async (hash) => {
+export const ipfsFetch = async (hash, duration) => {
+  if (!hash || hash === '0x') throw new Error("Hash not provided");
+  duration = duration ? duration : 15000; // default 15 seconds
+  
   if (hash.slice(0, 2) === '0x') {
     hash = multihashes.toB58String(multihashes.fromHexString('1220' + hash.slice(2)));
   }
-  return fetch(`https://ipfs.io/ipfs/${hash}`).then((res) => res.json());
+
+  const timeout = setTimeout(() => {
+    log.warn({ hash, duration }, "IPFS fetch timeout reached!");
+    throw new Error(`IPFS fetch timed out on ${hash}`);
+  }, duration);
+
+  let res = null;
+  try {
+    res = fetch(`https://ipfs.io/ipfs/${hash}`).then((res) => res.json());
+    clearTimeout(timeout);
+  } catch (err) {
+    log.error({ err: err.message }, "Error fetching from IPFS");
+    throw err;
+  }
+  return res;
 };
 
 /**
@@ -69,7 +86,7 @@ export const initContract = async (router, contractName) => {
   const address = contractData[0];
   const abi = contractData[1];
   
-  log.info({ address, abi }, 'Retrieved contract details from router');
+  log.info({ contractName, address, abi }, 'Retrieved contract details from router');
 
   // Get the ABI from IPFS
   const qmHash = multihashes.toB58String(multihashes.fromHexString('1220' + abi.slice(2)));
