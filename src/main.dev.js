@@ -33,7 +33,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Add in electron debug
-if (true) {
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
   const path = require('path');
   const p = path.join(__dirname, '..', 'src', 'node_modules');
@@ -50,7 +50,7 @@ app.on('window-all-closed', () => {
 
 const readyHandler = async () => {
   // Add in development tooling
-  if (true) {
+  if (isDevelopment) {
     await installExtensions();
   }
 

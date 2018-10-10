@@ -40,20 +40,8 @@ export default class MenuBuilder {
 
   buildDarwinTemplate() {
     const subMenuAbout = {
-      label: 'Electron',
+      label: 'File',
       submenu: [
-        {
-          label: 'About ElectronReact',
-          selector: 'orderFrontStandardAboutPanel:',
-        },
-        { type: 'separator' },
-        { label: 'Services', submenu: [] },
-        { type: 'separator' },
-        {
-          label: 'Hide ElectronReact',
-          accelerator: 'Command+H',
-          selector: 'hide:',
-        },
         {
           label: 'Hide Others',
           accelerator: 'Command+Shift+H',
@@ -141,27 +129,27 @@ export default class MenuBuilder {
       label: 'Help',
       submenu: [
         {
-          label: 'Learn More',
+          label: 'Website',
           click() {
-            shell.openExternal('http://electron.atom.io');
+            shell.openExternal('https://lunyr.com/');
           },
         },
         {
           label: 'Documentation',
           click() {
-            shell.openExternal('https://github.com/atom/electron/tree/master/docs#readme');
+            shell.openExternal('https://github.com/Lunyr/Orbiter');
           },
         },
         {
-          label: 'Community Discussions',
+          label: 'Telegram',
           click() {
-            shell.openExternal('https://discuss.atom.io/c/electron');
+            shell.openExternal('https://t.me/lunyrcommunityn');
           },
         },
         {
-          label: 'Search Issues',
+          label: 'Discord',
           click() {
-            shell.openExternal('https://github.com/atom/electron/issues');
+            shell.openExternal('https://discord.gg/Vaw5MWD');
           },
         },
       ],
@@ -231,27 +219,27 @@ export default class MenuBuilder {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
+            label: 'Website',
             click() {
-              shell.openExternal('http://electron.atom.io');
+              shell.openExternal('https://lunyr.com/');
             },
           },
           {
             label: 'Documentation',
             click() {
-              shell.openExternal('https://github.com/atom/electron/tree/master/docs#readme');
+              shell.openExternal('https://github.com/Lunyr/Orbiter');
             },
           },
           {
-            label: 'Community Discussions',
+            label: 'Telegram',
             click() {
-              shell.openExternal('https://discuss.atom.io/c/electron');
+              shell.openExternal('https://t.me/lunyrcommunityn');
             },
           },
           {
-            label: 'Search Issues',
+            label: 'Discord',
             click() {
-              shell.openExternal('https://github.com/atom/electron/issues');
+              shell.openExternal('https://discord.gg/Vaw5MWD');
             },
           },
         ],
