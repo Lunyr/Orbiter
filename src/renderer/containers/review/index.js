@@ -1,7 +1,7 @@
 import React from 'react';
 import injectStyles from 'react-jss';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import ReactPlaceholder from 'react-placeholder';
 import { MdRefresh as RefreshIcon } from 'react-icons/md';
@@ -31,7 +31,7 @@ class PeerReview extends React.Component {
   };
 
   load = () => {
-    this.props.fetchInReviewProposals(1000, 0);
+    this.props.fetchInReviewProposals(this.props.account, 1000, 0);
   };
 
   navigateToProposal = ({ proposalId, title }) => {
@@ -47,7 +47,10 @@ class PeerReview extends React.Component {
   }
 
   render() {
-    const { classes, data, error, isFetching } = this.props;
+    const { account, classes, data, error, isFetching, stats } = this.props;
+    if (!account) {
+      return <Redirect to="/login" />;
+    }
     return (
       <ErrorBoundary error={error}>
         <div className={classes.container}>
@@ -61,18 +64,7 @@ class PeerReview extends React.Component {
                   Below is a grid of articles that are going through the proposal process. You can
                   review click and review the articles.
                 </p>
-                <Stats
-                  counts={{
-                    reviewed: 0,
-                    submitted: 0,
-                    unreviewed: data ? data.length : 0,
-                  }}
-                  stats={{
-                    accepted: 0,
-                    rejected: 0,
-                    inReview: data ? data.length : 0,
-                  }}
-                />
+                <Stats stats={stats} />
               </div>
             </div>
             <InstantLoadingIndicator
@@ -114,8 +106,8 @@ class PeerReview extends React.Component {
   }
 }
 
-const mapStateToProps = ({ article: { proposals }, auth }) => ({
-  auth,
+const mapStateToProps = ({ article: { proposals }, auth: { account } }) => ({
+  account,
   ...proposals,
 });
 

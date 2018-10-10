@@ -68,7 +68,7 @@ export const initContract = async (router, contractName) => {
   const contractData = await router.methods.get(lowerCasedName).call();
   const address = contractData[0];
   const abi = contractData[1];
-  
+
   log.info({ address, abi }, 'Retrieved contract details from router');
 
   // Get the ABI from IPFS

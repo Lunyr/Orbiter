@@ -4,6 +4,7 @@ const initialState = {
   data: null,
   isFetching: false,
   error: null,
+  stats: {},
 };
 
 const proposalReducer = (state = initialState, action) => {
@@ -22,9 +23,9 @@ const proposalReducer = (state = initialState, action) => {
     case `${actions.FETCH}_SUCCESS`:
       return {
         ...state,
-        data: payload.data,
         error: null,
         isFetching: false,
+        ...payload,
       };
 
     case `${actions.FETCH}_ERROR`:

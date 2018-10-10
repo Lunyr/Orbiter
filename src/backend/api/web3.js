@@ -85,7 +85,7 @@ const signTransaction = async (privKey, txObj) => {
 
   // Generate the nonce if it wasn't provided
   if (typeof txObj.nonce === 'undefined') {
-    txObj.nonce = await web3.eth.getTransactionCount(txObj.from, 'pending');
+    txObj.nonce = await global.web3.eth.getTransactionCount(txObj.from, 'pending');
   }
 
   // Sign the TX and return the transaction object
@@ -108,7 +108,7 @@ const initializeContracts = async (network) => {
     const allContracts = await Promise.all([
       initContract(router, 'PeerReview'),
       initContract(router, 'Auctioneer'),
-      // initContract(router, 'LunyrToken'),
+      initContract(router, 'LunyrToken'),
       initContract(router, 'Contributors'),
       initContract(router, 'LunPool'),
       initContract(router, 'Environment'),
@@ -121,7 +121,7 @@ const initializeContracts = async (network) => {
     const [
       peerReview,
       auctioneer,
-      // lunyrToken,
+      lunyrToken,
       contributors,
       lunPool,
       environment,
@@ -130,7 +130,7 @@ const initializeContracts = async (network) => {
 
     log.info('PeerReview address', peerReview.options.address);
     log.info('Auctioneer address', auctioneer.options.address);
-    // log.info('LunyrToken address', lunyrToken.options.address);
+    log.info('LunyrToken address', lunyrToken.options.address);
     log.info('Contributors address', contributors.options.address);
     log.info('Lun Pool address', lunPool.options.address);
     log.info('Environment address', environment.options.address);
@@ -140,7 +140,7 @@ const initializeContracts = async (network) => {
     global.contracts = {
       peerReview,
       auctioneer,
-      // lunyrToken,
+      lunyrToken,
       contributors,
       lunPool,
       environment,
