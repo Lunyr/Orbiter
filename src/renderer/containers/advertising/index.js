@@ -2,14 +2,14 @@ import React from 'react';
 import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import styles from './styles';
 
-// NPM Modules
 import { Redirect } from 'react-router-dom';
+import MyAds from './MyAds';
+import styles from './styles';
 
 // Components
 /*
-import MyAds from './components/MyAds';
+
 import AdvertisingStats from './components/AdvertisingStats';
 import SubHeader from '../header/SubHeader';
 import theme from '../../theme';
@@ -23,17 +23,7 @@ import { Web3Actions } from '../../redux/web3';
 */
 
 class Advertising extends React.Component {
-  state = {
-    ads: [],
-    lunToUSD: 1,
-  };
-
   /*
-  getStats = async (chosenDate) => {
-    let { advertisingActions, web3Actions } = this.props;
-    var conversion = await web3Actions.getUSDConversion('lunyr');
-    advertisingActions.stats(conversion, chosenDate.year, chosenDate.month);
-  };
 
   async componentDidMount() {
     let { advertisingActions, web3Actions, auth } = this.props;
@@ -71,54 +61,12 @@ class Advertising extends React.Component {
 
   render() {
     const { account, advertising, classes, intl } = this.props;
-    const cpc =
-      typeof advertising.clicks === 'number' && advertising.clicks > 0
-        ? (advertising.cost / advertising.clicks).toFixed(2)
-        : advertising.cost;
-
-    const advertisingCards = [
-      {
-        id: 'reach',
-        headerTitle: intl.formatMessage({
-          id: 'advertising_reach_header',
-          defaultMessage: 'Reach',
-        }),
-        stat: advertising.reach,
-        bodyHeader: intl.formatMessage({
-          id: 'advertising_reach_body',
-          defaultMessage: 'Total Reach',
-        }),
-      },
-      {
-        id: 'cpc',
-        headerTitle: intl.formatMessage({
-          id: 'advertising_cpc_header',
-          defaultMessage: 'Cost per click',
-        }),
-        stat: `$${cpc}`,
-        bodyHeader: intl.formatMessage({
-          id: 'advertising_cpc_body',
-          defaultMessage: 'Cost per Click',
-        }),
-      },
-      {
-        id: 'linkClicks',
-        headerTitle: intl.formatMessage({
-          id: 'advertising_linkClicks_header',
-          defaultMessage: 'Link clicks',
-        }),
-        stat: advertising.clicks,
-        bodyHeader: intl.formatMessage({
-          id: 'advertising_linkClicks_body',
-          defaultMessage: 'Total Clicks',
-        }),
-        avgPerDay: (advertising.clicks / 30).toFixed(2),
-      },
-    ];
 
     if (!account) {
       return <Redirect to="/login" />;
     }
+
+    console.log('advertising', this.props);
 
     return (
       <div className={classes.container}>
@@ -134,19 +82,7 @@ class Advertising extends React.Component {
           </div>
         </div>
         <div className={classes.body}>
-          {/*
-          {advertisingCards.length > 0 && (
-            <AdvertisingStats
-              advertisingCards={advertisingCards}
-              lunToUSD={this.state.lunToUSD}
-              getStats={this.getStats}
-            />
-          )}
-          <MyAds
-            ads={this.state.ads}
-            createAd={() => this.props.history.push('/advertising/create')}
-          />
-          */}
+          <MyAds />
         </div>
       </div>
     );
@@ -159,17 +95,7 @@ const mapStateToProps = ({ advertising, auth: { account }, locale }) => ({
   locale,
 });
 
-const mapDispatchToProps = {};
-
-/*
-const mapDispatchToProps = dispatch => ({
-  modalActions: bindActionCreators(ModalActions, dispatch),
-  advertisingActions: bindActionCreators(AdvertisingActions, dispatch),
-  web3Actions: bindActionCreators(Web3Actions, dispatch),
-});
-*/
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  null
 )(injectIntl(injectStyles(styles)(Advertising)));

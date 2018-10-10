@@ -1,29 +1,37 @@
 import actions from './actions';
 
 const initialState = {
-  url: '',
-  title: '',
-  body: '',
-  imageHash: '',
-  actionLabel: '',
-  startsOn: '',
-  endsOn: '',
-  bidValueLUN: 0,
-  bidValueDollars: 0,
-  cost: '-',
-  reach: '-',
-  clicks: '-',
-  ads: [],
+  data: [],
+  error: null,
+  loading: false,
 };
 
 const advertisingReducer = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
-    case actions.FETCH:
+    case `${actions.FETCH}_START`:
+      return {
+        ...state,
+        error: null,
+        data: [],
+        loading: true,
+      };
+
+    case `${actions.FETCH}_SUCCESS`:
       return {
         ...state,
         ...payload,
+        loading: false,
       };
+
+    case `${actions.FETCH}_ERROR`:
+      return {
+        ...state,
+        ...state,
+        error: payload,
+        loading: false,
+      };
+
     default:
       return state;
   }

@@ -1,3 +1,4 @@
+import { Web3API } from '../../../../backend/api';
 import createTriggerAlias from '../../helpers/createTriggerAlias';
 
 const actions = {
@@ -10,9 +11,9 @@ const actions = {
 /**
  * Fetches the ads in lunyr
  */
-export const fetchAds = createTriggerAlias(actions.FETCH, (limit, offset) => ({
+export const fetchAds = createTriggerAlias(actions.FETCH, () => ({
   type: actions.FETCH,
-  payload: Promise.resolve([]),
+  payload: Web3API.fetchAds(),
 }));
 
 /*
