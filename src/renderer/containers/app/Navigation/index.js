@@ -141,15 +141,7 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         }),
         icon: <TagIcon />,
       },
-      {
-        to: 'https://lunyragent.gitbooks.io/lunyr-manual/content/',
-        display: intl.formatMessage({
-          id: 'header_writingManual',
-          defaultMessage: 'Writing Manual',
-        }),
-        icon: <PencilIcon />,
-        target: '_blank',
-      },
+      ,
       /*
       {
         to: '/advertising',
@@ -160,6 +152,15 @@ const mapStateToProps = ({ auth: { isLoggedIn } }, { intl }) => {
         icon: <FlagIcon />,
       },
       */
+      {
+        to: 'https://lunyragent.gitbooks.io/lunyr-manual/content/',
+        display: intl.formatMessage({
+          id: 'header_writingManual',
+          defaultMessage: 'Writing Manual',
+        }),
+        icon: <PencilIcon />,
+        target: '_blank',
+      },
       {
         to: '/about',
         display: intl.formatMessage({

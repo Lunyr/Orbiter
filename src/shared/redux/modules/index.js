@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { reducer as form } from 'redux-form';
+import advertising from './advertising/reducer';
 import app from './app/reducer';
 import article from './article/';
 import auth from './auth/reducer';
@@ -18,6 +19,7 @@ import wallet from './wallet/reducer';
 */
 
 export const reducers = combineReducers({
+  advertising,
   app,
   article,
   auth,

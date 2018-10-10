@@ -9,7 +9,7 @@ import mixpanel from 'mixpanel-browser';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
 // Components
-import MyAds from './components/MyAds';
+import MyAds from '../MyAds';
 import AdvertisingStats from './components/AdvertisingStats';
 import SubHeader from '../header/SubHeader';
 import theme from '../../theme';

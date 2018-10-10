@@ -46,15 +46,15 @@ export const initRouter = async (addr) => {
 };
 
 export const ipfsFetch = async (hash, duration) => {
-  if (!hash || hash === '0x') throw new Error("Hash not provided");
+  if (!hash || hash === '0x') throw new Error('Hash not provided');
   duration = duration ? duration : 15000; // default 15 seconds
-  
+
   if (hash.slice(0, 2) === '0x') {
     hash = multihashes.toB58String(multihashes.fromHexString('1220' + hash.slice(2)));
   }
 
   const timeout = setTimeout(() => {
-    log.warn({ hash, duration }, "IPFS fetch timeout reached!");
+    log.warn({ hash, duration }, 'IPFS fetch timeout reached!');
     throw new Error(`IPFS fetch timed out on ${hash}`);
   }, duration);
 
@@ -63,7 +63,7 @@ export const ipfsFetch = async (hash, duration) => {
     res = fetch(`https://ipfs.io/ipfs/${hash}`).then((res) => res.json());
     clearTimeout(timeout);
   } catch (err) {
-    log.error({ err: err.message }, "Error fetching from IPFS");
+    log.error({ err: err.message }, 'Error fetching from IPFS');
     throw err;
   }
   return res;
@@ -85,8 +85,8 @@ export const initContract = async (router, contractName) => {
   const contractData = await router.methods.get(lowerCasedName).call();
   const address = contractData[0];
   const abi = contractData[1];
-  
-  log.info({ contractName, address, abi }, 'Retrieved contract details from router');
+
+  log.info({ address, abi }, 'Retrieved contract details from router');
 
   // Get the ABI from IPFS
   const qmHash = multihashes.toB58String(multihashes.fromHexString('1220' + abi.slice(2)));

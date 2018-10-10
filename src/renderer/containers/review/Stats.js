@@ -6,12 +6,13 @@ import cx from 'classnames';
 
 class Stats extends React.Component {
   render() {
-    const {
-      counts: { reviewed, submitted, unreviewed },
-      stats: { accepted, rejected, inReview },
-      classes,
-      intl,
-    } = this.props;
+    const { stats, classes, intl } = this.props;
+
+    if (!stats) {
+      return null;
+    }
+
+    const { reviewed, submitted, unreviewed, accepted, rejected, inReview } = stats;
 
     const acceptedLabel = intl.formatMessage({
       id: 'unreviewed_accepted',
@@ -97,7 +98,7 @@ class Stats extends React.Component {
           <div className={classes.userStats}>
             <div className={classes.graph}>
               <div className={classes.submittedText}>
-                <span className={classes.numSubmitted}> {submitted} </span>
+                <span className={classes.numSubmitted}> {accepted + rejected + inReview} </span>
                 <span className={classes.submitted}>
                   <FormattedMessage id="unreviewed_submitted" defaultMessage="Submitted" />
                 </span>
@@ -106,7 +107,7 @@ class Stats extends React.Component {
             </div>
             <div className={classes.legend}>
               <span className={classes.userStatsHeading}>Accepted Articles</span>
-              <span className={classes.reviewRate}>{reviewed} </span>
+              <span className={classes.reviewRate}>{accepted} </span>
               <div className={classes.labelContainer}>
                 <div className={classes.submittedDot} />
                 <span className={classes.userStatsLabel}>
