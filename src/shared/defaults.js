@@ -201,15 +201,21 @@ const getAPIRoot = () => {
   return 'https://api.lunyr.com/';
 };
 
+const getLogLevel = () => {
+  if (typeof process.env.LOG_LEVEL !== 'undefined') {
+    return parseInt(process.env.LOG_LEVEL);
+  } else if (isDevelopment()) {
+    return 20;
+  } else {
+    return 30;
+  }
+};
+
 export default {
   isDevelopment: isDevelopment(),
   privacy,
   logging: {
-    logLevel: process.env.LOG_LEVEL
-      ? parseInt(process.env.LOG_LEVEL, 10)
-      : isDevelopment()
-        ? 20
-        : 30,
+    logLevel: getLogLevel(),
   },
   ipfs,
   jsonRPC,
