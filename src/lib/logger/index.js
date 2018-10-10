@@ -38,7 +38,7 @@ export const log = bunyan.createLogger({
   level: settings.logging.logLevel,
 });
 
-log.info('logger initialized.');
+log.info({ level: settings.logging.logLevel }, 'logger initialized.');
 
 /**
  * getLogger returns a logger that can be used in the `name`ed module.
