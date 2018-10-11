@@ -106,6 +106,7 @@ const authReducer = (state = initialState, action) => {
         isImportingFromAPI: false,
         account: payload.address,
         accounts: payload.accounts,
+        isLoggedIn: true,
       };
     }
 
