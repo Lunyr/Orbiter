@@ -1,7 +1,7 @@
 {
   "name": "Lunyr-Orbiter",
   "productName": "Lunyr-Orbiter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "author": "Lunyr Inc <support@lunyr.com> (https://lunyr.com)",
   "main": "./main.prod.js",
