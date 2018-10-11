@@ -48,7 +48,7 @@ const Header = ({ auth, classes, history, openSidebar, sideBarOpened, wallet }) 
       <Link className={cx(classes.account, classes.header__item)} to="/wallet">
         <WalletOverview wallet={wallet} />
       </Link>
-      {accounts.length > 1 && (
+      {accounts.length > 0 && (
         <Link className={cx(classes.header__item, classes.link, classes.padded)} to="/login">
           Switch Accounts
         </Link>
