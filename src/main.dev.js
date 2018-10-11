@@ -50,7 +50,7 @@ app.on('window-all-closed', () => {
 
 const readyHandler = async () => {
   // Add in development tooling
-  if (isDevelopment) {
+  if (isDevelopment || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 

@@ -14,8 +14,8 @@ import { getLogger } from '../logger';
 import { settings } from '../../shared/settings';
 import { web3 } from '../../shared/web3';
 
-const log = getLogger("accounts");
-const KEY_DIR = process.env.KEY_DIR || path.join(settings.configDir, "keys");
+const log = getLogger('accounts');
+const KEY_DIR = process.env.KEY_DIR || path.join(settings.configDir, 'keys');
 let ACCOUNTS = [];
 
 Promise.promisifyAll(fs);
@@ -27,8 +27,8 @@ const mkdirpAsync = Promise.promisify(mkdirp);
  * @returns {string} hex string with the 0x prefix
  */
 const addHexPrefix = (str) => {
-  if (typeof str !== 'string') throw new Error("Provided string not a string");
-  if (str.slice(0,2) === "0x") return str;
+  if (typeof str !== 'string') throw new Error('Provided string not a string');
+  if (str.slice(0, 2) === '0x') return str;
   return `0x${str}`;
 };
 
@@ -38,8 +38,8 @@ const addHexPrefix = (str) => {
  * @returns {string} hex string without the 0x prefix
  */
 const removeHexPrefix = (str) => {
-  if (typeof str !== 'string') throw new Error("Provided string not a string");
-  if (str.slice(0,2) === "0x") return str.slice(2);
+  if (typeof str !== 'string') throw new Error('Provided string not a string');
+  if (str.slice(0, 2) === '0x') return str.slice(2);
   return str;
 };
 
@@ -49,7 +49,7 @@ const removeHexPrefix = (str) => {
  */
 export const dkToAddress = (dk) => {
   if (typeof dk === 'undefined' || typeof dk.privateKey === 'undefined') {
-    throw new Error("Invalid derived key object");
+    throw new Error('Invalid derived key object');
   }
   return keythereum.privateKeyToAddress(dk.privateKey);
 };
@@ -60,13 +60,13 @@ export const dkToAddress = (dk) => {
  */
 export const privToAddress = (privKey) => {
   if (typeof privKey === 'undefined') {
-    throw new Error("Invalid key");
+    throw new Error('Invalid key');
   }
   return keythereum.privateKeyToAddress(removeHexPrefix(privKey));
 };
 
 /**
- * getList return an array of objects with the properties `address` and 
+ * getList return an array of objects with the properties `address` and
  *    `fileName` for each account in the local keystore.
  * @returns {Array} array of objects representing accounts in the keystore
  */
@@ -84,14 +84,14 @@ export const getList = async () => {
   for (let i = 0; i < files.length; i++) {
     const fileName = files[i];
     const fullFileName = path.join(KEY_DIR, fileName);
-    const fd = await fs.openAsync(fullFileName, "r");
+    const fd = await fs.openAsync(fullFileName, 'r');
     if (fs.statSync(fullFileName).isDirectory()) continue;
     const jsonString = await fs.readFileSync(fd);
     try {
       const jsonObj = JSON.parse(jsonString);
       ACCOUNTS.push({ fileName, address: addHexPrefix(jsonObj.address) });
     } catch (err) {
-      log.warn({ fileName }, "Unable to read file in key directory");
+      log.warn({ fileName }, 'Unable to read file in key directory');
     }
   }
   return ACCOUNTS;
@@ -109,11 +109,11 @@ export const getList = async () => {
  */
 export const unlock = async (args) => {
   if (
-    typeof args !== 'object'
-    || typeof args.password === 'undefined'
-    || (typeof args.address === 'undefined' && typeof args.fileName === 'undefined')
+    typeof args !== 'object' ||
+    typeof args.password === 'undefined' ||
+    (typeof args.address === 'undefined' && typeof args.fileName === 'undefined')
   ) {
-    throw new Error("Password, and address or fileName required as an object");
+    throw new Error('Password, and address or fileName required as an object');
   }
 
   let fileName;
@@ -125,10 +125,12 @@ export const unlock = async (args) => {
     if (ACCOUNTS.length === 0) await getList();
 
     // Look for the address in our list of accounts
-    const account = _.find(ACCOUNTS, (obj) => { return obj.address === args.address });
+    const account = _.find(ACCOUNTS, (obj) => {
+      return obj.address === args.address;
+    });
     if (!account) {
-      log.warn({ address: args.address }, "Unknown account. Can not unlock.");
-      throw new Error("Unknown account");
+      log.warn({ address: args.address }, 'Unknown account. Can not unlock.');
+      throw new Error('Unknown account');
     }
     fileName = account.fileName;
   } else {
@@ -159,8 +161,8 @@ export const savePlain = async (password, rawKey) => {
   const thing = {
     privateKey: rawKey,
     iv: rando.slice(keyBytes, keyBytes + ivBytes),
-    salt: rando.slice(keyBytes + ivBytes)
-  }
+    salt: rando.slice(keyBytes + ivBytes),
+  };
   return await save(password, thing);
 };
 
@@ -175,19 +177,19 @@ export const savePlain = async (password, rawKey) => {
  */
 export const save = async (password, dk) => {
   if (
-    typeof dk !== 'object'
-    || typeof dk.privateKey === 'undefined'
-    || typeof dk.salt === 'undefined'
-    || typeof dk.iv === 'undefined'
+    typeof dk !== 'object' ||
+    typeof dk.privateKey === 'undefined' ||
+    typeof dk.salt === 'undefined' ||
+    typeof dk.iv === 'undefined'
   ) {
-    throw new Error("Invalid derived key object");
+    throw new Error('Invalid derived key object');
   }
   const keyObj = keythereum.dump(password, dk.privateKey, dk.salt, dk.iv);
 
   // Verify KEY_DIR exists, if not create it
   if (!fs.existsSync(KEY_DIR)) await mkdirpAsync(KEY_DIR, { mode: 0o750 });
   const dirStats = await fs.statAsync(KEY_DIR);
-  if (!dirStats.isDirectory()) throw new Error("Key directory is not a directory!");
+  if (!dirStats.isDirectory()) throw new Error('Key directory is not a directory!');
   return keythereum.exportToFile(keyObj, KEY_DIR);
 };
 
@@ -217,15 +219,15 @@ export const importFromAPI = async (email, password) => {
       password: web3.utils.sha3(password),
     }),
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   });
 
   if (res.status === 400) {
     const respBody = await res.json();
-    throw new Error(respBody.message)
+    throw new Error(respBody.message);
   } else if (res.status !== 200) {
-    throw new Error("Unknown error");
+    throw new Error('Unknown error');
   }
   const respBody = await res.json();
 

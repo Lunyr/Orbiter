@@ -1,5 +1,4 @@
 import path from 'path';
-import { app } from 'electron';
 
 const isDevelopment = () => {
   return process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
