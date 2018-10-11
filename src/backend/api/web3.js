@@ -164,6 +164,10 @@ const initializeContracts = async (network) => {
 
 const fetchAccountInformation = async (address) => {
   try {
+    if (!address) {
+      throw new Error('Error fetching account information with no address provided');
+    }
+
     // Reference web3 and contracts we need
     const {
       web3: {
@@ -172,8 +176,6 @@ const fetchAccountInformation = async (address) => {
       },
       contracts: { contributors, environment, lunyrToken, lunPool },
     } = global;
-
-    let address = typeof address === 'string' ? address : address.address;
 
     // Run calls in parallel
     const [ethereum, lunyr, hp, cp, pool, totalCp] = await Promise.all([
@@ -284,7 +286,7 @@ const fetchAccountInformation = async (address) => {
   } catch (err) {
     console.error(err);
     const errorMessage = `There was an error while fetching account information linked to address ${address}`;
-    log.error({ err }, errorMessage);
+    log.error({ address, err }, errorMessage);
     return {
       success: false,
       error: errorMessage,

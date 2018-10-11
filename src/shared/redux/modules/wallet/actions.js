@@ -10,6 +10,14 @@ export const fetchAccountInformation = createTriggerAlias(
   (address) => ({
     type: actions.FETCH_ACCOUNT_INFORMATION,
     payload: Web3API.fetchAccountInformation(address)
+      .then((account) => {
+        console.log('account returned', account);
+        return account;
+      })
+      .catch((err) => {
+        console.error('got me an error getting stuff', err);
+        return err;
+      }),
   })
 );
 

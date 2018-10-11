@@ -182,16 +182,14 @@ const ipfs = {
 };
 
 const getConfigDir = () => {
-  const configPath = app.getPath('appData');
-  /*
+  let configPath;
   if (typeof process.env.APPDATA !== 'undefined') {
     configPath = process.env.APPDATA;
-  } else if (process.platform == 'darwin') {
-    configPath = path.join(process.env.HOME, 'Library', 'Preferences');
+  } else if (process.platform === 'darwin') {
+    configPath = path.join(process.env.HOME, 'Library', 'Application Support');
   } else {
     configPath = path.join(process.env.HOME, '.config');
   }
-  */
   return path.join(configPath, 'lunyr-orbiter');
 };
 

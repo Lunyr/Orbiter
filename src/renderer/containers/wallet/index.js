@@ -10,13 +10,14 @@ import styles from './styles';
 
 class Wallet extends React.PureComponent {
   load = () => {
-    this.props.fetchAccountInformation(this.props.account);
+    if (this.props.account) {
+      console.log('got me an account meow', this.props.account);
+      this.props.fetchAccountInformation(this.props.account);
+    }
   };
 
   componentDidMount() {
-    if(this.props.account){
-      this.load();
-    }
+    this.load();
   }
 
   render() {

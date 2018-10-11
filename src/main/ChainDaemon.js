@@ -31,7 +31,7 @@ export default class ChainDaemon {
       'Launching daemon'
     );
 
-    this.subprocess = spawn(ChainDaemon.execPath, [ChainDaemon.path], {
+    this.subprocess = spawn('babel-node', [ChainDaemon.path], {
       stdio: ['pipe', 'inherit', 'inherit'],
     });
 

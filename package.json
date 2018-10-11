@@ -213,6 +213,9 @@
     "appId": "com.lunyr.orbiter",
     "asar": false,
     "files": [
+      "build/icon.*",
+      "src/icon.png",
+      "src/favicon.ico",
       "src/node_modules/",
       "src/",
       "index.html",
@@ -271,7 +274,7 @@
       "icon": "dist/icon.png"
     },
     "directories": {
-      "buildResources": "assets",
+      "buildResources": "src/assets",
       "output": "dist"
     }
   },
