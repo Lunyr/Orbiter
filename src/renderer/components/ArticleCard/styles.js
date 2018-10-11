@@ -8,6 +8,7 @@ export default (theme) => ({
     flexDirection: 'column',
     minHeight: '100%',
     width: '100%',
+    minWidth: 325,
     backgroundColor: theme.colors.white,
     borderRadius: theme.borderRadius,
     zIndex: 1,
