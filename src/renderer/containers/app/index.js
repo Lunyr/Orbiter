@@ -4,6 +4,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
 import { toast } from 'react-toastify';
+import size from 'lodash/size';
 import { connectToBlockchain, closeSidebar } from '../../../shared/redux/modules/app/actions';
 import { fetchAccountInformation } from '../../../shared/redux/modules/wallet/actions';
 import { TwoColumn, Notifications } from '../../components';
@@ -38,16 +39,16 @@ class App extends React.Component {
     });
   };
 
-  handleLoadingAccountInformation = () => {
-    if (this.props.account && this.props.connected) {
-      console.info('Fetching new user account information', this.props.account);
-      this.props.fetchAccountInformation(this.props.account);
+  handleLoadingAccountInformation = (account, connected) => {
+    if (account && connected) {
+      console.info('Fetching new user account information', account);
+      this.props.fetchAccountInformation(account);
     }
   };
 
   handleNewConnectionEstablished = () => {
     this.showNewConnectionStatus(this.props.network);
-    this.handleLoadingAccountInformation();
+    this.handleLoadingAccountInformation(this.props.account, true);
   };
 
   componentDidUpdate(prevProps) {
@@ -60,13 +61,20 @@ class App extends React.Component {
     if (this.props.account !== prevProps.account) {
       // Logged in or changed user
       this.props.history.replace('/');
-      this.handleLoadingAccountInformation();
+      this.handleLoadingAccountInformation(this.props.account, true);
+    }
+
+    // Show a users accounts increased
+    if (size(this.props.accounts) !== size(prevProps.accounts)) {
+      const moreAccounts = size(prevProps.accounts) < size(this.props.accounts);
+      if (moreAccounts) {
+        toast.info('New accounts were recently added.');
+      }
     }
   }
 
   componentDidMount() {
     this.props.connectToBlockchain();
-    this.handleLoadingAccountInformation();
   }
 
   componentWillUpdate(nextProps) {
@@ -131,7 +139,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = ({
-  auth: { account },
+  auth: { account, accounts },
   app: {
     connecting,
     connected,
@@ -144,6 +152,7 @@ const mapStateToProps = ({
   },
 }) => ({
   account,
+  accounts,
   connecting,
   connected,
   footerHeight,

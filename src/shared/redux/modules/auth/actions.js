@@ -66,7 +66,11 @@ export const importAPIAccount = createTriggerAlias(
       const privKey = Web3.utils.sha3(`${password}.${res.username}`);
       await savePlain(password, privKey);
       const address = privToAddress(privKey);
-      return address;
+      const accounts = await getList();
+      return {
+        address,
+        accounts,
+      };
     }),
   })
 );

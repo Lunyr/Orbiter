@@ -104,7 +104,8 @@ const authReducer = (state = initialState, action) => {
         ...state,
         importError: '',
         isImportingFromAPI: false,
-        account: payload,
+        account: payload.address,
+        accounts: payload.accounts,
       };
     }
 

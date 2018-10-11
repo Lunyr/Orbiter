@@ -38,40 +38,57 @@ class LoginForm extends React.Component {
 
   render() {
     const {
+      account,
+      accounts,
       classes,
       accountsError,
       loginError,
       handleSubmit,
       history,
+      loading,
       intl,
       submitting,
-      accounts,
-      loading,
     } = this.props;
     const accountRadios = accounts ? (
-      accounts.map((a) => (
-        <div key={a.address} className={classes.radio__container}>
-          <Field
-            name="account"
-            className={classes.radio}
-            component={InputField}
-            type="radio"
-            id={a.address}
-            value={a.address}
-            required={true}
-          />
-          <Label
-            className={cx(classes.label, classes.accountLabel__label)}
-            htmlFor={a.address}
-            value={
-              <span className={classes.accountLabel}>
-                <Avatar className={classes.accountLabel__avatar} seed={a.address} />
-                <span className={classes.accountLabel__address}>{a.address}</span>
-              </span>
-            }
-          />
-        </div>
-      ))
+      accounts.map((a) => {
+        const isCurrentAccount = a.address === account;
+        return (
+          <div
+            key={a.address}
+            className={cx({
+              [classes.radio__container]: true,
+            })}>
+            {!isCurrentAccount && (
+              <Field
+                name="account"
+                className={classes.radio}
+                component={InputField}
+                type="radio"
+                id={a.address}
+                value={a.address}
+                required={true}
+                readOnly={isCurrentAccount}
+              />
+            )}
+            <Label
+              className={cx(
+                classes.label,
+                classes.accountLabel__label,
+                isCurrentAccount && classes.padLeft
+              )}
+              htmlFor={a.address}
+              value={
+                <span className={classes.accountLabel}>
+                  <Avatar className={classes.accountLabel__avatar} seed={a.address} />
+                  <span className={classes.accountLabel__address}>
+                    {isCurrentAccount ? `${a.address} (LOGGED IN)` : a.address}
+                  </span>
+                </span>
+              }
+            />
+          </div>
+        );
+      })
     ) : (
       <div>loading...</div>
     );
@@ -186,12 +203,17 @@ const styles = (theme) => ({
   accountLabel__address: {
     ...theme.overflow,
   },
+  disabled: {
+    ...theme.forms.disabled,
+  },
+  padLeft: {
+    marginLeft: 22,
+  },
 });
 
 const mapStateToProps = ({ auth: { account, accounts, loginError, accountsError } }) => ({
   account,
-  // Exclude any accounts that are already logged in
-  accounts: accounts.filter(({ address }) => address !== account),
+  accounts,
   loginError,
   accountsError,
 });
@@ -200,13 +222,13 @@ const mapDispatchToProps = {
   login,
 };
 
-LoginForm = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginForm);
-
 export default withRouter(
-  reduxForm({
-    form: 'forms.login',
-  })(injectIntl(injectStyles(styles)(LoginForm)))
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(
+    reduxForm({
+      form: 'forms.login',
+    })(injectIntl(injectStyles(styles)(LoginForm)))
+  )
 );
