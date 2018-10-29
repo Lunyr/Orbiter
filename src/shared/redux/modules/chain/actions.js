@@ -5,6 +5,15 @@ const actions = {
   SEND_TRANSACTION: 'chain/SEND_TRANSACTION',
 };
 
+export const createAd = createTriggerAlias(
+  actions.SEND_TRANSACTION,
+  (responseId, hash, transactionObject, privKey) => ({
+    type: actions.SEND_TRANSACTION,
+    meta: { responseId },
+    payload: Web3API.createAd(hash, transactionObject, privKey),
+  })
+);
+
 export const publishProposal = createTriggerAlias(
   actions.SEND_TRANSACTION,
   (responseId, hash, transactionObject, privKey) => ({

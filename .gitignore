@@ -10,3 +10,4 @@ build
 src/main.prod.js.map
 .eslintcache
 src/main.prod.js
+src/chain-daemon.prod.js

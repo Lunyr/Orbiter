@@ -2,8 +2,8 @@ import React from 'react';
 import injectStyles from 'react-jss';
 import Dropzone from 'react-dropzone';
 import Cropper from 'react-cropper';
+import toast from 'react-toastify';
 import cx from 'classnames';
-import 'cropperjs/dist/cropper.css';
 import { FaUpload as UploadIcon, FaLongArrowAltRight as LongArrowRightIcon } from 'react-icons/fa';
 
 class AdUIComponent extends React.Component {
@@ -59,7 +59,7 @@ class AdUIComponent extends React.Component {
     }
 
     // write the ArrayBuffer to a blob, and you're done
-    let blob = new Blob([ab], { type: mimeString });
+    let blob = new window.Blob([ab], { type: mimeString });
     return blob;
   };
 
@@ -86,7 +86,7 @@ class AdUIComponent extends React.Component {
       hash,
     });
 
-    this.props.updateAdInfo(hash, 'imageHash');
+    this.props.onChange('imageHash', hash);
   };
 
   /***
@@ -95,34 +95,27 @@ class AdUIComponent extends React.Component {
    * @params string key -- which input it is, the key to set in redux
    */
   sendToRedux = (value, key) => {
-    this.props.updateAdInfo(value, key);
+    this.props.onChange(key, value);
   };
 
   /***
    * Update the backend to add a click when the ad is clicked
    */
   adClicked = () => {
-    if (this.props.adClicked) this.props.adClicked(this.props.hash);
+    console.log('Ad was clicked');
   };
 
   /***
    * On a rejected file drop
    */
   onDropRejected = () => {
-    let { messageActions } = this.props;
-    messageActions.setMessage(
-      'The file you tried to upload was too big. Try again with another file under 2mb.',
-      'error',
-      true
-    );
+    toast.error('The file you tried to upload was too big. Try again with another file under 2mb.');
   };
 
   render() {
     const { classes } = this.props;
     return (
-      <a
-        target="_blank"
-        href={this.props.url}
+      <div
         className={cx(
           classes.preview,
           this.props.url && classes.click,
@@ -238,7 +231,7 @@ class AdUIComponent extends React.Component {
             </div>
           </div>
         )}
-      </a>
+      </div>
     );
   }
 }

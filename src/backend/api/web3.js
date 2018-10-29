@@ -334,6 +334,97 @@ const signedTransaction = async (privKey, txObj) => {
   };
 };
 
+const createAd = async (contentHash, transactionObject, privKey) => {
+  try {
+    const {
+      web3,
+      contracts: { auctioneer, lunyrToken },
+    } = global;
+
+    // Gets the time period in days by subtracting start date from current day
+    const timePeriodInDays =
+      new Date(transactionObject.endsOn - transactionObject.startsOn).getUTCDate() - 1; //ad runs for one day
+    const timePeriodInAdPeriods = Math.floor(timePeriodInDays / transactionObject.adPeriodInDays);
+    const lunAmount = Math.floor((transactionObject.bidValueLUN * 1e9) / timePeriodInAdPeriods);
+
+    const startDate = new Date(0);
+    startDate.setUTCSeconds(transactionObject.startTime.toString());
+    let startPeriod = Math.abs(transactionObject.startsOn.getTime() - startDate.getTime());
+    startPeriod = Math.ceil(startPeriod / (1000 * 3600 * 24));
+
+    console.log(
+      'lunyrToken',
+      lunyrToken,
+      timePeriodInDays,
+      timePeriodInAdPeriods,
+      lunAmount,
+      startPeriod
+    );
+    /*
+    // Approve the lun token being spent
+    const approveTxHash = await lunyrToken.methods.approve().encodeABI();;
+    
+    sendTransaction(
+      contracts.Auctioneer.address,
+      web3.web3.toWei(advertising.bidValueLUN) + LUN_CONVERSION,
+      { from: fromEthAddr, gas: GAS_AMT, gasPrice: approvalGasPrice, nonce: nonce }
+    );
+    
+    const data = await auctioneer.methods.bidRange(1, transactionObject.startPeriod, lunAmount, contentHash).encodeABI();
+    const to = auctioneer.options.address;
+    const convertedTransactionObject = normalizeTransaction(transactionObject, data, to);
+    
+    /*
+
+      // Splitting the LUN amt by the number of days the bid goes on for
+      let lunamt = Math.floor(web3.web3.toWei(advertising.bidValueLUN) / timePeriodInAdPeriods);
+      let txhash = await contracts.Auctioneer.bidRange.sendTransaction(
+        SCOPE,
+        this.state.startPeriod,
+        timePeriodInAdPeriods,
+        lunamt,
+        ipfsHash,
+        { from: fromEthAddr, gas: AD_GAS_AMT, gasPrice: bidRangeGasPrice, nonce: nonce + 1 }
+      );
+      
+     
+    
+    
+    log.info(
+      { account: privToAddress(privKey), contentHash, txObj: convertedTransactionObject },
+      'Attempting to publish proposal'
+    );
+    
+    // Sign the tx
+    const { encodedTx, transactionHash } = await signedTransaction(
+      privKey,
+      convertedTransactionObject
+    );
+    
+    // Send it
+    web3.eth.sendSignedTransaction(encodedTx).then((receipt) => {
+      log.info({ transactionHash: receipt.transactionHash }, 'Transaction mined');
+    });
+    
+    log.info({ transactionHash }, 'Successfully proposed new proposal content');
+    
+    return {
+      success: true,
+      data: {
+        transactionHash,
+      },
+    };
+    */
+  } catch (err) {
+    console.error(err);
+    log.error({ err }, `There was an error publishing a proposal ${contentHash}`);
+    return {
+      success: false,
+      error: err.message,
+    };
+  }
+};
+
 const publishProposal = async (contentHash, transactionObject, privKey) => {
   try {
     const {
@@ -432,6 +523,7 @@ export default {
   connect,
   fetchAccountInformation,
   initializeContracts,
+  createAd,
   publishProposal,
   voteOnProposal,
 };
