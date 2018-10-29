@@ -11,6 +11,7 @@ export default (theme) => ({
     borderBottom: '1px solid #eee',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   myAdsTitle: {
     fontSize: '26px',
@@ -45,6 +46,7 @@ export default (theme) => ({
   },
   startOfAds: {
     marginTop: '5px',
+    minHeight: 250,
   },
   ad: {
     display: 'flex',

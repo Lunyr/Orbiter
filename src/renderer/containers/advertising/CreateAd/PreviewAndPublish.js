@@ -1,81 +1,68 @@
-/***
- * Page 4 of ad modal -- Preview and Publish
- * @patr -- patrick@quantfive.org
- */
-
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-
-// NPM Modules
-import { StyleSheet, css } from 'aphrodite';
+import injectStyles from 'react-jss';
+import cx from 'classnames';
 
 class PreviewAndPublish extends React.Component {
   render() {
-    const yourBidFee = this.props.yourBid * 0.85;
-    const yourBidFeeLUN = this.props.conversion
-      ? (yourBidFee / this.props.conversion).toFixed(5)
-      : '0';
-    const yourBidLUN = this.props.conversion
-      ? (this.props.yourBid / this.props.conversion).toFixed(5)
-      : '0';
-    const txfee = this.props.yourBid * 0.15;
-    const yourBidTXFee = this.props.conversion ? (txfee / this.props.conversion).toFixed(5) : '0';
+    const { classes, conversion, yourBid, yourLunBalance } = this.props;
+    const yourBidFee = yourBid * 0.85;
+    const yourBidFeeLUN = conversion ? (yourBidFee / conversion).toFixed(5) : '0';
+    const yourBidLUN = conversion ? (yourBid / conversion).toFixed(5) : '0';
+    const txfee = yourBid * 0.15;
+    const yourBidTXFee = conversion ? (txfee / conversion).toFixed(5) : '0';
     return (
-      <div className={css(styles.body)}>
-        <div className={css(styles.section, styles.noborder)}>
-          <div className={css(styles.numbers)}>
-            <div className={css(styles.headerTitle)}>
+      <div className={classes.body}>
+        <div className={cx(classes.section, classes.noborder)}>
+          <div className={classes.numbers}>
+            <div className={classes.headerTitle}>
               <FormattedMessage id="previewandpub_review" defaultMessage="Review" />
             </div>
-            <div className={css(styles.headerNote)}>
+            <div className={classes.headerNote}>
               <FormattedMessage
                 id="previewandpub_note"
                 defaultMessage="NOTE: Remember your bid is deducted by 15%, so a $5 bid becomes $4.25"
               />
             </div>
-            <div className={css(styles.bidNumbers)}>
-              <div className={css(styles.content)}>
-                <div className={css(styles.bidLabel)}>
+            <div className={classes.bidNumbers}>
+              <div className={classes.content}>
+                <div className={classes.bidLabel}>
                   <FormattedMessage id="previewandpub_yourBid" defaultMessage="Your Bid" />
                 </div>
-                <div className={css(styles.bidNumber, styles.yourBid)}>
+                <div className={cx(classes.bidNumber, classes.yourBid)}>
                   ${yourBidFee.toFixed(2)}
                 </div>
-                <div className={css(styles.usd)}>
-                  = {yourBidFeeLUN} <span className={css(styles.lunLabel)}>LUN</span>
+                <div className={classes.usd}>
+                  = {yourBidFeeLUN} <span className={classes.lunLabel}>LUN</span>
                 </div>
               </div>
-              <div className={css(styles.content)}>
-                <div className={css(styles.bidLabel)}>
+              <div className={classes.content}>
+                <div className={classes.bidLabel}>
                   <FormattedMessage id="previewandpub_txFee" defaultMessage="Transaction Fee" />
                 </div>
-                <div className={css(styles.bidNumber, styles.yourBid)}>${txfee.toFixed(2)}</div>
-                <div className={css(styles.usd)}>
-                  = {yourBidTXFee} <span className={css(styles.lunLabel)}>LUN</span>
+                <div className={cx(classes.bidNumber, classes.yourBid)}>${txfee.toFixed(2)}</div>
+                <div className={classes.usd}>
+                  = {yourBidTXFee} <span className={classes.lunLabel}>LUN</span>
                 </div>
               </div>
 
-              <div className={css(styles.content)}>
-                <div className={css(styles.bidLabel)}>
+              <div className={classes.content}>
+                <div className={classes.bidLabel}>
                   <FormattedMessage id="previewandpub_totalCost" defaultMessage="Total Cost" />
                 </div>
-                <div className={css(styles.bidNumber, styles.yourBid)}>
-                  ${this.props.yourBid.toFixed(2)}
-                </div>
-                <div className={css(styles.usd)}>
-                  = {yourBidLUN} <span className={css(styles.lunLabel)}>LUN</span>
+                <div className={cx(classes.bidNumber, classes.yourBid)}>${yourBid.toFixed(2)}</div>
+                <div className={classes.usd}>
+                  = {yourBidLUN} <span className={classes.lunLabel}>LUN</span>
                 </div>
               </div>
 
-              <div className={css(styles.content)}>
-                <div className={css(styles.bidLabel)}>
+              <div className={classes.content}>
+                <div className={classes.bidLabel}>
                   <FormattedMessage id="previewandpub_yourBalance" defaultMessage="Your Balance" />
                 </div>
-                <div className={css(styles.bidNumber)}>
-                  ${(this.props.conversion * this.props.yourLunBalance).toFixed(2)}
-                </div>
-                <div className={css(styles.usd)}>
-                  = {this.props.yourLunBalance} <span className={css(styles.lunLabel)}>LUN</span>
+                <div className={classes.bidNumber}>${(conversion * yourLunBalance).toFixed(2)}</div>
+                <div className={classes.usd}>
+                  = {yourLunBalance} <span className={classes.lunLabel}>LUN</span>
                 </div>
               </div>
             </div>
@@ -86,7 +73,7 @@ class PreviewAndPublish extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = (theme) => ({
   section: {
     borderBottom: '1px solid #eee',
     padding: '12.5px 25px',
@@ -162,4 +149,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PreviewAndPublish;
+export default injectStyles(styles)(PreviewAndPublish);

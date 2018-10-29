@@ -10,6 +10,7 @@ import { fetchAccountInformation } from '../../../shared/redux/modules/wallet/ac
 import { TwoColumn, Notifications } from '../../components';
 import Advertising from '../advertising/';
 import Articles from '../article/Articles';
+import CreateAd from '../advertising/CreateAd/';
 import Drafts from '../article/Drafts';
 import Draft from '../article/Draft';
 import Feed from '../feed/Feed';
@@ -121,6 +122,7 @@ class App extends React.Component {
                 <Route exact path="/articles/unreviewed" component={PeerReview} />
                 <Route exact path="/tagging" component={Tagging} />
                 <Route exact path="/advertising" component={Advertising} />
+                <Route exact path="/advertising/create" component={CreateAd} />
                 <Route exact path="/about" component={About} />
                 <Route exact path="/faq" component={FAQ} />
                 <Route exact path="/announcements" component={Announcements} />
@@ -174,6 +176,7 @@ const styles = (theme) => ({
     display: 'flex',
     flexGrow: 1,
     backgroundColor: theme.colors.lightGray,
+    overflow: 'auto',
   },
 });
 
