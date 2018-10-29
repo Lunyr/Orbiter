@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import Tx from 'ethereumjs-tx';
+import fetch from 'node-fetch';
 import { settings } from '../../shared/settings';
 import { getLogger } from '../../lib/logger';
 import { privToAddress } from '../../lib/accounts';
@@ -162,6 +163,20 @@ const initializeContracts = async (network) => {
   }
 };
 
+const getUSDConversion = async (coin = 'ethereum') =>
+  fetch(`https://api.coinmarketcap.com/v1/ticker/${coin}/`)
+    .then((res) => res.json())
+    .then((json) => {
+      console.log('got me some usd conversion for lun', json);
+      if (json && json[0].id === coin) {
+        return json[0].price_usd;
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      return 1;
+    });
+
 const fetchAccountInformation = async (address) => {
   try {
     if (!address) {
@@ -255,6 +270,8 @@ const fetchAccountInformation = async (address) => {
         .then(parseIntWithRadix),
     ]);
 
+    const lunToUsd = await getUSDConversion('lunyr');
+
     return {
       success: true,
       data: {
@@ -262,6 +279,9 @@ const fetchAccountInformation = async (address) => {
         balances: {
           ethereum,
           lunyr,
+        },
+        conversion: {
+          lunToUsd: parseFloat(lunToUsd),
         },
         rewards: {
           cp,

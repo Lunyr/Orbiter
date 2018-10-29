@@ -1,20 +1,10 @@
-/***
- * Page 3 of ad modal -- select a slot
- * @patr -- patrick@quantfive.org
- */
-
 import React from 'react';
-
-// NPM Modules
-import { StyleSheet, css } from 'aphrodite';
+import injectStyles from 'react-jss';
 import { Doughnut } from 'react-chartjs-2';
 import { FormattedMessage } from 'react-intl';
+import cx from 'classnames';
 
-// Stylesheets
-import theme from '../../../theme';
-import '../stylesheets/CreateAdModal.css';
-
-export default class AdFrequency extends React.Component {
+class AdFrequency extends React.Component {
   constructor(props) {
     super(props);
 
@@ -27,7 +17,7 @@ export default class AdFrequency extends React.Component {
   /***
    * Calculates the percentage of the LUN pool that you're bidding for
    */
-  bidChange = e => {
+  bidChange = (e) => {
     let bid = e.target.value ? e.target.value * 1 : 0;
     if (this.props.yourLunBalance <= 0) {
       this.props.messageActions.setMessage(
@@ -46,13 +36,14 @@ export default class AdFrequency extends React.Component {
     });
 
     if (bid > 0) {
-      this.props.timePct(this.props.startPeriod, this.props.endPeriod, bid / this.props.conversion);
-      this.props.updateAdInfo(bid / this.props.conversion, 'bidValueLUN');
-      this.props.updateAdInfo(bid * 1.0, 'bidValueDollars');
+      // this.props.timePct(this.props.startPeriod, this.props.endPeriod, bid / this.props.conversion);
+      this.props.onChange('yourBidLun', bid / this.props.conversion);
+      this.props.onChange('yourBid', bid * 1.0);
     }
   };
 
   render() {
+    const { classes } = this.props;
     const chartData = {
       labels: ['Your ad', 'Other ads'],
       datasets: [
@@ -81,18 +72,12 @@ export default class AdFrequency extends React.Component {
       : '0';
 
     return (
-      <div className={css(styles.section)}>
-        <div className={css(styles.bidSection)}>
-          <div className={css(styles.placeBidHeader)}>
+      <div className={classes.section}>
+        <div className={classes.bidSection}>
+          <div className={classes.placeBidHeader}>
             <FormattedMessage id="adfrequency_title" defaultMessage="Ad Frequency" />
           </div>
-          <div className={css(styles.selectNote)}>
-            <FormattedMessage
-              id="adfrequency_note"
-              defaultMessage="NOTE: We charge a 15% LUN transaction fee per bid"
-            />
-          </div>
-          <div className={css(styles.bidInfo)}>
+          <div className={classes.bidInfo}>
             <FormattedMessage
               id="adfrequency_bid"
               defaultMessage="Your ad will be displayed in proportion to how much you pay."
@@ -103,38 +88,37 @@ export default class AdFrequency extends React.Component {
               defaultMessage="The more you pay, the more frequently your ad appears!"
             />
           </div>
-          <div className={css(styles.auctionSection)}>
-            <div className={css(styles.bidFormat)}>
-              <div className={css(styles.choiceLabel)}>
+          <div className={classes.auctionSection}>
+            <div className={classes.bidFormat}>
+              <div className={classes.choiceLabel}>
                 <FormattedMessage id="adfrequency_yourBid" defaultMessage="Your bid" />
               </div>
-              <div className={css(styles.bidChanges)}>
-                <div className={css(styles.yourBid)}>
-                  <div className={css(styles.dollarSign)}>$</div>
+              <div className={classes.bidChanges}>
+                <div className={classes.yourBid}>
+                  <div className={classes.dollarSign}>$</div>
                   <input
                     type="number"
                     value={this.state.bidValue}
                     max={String(this.props.yourLunBalance * this.props.conversion)}
                     required={true}
-                    ref={ref => (this.bid = ref)}
-                    className={css(styles.startDate, styles.bidInput)}
+                    ref={(ref) => (this.bid = ref)}
+                    className={cx(classes.startDate, classes.bidInput)}
                     onChange={this.bidChange}
                     min="0.01"
                     step="0.01"
                   />
                 </div>
 
-                <div className={css(styles.truePrice)}>
-                  = {truePrice} <span className={css(styles.lun)}> LUN </span>
+                <div className={classes.truePrice}>
+                  = {truePrice} <span className={classes.lun}> LUN </span>
                 </div>
-                <div className={css(styles.noLun)}>
+                <div className={classes.noLun}>
                   No LUN?
                   <a
                     href="https://coinmarketcap.com/currencies/lunyr/#market"
                     target="_blank"
-                    className={css(styles.textStyles)}
-                    rel="noopener noreferrer"
-                  >
+                    className={classes.textStyles}
+                    rel="noopener noreferrer">
                     <FormattedMessage
                       id="adfrequency_findLUN"
                       defaultMessage="Find LUN on these exchanges"
@@ -143,33 +127,33 @@ export default class AdFrequency extends React.Component {
                 </div>
               </div>
             </div>
-            <div className={css(styles.auctionPool)}>
-              <div className={css(styles.choiceLabel)}>
+            <div className={classes.auctionPool}>
+              <div className={classes.choiceLabel}>
                 <FormattedMessage
                   id="adfrequency_auctionPool"
                   defaultMessage="Current auction pool"
                 />
               </div>
-              <div className={css(styles.currentAuctionPool)}>
+              <div className={classes.currentAuctionPool}>
                 $ {(this.props.lunPool * this.props.conversion).toFixed(5)}
               </div>
-              <div className={css(styles.currentAuctionLUN)}>
-                = {this.props.lunPool} <span className={css(styles.lun)}>LUN</span>
+              <div className={classes.currentAuctionLUN}>
+                = {this.props.lunPool} <span className={classes.lun}>LUN</span>
               </div>
             </div>
           </div>
         </div>
-        <div className={css(styles.graphArea)}>
-          <div className={css(styles.graph)}>
-            <div className={css(styles.graphText)}>
-              <div className={css(styles.frequency)}>{this.props.percentLUNPool}</div>
-              <div className={css(styles.frequencyText)}>
+        <div className={classes.graphArea}>
+          <div className={classes.graph}>
+            <div className={classes.graphText}>
+              <div className={classes.frequency}>{this.props.percentLUNPool}</div>
+              <div className={classes.frequencyText}>
                 <FormattedMessage id="adfrequency_percent" defaultMessage="Percent Frequency" />
               </div>
             </div>
             <Doughnut height={170} width={170} data={chartData} options={chartOptions} />
           </div>
-          <div className={css(styles.graphExplanation)}>
+          <div className={classes.graphExplanation}>
             <FormattedMessage
               id="adfrequency_currentValues"
               defaultMessage="Current values may change based on advertisers' contributions to the pool"
@@ -181,7 +165,7 @@ export default class AdFrequency extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = (theme) => ({
   noLun: {
     display: 'flex',
     opacity: '.6',
@@ -361,3 +345,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default injectStyles(styles)(AdFrequency);

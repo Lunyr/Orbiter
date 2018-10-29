@@ -1,22 +1,36 @@
+import { remote } from 'electron';
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import injectStyles from 'react-jss';
 import ReactTable from 'react-table';
 import { FaBullhorn as BullhornIcon } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import cx from 'classnames';
-// import 'react-table/react-table.css';
-// import './legacy/stylesheets/react-table.css';
+import 'react-table/react-table.css';
 import styles from './styles';
 
 class MyAds extends React.Component {
-  chooseAd = () => {
-    return {
-      onClick: (e, handleOriginal) => {
-        if (handleOriginal) {
-          handleOriginal();
-        }
-      },
-    };
+  state = {
+    ads: [],
+  };
+
+  getAdsInformation = async () => {
+    try {
+      const { auctioneer } = remote.getGlobal('contracts');
+      if (auctioneer) {
+        //  Derive the next ad period available
+        const currentPeriod = await auctioneer.methods.getCurrentPeriod().call();
+        const auctionId = await auctioneer.methods.getAuctionId(1, currentPeriod).call();
+        const adsForAuction = await auctioneer.methods.getAdsForAuction(auctionId).call();
+        this.setState({
+          ads: adsForAuction[1],
+          bids: adsForAuction[2],
+          bidders: adsForAuction[3],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   columns = () => {
@@ -31,7 +45,7 @@ class MyAds extends React.Component {
         accessor: 'image',
         id: 'image',
         className: 'header',
-        Cell: (props) => <img className={classes.adImage} src={props.value} alt={'Advertising'} />,
+        Cell: (props) => <img className={classes.adImage} src={props.value} alt="Advertising" />,
       },
 
       // Ad name Header
@@ -82,17 +96,6 @@ class MyAds extends React.Component {
         className: 'header',
       },
 
-      // Bid
-      {
-        Header: intl.formatMessage({
-          id: 'ads_adCPC',
-          defaultMessage: 'Cost per click',
-        }),
-        id: 'cpc',
-        className: 'header',
-        accessor: 'cpc',
-      },
-
       // Adshare
       {
         Header: intl.formatMessage({
@@ -106,27 +109,29 @@ class MyAds extends React.Component {
     ];
   };
 
+  componentDidMount() {
+    this.getAdsInformation();
+  }
+
   render() {
     const { classes } = this.props;
+    const { ads } = this.state;
     return (
       <div className={classes.myAds}>
         <div className={classes.header}>
           <span className={classes.myAdsTitle}>
             <FormattedMessage id="ads_title" defaultMessage="My Ads" />
           </span>
-          <button className={classes.createAnAd} onClick={this.props.createAd}>
-            <BullhornIcon className={classes.bullHorn} />
-            <FormattedMessage id="ads_create" defaultMessage="Create an Ad" />
-          </button>
+          <Link to="/advertising/create">
+            <button className={classes.createAnAd}>
+              <BullhornIcon className={classes.bullHorn} />
+              <FormattedMessage id="ads_create" defaultMessage="Create an Ad" />
+            </button>
+          </Link>
         </div>
         <div className={classes.ads}>
           <div className={classes.startOfAds}>
-            <ReactTable
-              data={this.props.ads}
-              columns={this.columns()}
-              minRows={0}
-              getTdProps={this.chooseAd}
-            />
+            <ReactTable data={ads} columns={this.columns()} minRows={10} />
           </div>
         </div>
       </div>

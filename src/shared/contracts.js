@@ -86,14 +86,14 @@ export const initContract = async (router, contractName) => {
   const address = contractData[0];
   const abi = contractData[1];
 
-  log.info({ address, abi }, 'Retrieved contract details from router');
-
   // Get the ABI from IPFS
   const qmHash = multihashes.toB58String(multihashes.fromHexString('1220' + abi.slice(2)));
 
+  log.info({ address, abi, contractName, qmHash }, 'Retrieved contract details from router');
+
   const jsonABI = await ipfsFetch(qmHash);
 
-  log.debug({ jsonABI }, 'Retrieved jsonABI');
+  log.info({ contractName }, 'Retrieved jsonABI');
 
   if (!jsonABI) {
     throw new Error(`Error fetching ${contractName} ABI from IPFS.`);

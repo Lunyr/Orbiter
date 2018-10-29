@@ -1,22 +1,12 @@
-/***
- * Advertising UI component
- * @patr -- patrick@quantfive.org
- */
-
 import React from 'react';
-
-// NPM Modules
-import { StyleSheet, css } from 'aphrodite';
+import injectStyles from 'react-jss';
 import Dropzone from 'react-dropzone';
 import Cropper from 'react-cropper';
-
-// Components
-import ReviewBackButton from '../../review/ReviewBackButton';
-
-// Stylesheets
+import cx from 'classnames';
 import 'cropperjs/dist/cropper.css';
+import { FaUpload as UploadIcon, FaLongArrowAltRight as LongArrowRightIcon } from 'react-icons/fa';
 
-export default class AdUIComponent extends React.Component {
+class AdUIComponent extends React.Component {
   constructor(props) {
     super(props);
 
@@ -46,30 +36,30 @@ export default class AdUIComponent extends React.Component {
   /***
    * Converts data url to blob
    */
-  dataURItoBlob = dataURI => {
+  dataURItoBlob = (dataURI) => {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-    var byteString = atob(dataURI.split(',')[1]);
+    let byteString = window.atob(dataURI.split(',')[1]);
 
     // separate out the mime component
-    var mimeString = dataURI
+    let mimeString = dataURI
       .split(',')[0]
       .split(':')[1]
       .split(';')[0];
 
     // write the bytes of the string to an ArrayBuffer
-    var ab = new ArrayBuffer(byteString.length);
+    let ab = new ArrayBuffer(byteString.length);
 
     // create a view into the buffer
-    var ia = new Uint8Array(ab);
+    let ia = new Uint8Array(ab);
 
     // set the bytes of the buffer to the correct values
-    for (var i = 0; i < byteString.length; i++) {
+    for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i);
     }
 
     // write the ArrayBuffer to a blob, and you're done
-    var blob = new Blob([ab], { type: mimeString });
+    let blob = new Blob([ab], { type: mimeString });
     return blob;
   };
 
@@ -82,13 +72,13 @@ export default class AdUIComponent extends React.Component {
       return;
     }
 
-    var dataUrl = this.cropper.getCroppedCanvas().toDataURL();
-    var blob = this.dataURItoBlob(dataUrl);
-    // var dataFile = new File(blob, this.state.name); //await toFile(dataUrl);
+    let dataUrl = this.cropper.getCroppedCanvas().toDataURL();
+    let blob = this.dataURItoBlob(dataUrl);
+    // let dataFile = new File(blob, this.state.name); //await toFile(dataUrl);
     this.setState({
       isUploadingPhoto: true,
     });
-    var hash = await this.props.ipfsUpload(blob);
+    let hash = await this.props.ipfsUpload(blob);
 
     this.setState({
       isUploadingPhoto: false,
@@ -128,133 +118,123 @@ export default class AdUIComponent extends React.Component {
   };
 
   render() {
+    const { classes } = this.props;
     return (
       <a
         target="_blank"
         href={this.props.url}
-        className={css(
-          styles.preview,
-          this.props.url && styles.click,
-          this.props.side && styles.previewSide
+        className={cx(
+          classes.preview,
+          this.props.url && classes.click,
+          this.props.side && classes.previewSide
         )}
-        onClick={this.adClicked}
-      >
+        onClick={this.adClicked}>
         {this.props.hash ? (
-          <div className={css(styles.imgZone)}>
+          <div className={classes.imgZone}>
             <img
               alt={'Advertising'}
               src={`https://ipfs.io/ipfs/${this.props.hash}`}
-              className={css(
-                styles.advertisingImage,
-                this.props.side && styles.advertisingImageSide
+              className={cx(
+                classes.advertisingImage,
+                this.props.side && classes.advertisingImageSide
               )}
             />
-            <div className={css(styles.overlay, this.props.side && styles.sideOverlay)}>
+            <div className={cx(classes.overlay, this.props.side && classes.sideOverlay)}>
               Sponsored
             </div>
           </div>
         ) : this.state.crop ? (
-          <div className={css(styles.crop)}>
-            <div className={css(styles.cropWrapper)}>
+          <div className={classes.crop}>
+            <div className={classes.cropWrapper}>
               {this.state.isUploadingPhoto ? (
-                <div className={css(styles.uploadingPhoto)}>
-                  <i className={css(styles.upload) + ' fa fa-spin fa-spinner'} />
+                <div className={classes.uploadingPhoto}>
+                  <UploadIcon className={classes.upload} />
                 </div>
               ) : null}
               <Cropper
-                ref={ref => (this.cropper = ref)}
-                className={css(styles.cropper)}
+                ref={(ref) => (this.cropper = ref)}
+                className={classes.cropper}
                 src={this.state.preview}
                 // Cropper.js options
                 aspectRatio={1}
                 guides={false}
               />
             </div>
-            <ReviewBackButton text={'Crop'} back={this._crop} />
           </div>
         ) : (
           <Dropzone
             onDrop={this.uploadPhoto}
             required={true}
-            className={css(styles.imageUpload, this.state.hash && styles.hash)}
+            className={cx(classes.imageUpload, this.state.hash && classes.hash)}
             onMouseEnter={() => this.setState({ uploadEntered: true })}
             maxSize={2e6}
             onDropRejected={this.onDropRejected}
-            onMouseLeave={() => this.setState({ uploadEntered: false })}
-          >
+            onMouseLeave={() => this.setState({ uploadEntered: false })}>
             {this.state.hash ? (
               <img
                 alt={'Advertising'}
                 src={`https://ipfs.io/ipfs/${this.state.hash}`}
-                className={css(
-                  styles.advertisingImage,
-                  this.props.side && styles.advertisingImageSide
+                className={cx(
+                  classes.advertisingImage,
+                  this.props.side && classes.advertisingImageSide
                 )}
               />
             ) : (
-              <i
-                className={css(this.state.uploadEntered && styles.uploadHover) + ' fa fa-upload'}
-                aria-hidden="true"
-              />
+              <UploadIcon className={cx(this.state.uploadEntered && classes.uploadHover)} />
             )}
           </Dropzone>
         )}
         {this.state.crop ? null : (
-          <div className={css(styles.textArea, this.props.side && styles.textAreaSide)}>
+          <div className={cx(classes.textArea, this.props.side && classes.textAreaSide)}>
             {!this.props.edit ? (
-              <div className={css(styles.adTitle, this.props.side && styles.adTitleSide)}>
+              <div className={cx(classes.adTitle, this.props.side && classes.adTitleSide)}>
                 {' '}
                 {this.props.title ? this.props.title : 'Title of Ad'}{' '}
               </div>
             ) : (
               <input
-                onChange={e => this.sendToRedux(e.target.value, 'title')}
+                onChange={(e) => this.sendToRedux(e.target.value, 'title')}
                 defaultValue={this.props.title}
-                className={css(styles.input, styles.adTitle)}
+                className={cx(classes.input, classes.adTitle)}
                 placeholder={'Title of ad'}
                 required={true}
               />
             )}
             {!this.props.edit ? (
-              <div className={css(styles.adBody, this.props.side && styles.adBodySide)}>
+              <div className={cx(classes.adBody, this.props.side && classes.adBodySide)}>
                 {' '}
                 {this.props.body ? this.props.body : 'Body Text'}{' '}
               </div>
             ) : (
               <textarea
                 defaultValue={this.props.body}
-                onChange={e => this.sendToRedux(e.target.value, 'body')}
-                className={css(styles.input, styles.adBody)}
+                onChange={(e) => this.sendToRedux(e.target.value, 'body')}
+                className={cx(classes.input, classes.adBody)}
                 placeholder={'Body of ad'}
                 required={true}
               />
             )}
 
-            <div className={css(styles.actionLabel, this.props.side && styles.actionLabelSide)}>
+            <div className={cx(classes.actionLabel, this.props.side && classes.actionLabelSide)}>
               {!this.props.edit ? (
                 <div
-                  className={css(
-                    styles.actionLabelInput,
-                    this.props.side && styles.actionLabelInputSide
-                  )}
-                >
+                  className={cx(
+                    classes.actionLabelInput,
+                    this.props.side && classes.actionLabelInputSide
+                  )}>
                   {' '}
                   {this.props.actionLabel ? this.props.actionLabel : 'Action Label'}{' '}
                 </div>
               ) : (
                 <input
                   defaultValue={this.props.actionLabel}
-                  onChange={e => this.sendToRedux(e.target.value, 'actionLabel')}
-                  className={css(styles.input, styles.actionLabelInput)}
+                  onChange={(e) => this.sendToRedux(e.target.value, 'actionLabel')}
+                  className={cx(classes.input, classes.actionLabelInput)}
                   placeholder={'Name of action'}
                   required={true}
                 />
               )}
-              <i
-                style={{ marginLeft: '10px' }}
-                className="fa fa-long-arrow-right"
-                aria-hidden="true"
-              />
+              <LongArrowRightIcon />
             </div>
           </div>
         )}
@@ -263,7 +243,7 @@ export default class AdUIComponent extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+const styles = (theme) => ({
   advertisingImage: {
     objectFit: 'cover',
     height: '75px',
@@ -478,3 +458,5 @@ var styles = StyleSheet.create({
     padding: '0px 10px',
   },
 });
+
+export default injectStyles(styles)(AdUIComponent);

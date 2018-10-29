@@ -2,6 +2,7 @@ export default (theme) => ({
   container: {
     display: 'flex',
     width: '100%',
+    flexDirection: 'column',
   },
   header: {
     display: 'flex',
@@ -35,7 +36,6 @@ export default (theme) => ({
   body: {
     display: 'flex',
     flexGrow: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
     backgroundColor: theme.colors.white,

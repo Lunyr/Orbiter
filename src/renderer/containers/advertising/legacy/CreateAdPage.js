@@ -16,9 +16,9 @@ import mixpanel from 'mixpanel-browser';
 // Components
 import SubHeader from '../header/SubHeader';
 import SelectSlot from './createAdPages/SelectSlot';
-import CreateAd from './createAdPages/CreateAd';
-import AdFrequency from './createAdPages/AdFrequency';
-import PreviewAndPublish from './createAdPages/PreviewAndPublish';
+import CreateAd from '../CreateAd/CreateAd';
+import AdFrequency from '../CreateAd/AdFrequency';
+import PreviewAndPublish from '../CreateAd/PreviewAndPublish';
 import ReviewNextButton from '../review/ReviewNextButton';
 import AdPreviewModal from '../modals/AdPreviewModal';
 import GasModal from '../modals/GasModal/';
