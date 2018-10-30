@@ -5,6 +5,7 @@ import injectStyles from 'react-jss';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { toast } from 'react-toastify';
 import multihashes from 'multihashes';
+import ipfsAPI from 'ipfs-api';
 import { createAd } from '../../../../shared/redux/modules/chain/actions';
 import { privToAddress } from '../../../../lib/accounts';
 import { Button, ErrorBoundary, Modal } from '../../../components';
@@ -14,6 +15,7 @@ import AdDuration from './AdDuration';
 import AdFrequency from './AdFrequency';
 import PreviewAndPublish from './PreviewAndPublish';
 import styles from './styles';
+import { readUploadedFileAsBuffer } from '../../../../shared/utils';
 
 class CreateAd extends React.Component {
   state = {
@@ -31,47 +33,30 @@ class CreateAd extends React.Component {
     openedCreateAdModal: false,
   };
 
+  ipfs = ipfsAPI('ipfs.infura.io', 5001, { protocol: 'https' });
+
+  toastId = null;
+
   handleFormChange = (key, value) => {
     this.setState({ [key]: value });
   };
 
-  timePct = async (startPeriod, endPeriod, totalBidLUN) => {
-    if (!startPeriod && !endPeriod) {
-      this.setState({
-        percentLUNPool: 100,
-      });
-      return;
+  saveToIpfs = (arrayBuffer) => {
+    const buffer = Buffer.from(arrayBuffer);
+    return this.ipfs.add(buffer);
+  };
+
+  handleIPFSUpload = async (file) => {
+    try {
+      // Extract out file as text
+      const arrayBuffer = await readUploadedFileAsBuffer(file);
+      // Save it to ipfs
+      const [{ hash }] = await this.saveToIpfs(arrayBuffer);
+      // Return hash as a reference
+      return hash;
+    } catch (err) {
+      console.warn(err.message);
     }
-
-    totalBidLUN = totalBidLUN * 0.85; // LUN tax of 15%
-
-    const { auctioneer } = remote.getGlobal('contracts');
-
-    const numDays = endPeriod - startPeriod;
-    const dailyBid = totalBidLUN / numDays;
-    const scope = 1;
-    let totalPct = 0;
-    let totalPool = 0;
-    for (let day = startPeriod; day < endPeriod; day++) {
-      const auctionId = await auctioneer.methods.getAuctionId(scope, day).call();
-      // eslint-disable-next-line
-      const adsForAuction = await auctioneer.methods.getAdsForAuction(auctionId).call();
-
-      // change bid from LUN to USD
-      let bidSum = adsForAuction[0] / 1e18;
-      totalPool += bidSum;
-
-      // TODO: make sure divideBy can't be 0 here..
-      const divideBy = dailyBid ? dailyBid : 1;
-      const dailyPct = dailyBid / (bidSum * 1.0 ? bidSum * 1.0 + dailyBid : divideBy);
-      totalPct += dailyPct;
-    }
-
-    const lunPool = (totalPool * 1.0).toFixed(5);
-    this.setState({
-      percentLUNPool: ((totalPct * 100) / numDays).toFixed(2),
-      lunPoolInUSD: lunPool,
-    });
   };
 
   getAuctioneerInformation = async () => {
@@ -179,6 +164,11 @@ class CreateAd extends React.Component {
     );
   };
 
+  submit = (e) => {
+    e.preventDefault();
+    this.setState({ openedCreateAdModal: true });
+  };
+
   componentDidUpdate({ address }) {
     if ((!address && this.props.address) || this.props.address !== address) {
       this.getAuctioneerInformation();
@@ -259,9 +249,14 @@ class CreateAd extends React.Component {
                 <div className={classes.buttons}>
                   <Button
                     className={classes.write}
+                    title={
+                      !canSubmit
+                        ? 'Fill out all required fields to submit ad.'
+                        : 'Create advertisement'
+                    }
                     theme="primary"
                     value="Create Advertisement"
-                    disabled={canSubmit}
+                    disabled={!canSubmit}
                   />
                 </div>
               </form>

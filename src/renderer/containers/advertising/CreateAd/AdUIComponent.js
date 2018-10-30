@@ -2,9 +2,12 @@ import React from 'react';
 import injectStyles from 'react-jss';
 import Dropzone from 'react-dropzone';
 import Cropper from 'react-cropper';
-import toast from 'react-toastify';
+import { toast } from 'react-toastify';
 import cx from 'classnames';
 import { FaUpload as UploadIcon, FaLongArrowAltRight as LongArrowRightIcon } from 'react-icons/fa';
+import ipfsAPI from 'ipfs-api';
+import { Button } from '../../../components';
+import { readUploadedFileAsBuffer } from '../../../../shared/utils';
 
 class AdUIComponent extends React.Component {
   constructor(props) {
@@ -16,7 +19,39 @@ class AdUIComponent extends React.Component {
       crop: false,
       acceptedFiles: null,
     };
+
+    this.ipfs = ipfsAPI('ipfs.infura.io', 5001, { protocol: 'https' });
+    this.toastId = null;
   }
+
+  saveToIpfs = (arrayBuffer) => {
+    const buffer = Buffer.from(arrayBuffer);
+    const totalUploadSize = arrayBuffer.byteLength;
+    this.toastId = toast.info('Uploading content to ipfs...');
+    const progressUpdate = (prog) => {
+      toast.update(this.toastId, {
+        render: `Progress - ${((prog / totalUploadSize) * 100).toFixed(2)}%`,
+      });
+    };
+    return this.ipfs.add(buffer, { progress: progressUpdate });
+  };
+
+  handleIPFSUpload = async (file) => {
+    try {
+      // Extract out file as text
+      const arrayBuffer = await readUploadedFileAsBuffer(file);
+      // Save it to ipfs
+      const [{ hash, size }] = await this.saveToIpfs(arrayBuffer);
+      toast.update(this.toastId, {
+        render: `Uploaded ${file.name ? file.name : 'file'}! \n Size: ${size}kb`,
+        type: toast.TYPE.INFO,
+      });
+      // Return hash as a reference
+      return hash;
+    } catch (err) {
+      console.warn(err.message);
+    }
+  };
 
   /***
    * Uploads photo to IPFS and returns a hash for the ad photo
@@ -63,6 +98,12 @@ class AdUIComponent extends React.Component {
     return blob;
   };
 
+  cancel = () => {
+    this.setState({
+      crop: false,
+    });
+  };
+
   /***
    * Crops the photo
    */
@@ -72,13 +113,14 @@ class AdUIComponent extends React.Component {
       return;
     }
 
-    let dataUrl = this.cropper.getCroppedCanvas().toDataURL();
-    let blob = this.dataURItoBlob(dataUrl);
+    const dataUrl = this.cropper.getCroppedCanvas().toDataURL();
+    const blob = this.dataURItoBlob(dataUrl);
     // let dataFile = new File(blob, this.state.name); //await toFile(dataUrl);
     this.setState({
       isUploadingPhoto: true,
     });
-    let hash = await this.props.ipfsUpload(blob);
+
+    const hash = await this.handleIPFSUpload(blob);
 
     this.setState({
       isUploadingPhoto: false,
@@ -105,10 +147,7 @@ class AdUIComponent extends React.Component {
     console.log('Ad was clicked');
   };
 
-  /***
-   * On a rejected file drop
-   */
-  onDropRejected = () => {
+  handleImageRejection = () => {
     toast.error('The file you tried to upload was too big. Try again with another file under 2mb.');
   };
 
@@ -153,6 +192,8 @@ class AdUIComponent extends React.Component {
                 guides={false}
               />
             </div>
+            <Button value="Crop" theme="text" onClick={this._crop} />
+            <Button value="Cancel" theme="error" onClick={this.cancel} />
           </div>
         ) : (
           <Dropzone
@@ -161,7 +202,7 @@ class AdUIComponent extends React.Component {
             className={cx(classes.imageUpload, this.state.hash && classes.hash)}
             onMouseEnter={() => this.setState({ uploadEntered: true })}
             maxSize={2e6}
-            onDropRejected={this.onDropRejected}
+            onDropRejected={this.handleImageRejection}
             onMouseLeave={() => this.setState({ uploadEntered: false })}>
             {this.state.hash ? (
               <img
@@ -334,18 +375,9 @@ const styles = (theme) => ({
     display: 'flex',
     boxShadow: '0 12px 44px 0 rgba(0,0,0,0.08)',
     padding: '20px',
-    // height: '127px',
     position: 'relative',
     background: '#fff',
     flex: 1,
-
-    '@media only screen and (min-width: 1024px)': {
-      maxWidth: '380px',
-    },
-
-    '@media only screen and (min-width: 1440px)': {
-      maxWidth: '440px',
-    },
   },
   previewSide: {
     flexDirection: 'column',
@@ -360,7 +392,6 @@ const styles = (theme) => ({
     '@media only screen and (min-width: 1250px)': {
       maxWidth: '280px',
       width: '280px',
-      // height: '250px',
       height: 'unset',
     },
   },

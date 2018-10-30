@@ -100,7 +100,6 @@ class AdFrequency extends React.Component {
                     type="number"
                     value={this.state.bidValue}
                     max={String(this.props.yourLunBalance * this.props.conversion)}
-                    required={true}
                     ref={(ref) => (this.bid = ref)}
                     className={cx(classes.startDate, classes.bidInput)}
                     onChange={this.bidChange}

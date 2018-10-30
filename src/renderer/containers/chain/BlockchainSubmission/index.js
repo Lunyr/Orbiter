@@ -298,6 +298,12 @@ class BlockchainSubmission extends React.Component {
           };
           break;
 
+        case 'create-ad':
+          newState.rewards = {
+            cpToLunyr: this.cpToLunyr(totalCp, pool, createCpReward),
+          };
+          break;
+
         case 'propose-tag':
           newState.rewards = {};
           break;

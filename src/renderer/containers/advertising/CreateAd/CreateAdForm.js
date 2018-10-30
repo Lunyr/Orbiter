@@ -4,10 +4,6 @@ import injectStyles from 'react-jss';
 import cx from 'classnames';
 import AdUIComponent from './AdUIComponent';
 
-// Components
-// import AdUIComponent from '../legacy/components/AdUIComponent';
-// import theme from '../../../theme';
-
 class CreateAdForm extends React.Component {
   constructor(props) {
     super(props);
@@ -17,19 +13,6 @@ class CreateAdForm extends React.Component {
       hash: '',
     };
   }
-
-  sendToRedux = () => {
-    console.log('do stuff');
-  };
-
-  preview = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    /*
-    this.props.openAdPreviewModal(true);
-    mixpanel.track('createAdPreview_button_clicked');
-    */
-  };
 
   render() {
     const { classes, intl, callToAction, title, body, onChange, url } = this.props;
@@ -46,18 +29,12 @@ class CreateAdForm extends React.Component {
           </div>
           <div className={classes.createAd}>
             <div className={classes.adui}>
-              <AdUIComponent callToAction={callToAction} title={title} body={body} />
-              {/*
-                <AdUIComponent
-                edit={false}
-                updateAdInfo={this.props.updateAdInfo}
-                actionLabel={this.props.actionLabel}
-                title={this.props.title}
-                body={this.props.body}
-                ipfsUpload={this.props.ipfsUpload}
-                messageActions={this.props.messageActions}
+              <AdUIComponent
+                callToAction={callToAction}
+                title={title}
+                body={body}
+                onChange={onChange}
               />
-                 */}
             </div>
             <div className={classes.content}>
               <div className={classes.firstRow}>
@@ -209,13 +186,6 @@ const styles = (theme) => ({
   },
   buttonContainer: {
     textAlign: 'right',
-  },
-  previewButton: {
-    ...theme.buttons.inverse,
-    marginTop: theme.spacing,
-    '@media only screen and (max-width: 1024px)': {
-      display: 'none',
-    },
   },
 });
 
