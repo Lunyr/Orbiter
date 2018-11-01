@@ -36,6 +36,7 @@ const Header = ({
   classes,
   history,
   openSidebar,
+  queue,
   setQueueSyncing,
   sideBarOpened,
   wallet,
@@ -56,14 +57,25 @@ const Header = ({
       <Link className={cx(classes.account, classes.header__item)} to="/wallet">
         <WalletOverview wallet={wallet} />
       </Link>
-      <Button
-        theme="text"
-        className={cx(classes.header__item, classes.link, classes.padded, classes.button)}
-        onClick={() => {
-          setQueueSyncing(true, 3000);
-        }}
-        value="Start Chain Sync"
-      />
+      {!queue.syncing ? (
+        <Button
+          theme="text"
+          className={cx(classes.header__item, classes.link, classes.padded, classes.button)}
+          onClick={() => {
+            setQueueSyncing(true, 3000);
+          }}
+          value="Start Chain Sync"
+        />
+      ) : (
+        <Button
+          theme="text"
+          className={cx(classes.header__item, classes.link, classes.padded, classes.button)}
+          onClick={() => {
+            setQueueSyncing(false, 60000);
+          }}
+          value="Stop Chain Sync"
+        />
+      )}
       {accounts.length > 0 && (
         <Link className={cx(classes.header__item, classes.link, classes.padded)} to="/login">
           Switch Accounts
@@ -118,8 +130,9 @@ const Header = ({
   );
 };
 
-const mapStateToProps = ({ app: { sideBarOpened }, auth, wallet }) => ({
+const mapStateToProps = ({ app: { sideBarOpened, queue }, auth, wallet }) => ({
   auth,
+  queue,
   sideBarOpened,
   wallet,
 });

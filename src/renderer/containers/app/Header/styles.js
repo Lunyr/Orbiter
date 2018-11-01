@@ -90,7 +90,7 @@ export default (theme) => ({
   button: {
     borderRadius: '0 !important',
     textTransform: 'unset !important',
-    fontWeight: 500,
+    fontWeight: '400 !important',
     color: theme.colors.gray,
     textDecoration: 'none',
     '&:hover': {
