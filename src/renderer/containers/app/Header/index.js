@@ -5,7 +5,7 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 import cx from 'classnames';
 import get from 'lodash/get';
 import { MdMenu as MenuIcon } from 'react-icons/md';
-import { openSidebar } from '../../../../shared/redux/modules/app/actions';
+import { openSidebar, setQueueSyncing } from '../../../../shared/redux/modules/app/actions';
 import { ActionMenu, Avatar, Button, ButtonGroup, Link, Select } from '../../../components';
 import DraftHeader from '../../article/Draft/DraftHeader/';
 import Search from '../Search/';
@@ -31,7 +31,15 @@ const onSelected = (history, { props }) => {
   }
 };
 
-const Header = ({ auth, classes, history, openSidebar, sideBarOpened, wallet }) => {
+const Header = ({
+  auth,
+  classes,
+  history,
+  openSidebar,
+  setQueueSyncing,
+  sideBarOpened,
+  wallet,
+}) => {
   const address = get(auth, 'account');
   const accounts = get(auth, 'accounts', []);
   const userMenu = (
@@ -48,6 +56,14 @@ const Header = ({ auth, classes, history, openSidebar, sideBarOpened, wallet }) 
       <Link className={cx(classes.account, classes.header__item)} to="/wallet">
         <WalletOverview wallet={wallet} />
       </Link>
+      <Button
+        theme="text"
+        className={cx(classes.header__item, classes.link, classes.padded, classes.button)}
+        onClick={() => {
+          setQueueSyncing(true, 3000);
+        }}
+        value="Start Chain Sync"
+      />
       {accounts.length > 0 && (
         <Link className={cx(classes.header__item, classes.link, classes.padded)} to="/login">
           Switch Accounts
@@ -111,6 +127,6 @@ const mapStateToProps = ({ app: { sideBarOpened }, auth, wallet }) => ({
 export default withRouter(
   connect(
     mapStateToProps,
-    { openSidebar }
+    { openSidebar, setQueueSyncing }
   )(injectStyles(styles)(Header))
 );

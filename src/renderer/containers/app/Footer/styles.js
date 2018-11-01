@@ -58,4 +58,16 @@ export default (theme) => ({
     color: theme.colors.white,
     borderRadius: 6,
   },
+  cancel: {
+    color: theme.colors.error,
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    width: 50,
+  },
+  syncbar: {
+    display: 'inline-flex',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'space-around',
+  },
 });

@@ -87,4 +87,14 @@ export default (theme) => ({
       color: theme.colors.primary,
     },
   },
+  button: {
+    borderRadius: '0 !important',
+    textTransform: 'unset !important',
+    fontWeight: 500,
+    color: theme.colors.gray,
+    textDecoration: 'none',
+    '&:hover': {
+      color: theme.colors.link,
+    },
+  },
 });

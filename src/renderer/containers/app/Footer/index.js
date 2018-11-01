@@ -3,7 +3,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import injectStyles from 'react-jss';
 import { FormattedMessage } from 'react-intl';
-import { ProgressBar } from '../../../components';
+import { toast } from 'react-toastify';
+import { IconButton, ProgressBar } from '../../../components';
+import { MdClose as CloseIcon } from 'react-icons/md';
 import { DiscordIcon, TelegramIcon } from '../../../components/icons';
 import { updateQueueStatus, setQueueSyncing } from '../../../../shared/redux/modules/app/actions';
 import styles from './styles';
@@ -65,6 +67,14 @@ class Footer extends React.PureComponent {
     ping: 60000, // ping every 60 seconds by default
   };
 
+  turnSyncOff = () => {
+    const { setQueueSyncing } = this.props;
+    setQueueSyncing(false, this.statusIntervals.ping);
+    toast.info(
+      'Orbiter sync was manually stopped. You may experience data issues if you do not fully sync with the blockchain.'
+    );
+  };
+
   checkChangeIntervalPolling = () => {
     const { progress, setQueueSyncing, syncing, pollIntervalMS, remaining } = this.props;
     // Not showing sync but the percent complete is not 100
@@ -120,7 +130,16 @@ class Footer extends React.PureComponent {
     return (
       <footer className={classes.container}>
         {syncing ? (
-          <SyncProgressBar classes={classes} progress={progress} remaining={remaining} />
+          <div className={classes.syncbar}>
+            <SyncProgressBar classes={classes} progress={progress} remaining={remaining} />
+            <IconButton
+              aria-label="cancel"
+              className={classes.cancel}
+              type="button"
+              onClick={this.turnSyncOff}
+              icon={<CloseIcon size={20} />}
+            />
+          </div>
         ) : (
           <React.Fragment>
             <ul className={classes.list}>
