@@ -70,6 +70,19 @@ const readyHandler = async () => {
   const processList = await findProcess('name', 'chain-daemon');
   const isDaemonRunning = processList.length > 0;
 
+  log.info(
+    { isDaemonRunning, processList, disabledDaemon: process.env.DISABLE_DAEMON },
+    'Daemon information'
+  );
+
+  // Kill the previous daemon
+  if (isDaemonRunning && processList[0] && processList[0].pid) {
+    const cp = require('child_process');
+    cp.execSync(`kill ${processList[0].pid}`);
+    log.info('Killed the previous daemon process that was running');
+  }
+
+  // Load up the daemon meow
   if (!isDaemonRunning && typeof process.env.DISABLE_DAEMON === 'undefined') {
     chainDaemon = new ChainDaemon();
 
@@ -117,6 +130,7 @@ const readyHandler = async () => {
 
       app.on('before-quit', () => {
         forceQuit = true;
+        mainWindow.removeAllListeners('close');
       });
     }
   });

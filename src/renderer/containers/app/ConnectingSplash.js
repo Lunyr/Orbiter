@@ -8,7 +8,7 @@ class ConnectingSplash extends React.Component {
     error: null,
     isShowing: true,
     timer: new Date().getTime(),
-    retries: 5,
+    retries: 30,
   };
 
   minimumViewTimeMs = 2000;
